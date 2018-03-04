@@ -1,7 +1,12 @@
-__all__ = ['Element']
+from pystructural.core import Element
+
+__all__ = ['LinearTriangleElement2D']
 
 
-class Element:
+class LinearTriangleElement2D(Element):
+
+    def shape_function(self, i):
+        pass
 
     def compute_shape_matrix(self):
         pass
