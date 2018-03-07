@@ -4,6 +4,8 @@ from . import material
 from .material import *
 from . import element_geometry
 from .element_geometry import *
+from . import degree_of_freedom
+from .degree_of_freedom import *
 from . import element
 from .element import *
 from . import connection

@@ -6,7 +6,7 @@ from pystructural.geometry import Point2D, Line2D, Triangle2D
 __all__ = ['geometry_subclasses_2d', 'UpdateGeometries']
 
 
-# List of geometry subclasses.
+# List of geometry subclasses
 geometry_subclasses_2d = [Point2D, Line2D, Triangle2D]
 
 
