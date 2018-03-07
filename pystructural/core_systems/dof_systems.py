@@ -5,6 +5,7 @@ from pystructural.core import DOF
 __all__ = ["UpdateDOFs"]
 
 
+# TODO add the dictionaries as a component to the general entity
 class UpdateDOFs(cecs.System):
     def __init__(self):
         self.local_to_global_dof_dict = {}
@@ -19,7 +20,7 @@ class UpdateDOFs(cecs.System):
             # dictionary value to a dictionary
             self.local_to_global_dof_dict[entity] = {}
             # Get the dof id list
-            dof_id_list = DOF.get_dof_id_list()
+            dof_id_list = component.get_dof_id_list()
             # Put each id of the list in the dictionary
             for dof_id in dof_id_list:
                 self.local_to_global_dof_dict[entity][dof_id] = current_dof_id

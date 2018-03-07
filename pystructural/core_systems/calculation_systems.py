@@ -4,7 +4,17 @@ from .geometry_systems import UpdateGeometries
 from .element_systems import UpdateElements
 from .dof_systems import UpdateDOFs
 
-__all__ = ['LinearCalculation']
+__all__ = ['GeneralComponent', 'InitializeCalculation', 'LinearCalculation']
+
+
+class GeneralComponent:
+    pass
+
+
+class InitializeCalculation(cecs.System):
+    def process(self):
+        # Adds a general entity to the world, which holds the 'static' components
+        self.world.add_entity(GeneralComponent)
 
 
 class LinearCalculation(cecs.System):
