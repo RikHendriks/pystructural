@@ -3,18 +3,15 @@ import cecs
 from .geometry_systems import UpdateGeometries
 from .element_systems import UpdateElements
 from .dof_systems import UpdateDOFs
+from pystructural.additional_components.calculation_components import *
 
-__all__ = ['GeneralComponent', 'InitializeCalculation', 'LinearCalculation']
-
-
-class GeneralComponent:
-    pass
+__all__ = ['InitializeCalculation', 'LinearCalculation']
 
 
 class InitializeCalculation(cecs.System):
-    def process(self):
+    def initialize(self):
         # Adds a general entity to the world, which holds the 'static' components
-        self.world.add_entity(GeneralComponent)
+        self.world.add_entity(GeneralComponent())
 
 
 class LinearCalculation(cecs.System):
@@ -22,6 +19,9 @@ class LinearCalculation(cecs.System):
         # Check if a linear calculation system category is in self.world then remove it
         if self.world.has_system_category("linear calculation"):
             self.world.remove_system_category("linear calculation")
+
+        # Add system -> Initialize calculation
+        self.world.add_system(InitializeCalculation(), "linear calculation")
 
         # Add system -> update the geometries
         self.world.add_system(UpdateGeometries(), "linear calculation")

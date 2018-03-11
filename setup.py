@@ -3,8 +3,9 @@ from setuptools import setup
 setup(
     name='pystructural',
     version='0.1',
-    packages=['pystructural', 'pystructural.core', 'pystructural.elements', 'pystructural.geometry',
-              'pystructural.core_systems'],
+    packages=['pystructural', 'pystructural.elements', 'pystructural.geometries', 'pystructural.materials',
+              'pystructural.core_systems', 'pystructural.core_components', 'pystructural.element_geometries',
+              'pystructural.additional_components'],
     url='https://github.com/RikHendriks/pystructural',
     license='GNU General Public License v3.0',
     author='Rik Hendriks',

@@ -1,21 +1,24 @@
 import cecs
 
-from pystructural.core import DOF
-from pystructural.geometry import Line2D, Triangle2D
+from pystructural.core_components import DOF
+from pystructural.geometries import Line2D, Triangle2D
 from pystructural.elements import FrameElement2D, LinearTriangleElement2D
 
 __all__ = ["element_subclasses_2d", "UpdateElements"]
 
 
 # List of all Element subclasses
-element_subclasses_2d = [[Line2D, FrameElement2D], [Triangle2D, LinearTriangleElement2D]]
+element_subclasses_2d = [FrameElement2D, LinearTriangleElement2D]
 
 
 class UpdateElements(cecs.System):
     def process(self):
         # Process all the 2d elements
-        for element_class_list in element_subclasses_2d:
-            for entity, components in self.world.get_components(element_class_list[0], element_class_list[1]):
+        for element_class in element_subclasses_2d:
+            for entity, components in self.world.get_components(element_class.compatible_geometry, element_class):
+
+                # Compute the element properties
+                # TODO implement this ()
 
                 # Compute the matrices of the elements
                 components[1].compute_matrices()

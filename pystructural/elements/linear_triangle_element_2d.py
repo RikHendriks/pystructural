@@ -1,15 +1,24 @@
-from pystructural.core import Element
-from pystructural.core import DOF
+from pystructural.core_components import Element
+from pystructural.core_components import DOF
+
+from pystructural.geometries import *
 
 __all__ = ['LinearTriangleElement2D']
 
 
 class LinearTriangleElement2D(Element):
+    compatible_geometry = Triangle2D
+    compatible_materials = []
+    compatible_element_geometries = []
+
     def __init__(self):
         super().__init__()
 
     def get_dof(self):
         return DOF(displacement_x=True, displacement_y=True)
+
+    def compute_element_properties(self):
+        pass
 
     def shape_function(self, i):
         pass

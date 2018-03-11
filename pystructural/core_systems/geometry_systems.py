@@ -1,18 +1,18 @@
 import numpy as np
 import cecs
 
-from pystructural.geometry import Point2D, Line2D, Triangle2D
+from pystructural.geometries import Point2D, Line2D, Triangle2D
 
 __all__ = ['geometry_subclasses_2d', 'UpdateGeometries']
 
 
-# List of geometry subclasses
+# List of geometries subclasses
 geometry_subclasses_2d = [Point2D, Line2D, Triangle2D]
 
 
 class UpdateGeometries(cecs.System):
     def process(self):
-        # Process all the 2d geometry subclasses
+        # Process all the 2d geometries subclasses
         for geometry_class in geometry_subclasses_2d:
             for entity, component in self.world.get_component(geometry_class):
 
@@ -23,7 +23,7 @@ class UpdateGeometries(cecs.System):
                     point_list = []
                     for point_id in component.point_id_list:
                         point_list.append(self.world.get_component_from_entity(point_id, Point2D).point_list[0])
-                    # Set the point list for the geometry subclass component
+                    # Set the point list for the geometries subclass component
                     component.point_list = np.array(point_list)
 
                 # Compute the area's of the geometries
