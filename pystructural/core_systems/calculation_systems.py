@@ -35,7 +35,7 @@ class LinearCalculation(cecs.System):
         # Add system -> update the reduced DOFs
         # TODO add this system
 
-        # Add system -> compute the global stiffness matrix
+        # Add system -> execute linear calculation (determine reduced stuff and solve the matrix equation)
         # TODO add this system
 
         # Process the 'linear calculation' system category

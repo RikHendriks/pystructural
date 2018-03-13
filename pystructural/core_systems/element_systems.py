@@ -1,7 +1,6 @@
 import cecs
 
 from pystructural.core_components import DOF
-from pystructural.geometries import Line2D, Triangle2D
 from pystructural.elements import FrameElement2D, LinearTriangleElement2D
 
 __all__ = ["element_subclasses_2d", "UpdateElements"]
@@ -17,11 +16,20 @@ class UpdateElements(cecs.System):
         for element_class in element_subclasses_2d:
             for entity, components in self.world.get_components(element_class.compatible_geometry, element_class):
 
-                # Compute the element properties
-                # TODO implement this ()
+                # Determine the material of the element
+                for material_class in element_class.compatible_materials:
+                    if self.world.has_component(entity, material_class):
+                        components[1].material = self.world.get_component_from_entity(entity, material_class)
+                        break
+
+                # Determine the element_geometry of the element
+                for element_geometry_class in element_class.compatible_element_geometries:
+                    if self.world.has_component(entity, element_geometry_class):
+                        components[1].element_geometry = self.world.get_component_from_entity(entity, element_geometry_class)
+                        break
 
                 # Compute the matrices of the elements
-                components[1].compute_matrices()
+                components[1].compute_element()
 
                 # Add the dof of the element to the dof of the nodes of the element
                 # For every point in the element
