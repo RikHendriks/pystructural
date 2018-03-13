@@ -16,6 +16,9 @@ class UpdateElements(cecs.System):
         for element_class in element_subclasses_2d:
             for entity, components in self.world.get_components(element_class.compatible_geometry, element_class):
 
+                # Determine the geometry of the element
+                components[1].geometry = components[0]
+
                 # Determine the material of the element
                 for material_class in element_class.compatible_materials:
                     if self.world.has_component(entity, material_class):

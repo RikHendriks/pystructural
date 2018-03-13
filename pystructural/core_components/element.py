@@ -7,9 +7,9 @@ class Element:
     compatible_element_geometries = None
 
     def __init__(self):
-        # geometries
+        # Geometry
         self.geometry = None
-        # material and geometries element
+        # Material and geometries element
         self.material = None
         self.element_geometry = None
         # Matrices
@@ -25,10 +25,6 @@ class Element:
         # Compute all the matrices
         # Element properties
         self.compute_element_properties()
-        # Shape matrix
-        self.compute_shape_matrix()
-        # Strain matrix
-        self.compute_strain_matrix()
         # Stiffness matrix
         self.compute_stiffness_matrix()
         # Mass matrix
@@ -37,12 +33,6 @@ class Element:
         self.compute_nodal_force_vector()
 
     def compute_element_properties(self):
-        pass
-
-    def compute_shape_matrix(self):
-        pass
-
-    def compute_strain_matrix(self):
         pass
 
     def compute_stiffness_matrix(self):
