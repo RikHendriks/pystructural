@@ -21,10 +21,7 @@ class Element:
     def get_dof(self):
         pass
 
-    def compute_element_properties(self):
-        pass
-
-    def compute_matrices(self):
+    def compute_element(self):
         # Compute all the matrices
         # Element properties
         self.compute_element_properties()
@@ -38,6 +35,9 @@ class Element:
         self.compute_mass_matrix()
         # Nodal force vector
         self.compute_nodal_force_vector()
+
+    def compute_element_properties(self):
+        pass
 
     def compute_shape_matrix(self):
         pass
