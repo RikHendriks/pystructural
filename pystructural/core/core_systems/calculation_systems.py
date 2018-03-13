@@ -3,7 +3,7 @@ import cecs
 from .geometry_systems import UpdateGeometries
 from .element_systems import UpdateElements
 from .dof_systems import UpdateDOFs
-from pystructural.additional_components.calculation_components import *
+from pystructural.core.additional_components.calculation_components import *
 
 __all__ = ['InitializeCalculation', 'LinearCalculation']
 

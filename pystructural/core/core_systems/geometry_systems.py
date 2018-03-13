@@ -1,7 +1,7 @@
 import numpy as np
 import cecs
 
-from pystructural.geometries import Point2D, Line2D, Triangle2D
+from pystructural.core.geometries import Point2D, Line2D, Triangle2D
 
 __all__ = ['geometry_subclasses_2d', 'UpdateGeometries']
 

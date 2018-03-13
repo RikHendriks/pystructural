@@ -1,7 +1,7 @@
 import cecs
 
-from pystructural.core_components import DOF
-from pystructural.additional_components.calculation_components import *
+from pystructural.core.core_components import DOF
+from pystructural.core.additional_components.calculation_components import *
 
 __all__ = ["UpdateDOFs"]
 

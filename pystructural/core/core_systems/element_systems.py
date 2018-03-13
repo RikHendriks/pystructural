@@ -1,7 +1,7 @@
 import cecs
 
-from pystructural.core_components import DOF
-from pystructural.elements import FrameElement2D, LinearTriangleElement2D
+from pystructural.core.core_components import DOF
+from pystructural.core.elements import FrameElement2D, LinearTriangleElement2D
 
 __all__ = ["element_subclasses_2d", "UpdateElements"]
 

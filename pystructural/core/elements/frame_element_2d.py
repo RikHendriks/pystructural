@@ -1,11 +1,10 @@
 import numpy as np
 
-from pystructural.core_components import Element
-from pystructural.core_components import DOF
+from pystructural.core.core_components import Element, DOF
 
-from pystructural.geometries import *
-from pystructural.materials import *
-from pystructural.element_geometries import *
+from pystructural.core.geometries import *
+from pystructural.core.materials import *
+from pystructural.core.element_geometries import *
 
 __all__ = ['FrameElement2D']
 

@@ -1,7 +1,6 @@
-from pystructural.core_components import Element
-from pystructural.core_components import DOF
+from pystructural.core.core_components import Element, DOF
 
-from pystructural.geometries import *
+from pystructural.core.geometries import *
 
 __all__ = ['LinearTriangleElement2D']
 
