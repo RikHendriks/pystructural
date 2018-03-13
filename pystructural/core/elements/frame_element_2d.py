@@ -43,8 +43,7 @@ class FrameElement2D(Element):
         self.compute_global_to_local_matrix()
 
     def calculate_local_stiffness_matrix(self):
-        """
-        Calculate the local stiffness matrix.
+        """Calculate the local stiffness matrix.
 
         :return: (Numpy Array) the local stiffness matrix.
         """
@@ -76,8 +75,7 @@ class FrameElement2D(Element):
         self.local_stiffness_matrix[5, 5] = 4.0 * (self.ei / self.length)
 
     def compute_global_to_local_matrix(self):
-        """
-        Calculate the local to global matrix.
+        """Calculate the local to global matrix.
 
         :return: (Numpy Array) the local to global matrix of the element.
         """
@@ -96,8 +94,7 @@ class FrameElement2D(Element):
         self.global_to_local_matrix[5, 5] = 1.0
 
     def rotate_by_local_to_global_matrix(self, input_matrix, clockwise=True):
-        """
-        Rotate the input vector or matrix by the local to global matrix.
+        """Rotate the input vector or matrix by the local to global matrix.
 
         :param input_matrix: (Numpy Array) the input vector or matrix.
         :param clockwise: (Bool) determines if it returns clockwise or counterclockwise.
@@ -111,8 +108,7 @@ class FrameElement2D(Element):
                              np.transpose(self.global_to_local_matrix))
 
     def compute_stiffness_matrix(self):
-        """
-        Calculate the global stiffness matrix.
+        """Calculate the global stiffness matrix.
 
         :return: (Numpy Array) the global stiffness matrix.
         """
