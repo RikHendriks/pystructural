@@ -2,7 +2,7 @@ import cecs
 
 from .geometry_systems import UpdateGeometries
 from .element_systems import UpdateElements
-from .dof_systems import UpdateDOFs
+from .dof_systems import UpdateDOFs, UpdateReducedDOFs
 from pystructural.core.additional_components.calculation_components import *
 
 __all__ = ['InitializeCalculation', 'LinearCalculation']
@@ -16,27 +16,30 @@ class InitializeCalculation(cecs.System):
 
 class LinearCalculation(cecs.System):
     def process(self):
+        # The name of the system category
+        system_category_name = "linear calculation"
         # Check if a linear calculation system category is in self.world then remove it
-        if self.world.has_system_category("linear calculation"):
-            self.world.remove_system_category("linear calculation")
+        if self.world.has_system_category(system_category_name):
+            self.world.remove_system_category(system_category_name)
 
         # Add system -> Initialize calculation
-        self.world.add_system(InitializeCalculation(), "linear calculation")
+        self.world.add_system(InitializeCalculation(), system_category_name)
 
         # Add system -> update the geometries
-        self.world.add_system(UpdateGeometries(), "linear calculation")
+        self.world.add_system(UpdateGeometries(), system_category_name)
 
         # Add system -> update the elements
-        self.world.add_system(UpdateElements(), "linear calculation")
+        self.world.add_system(UpdateElements(), system_category_name)
 
         # Add system -> update the DOFs
-        self.world.add_system(UpdateDOFs(), "linear calculation")
+        self.world.add_system(UpdateDOFs(), system_category_name)
 
         # Add system -> update the reduced DOFs
-        # TODO add this system
+        self.world.add_system(UpdateReducedDOFs(), system_category_name)
 
         # Add system -> execute linear calculation (determine reduced stuff and solve the matrix equation)
         # TODO add this system
 
+        # TODO change this to return system_category_name and process the function outisde of this system
         # Process the 'linear calculation' system category
-        self.world.process_system_categories("linear calculation")
+        self.world.process_system_categories(system_category_name)
