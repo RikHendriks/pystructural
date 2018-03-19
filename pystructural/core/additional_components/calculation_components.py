@@ -1,4 +1,4 @@
-__all__ = ["GeneralComponent", "DOFCalculationComponent"]
+__all__ = ["GeneralComponent", "DOFCalculationComponent", "LinearCalculationComponent"]
 
 
 class GeneralComponent:
@@ -30,14 +30,3 @@ class LinearCalculationComponent:
         self.reduced_load_vector = None
         # Dof calculation component
         self.dof_calculation_component = None
-
-    # TODO implement this function inside a system
-    def compute_linear_calculation(self, dof_calculation_component):
-        # Determine the reduced global stiffness vector and the reduced load vector
-
-        # Compute the reduced displacement vector
-
-        # Determine the displacement vector
-
-        # Determine the load vector
-        pass
