@@ -24,7 +24,7 @@ class Element:
     def get_stiffness_matrix_coordinate_to_node_and_dof_variable(self, x, y):
         pass
 
-    def stiffness_matrix_generator(self):
+    def stiffness_matrix_dof_generator(self):
         dim = self.stiffness_matrix.shape[0]
         for i in range(0, dim):
             for j in range(0, dim):

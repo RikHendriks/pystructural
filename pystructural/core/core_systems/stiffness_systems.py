@@ -38,14 +38,15 @@ class ExecuteLinearCalculation(cecs.System):
         for element_class in element_subclasses_2d:
             for entity, components in self.world.get_components(element_class.compatible_geometry, element_class):
                 # For each point in the element
-                for data in components[1].stiffness_matrix_generator():
+                for data in components[1].stiffness_matrix_dof_generator():
                     i = self.dof_calculation_component.local_to_global_dof_dict[data[0][0][0]][data[0][0][1]]
                     j = self.dof_calculation_component.local_to_global_dof_dict[data[0][1][0]][data[0][1][1]]
                     self.linear_calculation_component.global_stiffness_matrix[i][j] += data[1]
 
         # Determine the reduced global stiffness matrix
         # Initialize the reduced global stiffness matrix as a copy of the global stiffness matrix
-        self.linear_calculation_component.reduced_global_stiffness_matrix = copy.deepcopy(self.linear_calculation_component.global_stiffness_matrix)
+        self.linear_calculation_component.reduced_global_stiffness_matrix =\
+            copy.deepcopy(self.linear_calculation_component.global_stiffness_matrix)
         # Initialize the remove id list
         remove_id_list = []
         # Get the id's that need to be removed from the global stiffness matrix
@@ -71,10 +72,12 @@ class ExecuteLinearCalculation(cecs.System):
 
         # Determine the displacement vector
         # Initialize the displacement vector
-        self.linear_calculation_component.displacement_vector = np.zeros([len(self.linear_calculation_component.global_stiffness_matrix)])
+        self.linear_calculation_component.displacement_vector =\
+            np.zeros([len(self.linear_calculation_component.global_stiffness_matrix)])
         # Put the values of the reduced displacement vector in the displacement vector
         for i in range(0, len(self.linear_calculation_component.reduced_displacement_vector)):
-            self.linear_calculation_component.displacement_vector[self.dof_calculation_component.reduced_to_global_dof_dict[i]] =\
+            self.linear_calculation_component.displacement_vector\
+                [self.dof_calculation_component.reduced_to_global_dof_dict[i]] =\
                 self.linear_calculation_component.reduced_displacement_vector[i]
 
         # Determine the load vector
