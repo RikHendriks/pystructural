@@ -5,9 +5,9 @@ A structural finite element method implementation.
 
 ### Installation
 
-Currently PyStructural can only be installed by using the terminal. Open a terminal in the directory in which the setup.py file of PyStructural is and enter the following command (currently not possible!!!):
+Currently PyStructural can only be installed by using the terminal. Open a terminal in the directory in which the setup.py file of PyStructural is and enter the following command:
 
-    python install setup.py
+    python setup.py install
 
 ### Running the program
 
