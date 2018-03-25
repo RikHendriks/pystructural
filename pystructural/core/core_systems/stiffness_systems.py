@@ -39,8 +39,8 @@ class ExecuteLinearCalculation(cecs.System):
 
                 # For each point in the element
                 for data in components[1].stiffness_matrix_generator():
-                    i = self.dof_calculation_component.local_to_global_dof[data[0][0][0]][data[0][0][1]]
-                    j = self.dof_calculation_component.local_to_global_dof[data[0][1][0]][data[0][1][1]]
+                    i = self.dof_calculation_component.local_to_global_dof_dict[data[0][0][0]][data[0][0][1]]
+                    j = self.dof_calculation_component.local_to_global_dof_dict[data[0][1][0]][data[0][1][1]]
                     self.linear_calculation_component.global_stiffness_matrix[i][j] = data[1]
 
         # Determine the reduced global stiffness matrix
@@ -54,11 +54,15 @@ class ExecuteLinearCalculation(cecs.System):
             if i not in self.dof_calculation_component.global_to_reduced_dof_dict:
                 remove_id_list.append(i)
         # Remove the rows and columns to get the reduced global stiffness matrix
-        np.delete(self.linear_calculation_component.reduced_global_stiffness_matrix, remove_id_list, 0)
-        np.delete(self.linear_calculation_component.reduced_global_stiffness_matrix, remove_id_list, 1)
+        self.linear_calculation_component.reduced_global_stiffness_matrix =\
+            np.delete(self.linear_calculation_component.reduced_global_stiffness_matrix, remove_id_list, 0)
+        self.linear_calculation_component.reduced_global_stiffness_matrix =\
+            np.delete(self.linear_calculation_component.reduced_global_stiffness_matrix, remove_id_list, 1)
 
         # Determine the reduced load vector
-        # TODO add the load classes
+        # TODO change this based on Load classes
+        self.linear_calculation_component.reduced_load_vector =\
+            np.zeros([len(self.linear_calculation_component.reduced_global_stiffness_matrix)])
 
         # Compute the reduced displacement vector
         self.linear_calculation_component.reduced_displacement_vector =\
@@ -70,7 +74,7 @@ class ExecuteLinearCalculation(cecs.System):
         self.linear_calculation_component.displacement_vector = np.zeros([len(self.linear_calculation_component.global_stiffness_matrix)])
         # Put the values of the reduced displacement vector in the displacement vector
         for i in range(0, len(self.linear_calculation_component.reduced_displacement_vector)):
-            self.linear_calculation_component.displacement_vector[self.dof_calculation_component.reduced_to_global_dof_dict] =\
+            self.linear_calculation_component.displacement_vector[self.dof_calculation_component.reduced_to_global_dof_dict[i]] =\
                 self.linear_calculation_component.reduced_displacement_vector[i]
 
         # Determine the load vector

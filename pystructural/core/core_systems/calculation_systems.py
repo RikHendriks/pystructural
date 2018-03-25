@@ -13,7 +13,6 @@ class InitializeCalculation(cecs.System):
     def initialize(self):
         # Adds a general entity to the world, which holds the 'static' components
         self.world.add_entity(GeneralComponent())
-        self.world.add_entity(LinearCalculationComponent())
 
 
 class LinearCalculation(cecs.System):
