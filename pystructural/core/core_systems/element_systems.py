@@ -1,4 +1,4 @@
-import cecs
+import catecs
 
 from pystructural.core.core_components import DOF
 from pystructural.core.elements import FrameElement2D, LinearTriangleElement2D
@@ -11,7 +11,7 @@ element_subclasses_2d = [FrameElement2D, LinearTriangleElement2D]
 
 
 # TODO add errors when no geometry, material and element_geometry is found
-class UpdateElements(cecs.System):
+class UpdateElements(catecs.System):
     def process(self):
         # Process all the 2d elements
         for element_class in element_subclasses_2d:

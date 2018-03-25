@@ -1,8 +1,8 @@
-import cecs
+import catecs
 
 __all__ = ['Structure']
 
 
 class Structure:
     def __init__(self):
-        self.world = cecs.World()
+        self.world = catecs.World()

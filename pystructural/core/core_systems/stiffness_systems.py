@@ -1,5 +1,5 @@
 import numpy as np
-import cecs
+import catecs
 
 import copy
 
@@ -9,7 +9,7 @@ from pystructural.core.core_systems.element_systems import element_subclasses_2d
 __all__ = ["ExecuteLinearCalculation"]
 
 
-class ExecuteLinearCalculation(cecs.System):
+class ExecuteLinearCalculation(catecs.System):
     def __init__(self):
         self.dof_calculation_component = None
         self.linear_calculation_component = None

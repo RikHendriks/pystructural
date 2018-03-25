@@ -1,14 +1,23 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
+with open('README.md') as f:
+    readme = f.read()
+
+with open('LICENSE') as f:
+    lic = f.read()
 
 setup(
     name='pystructural',
     version='0.1',
-    packages=['pystructural', 'pystructural.core', 'pystructural.core.elements', 'pystructural.core.materials',
-              'pystructural.core.geometries', 'pystructural.core.core_systems', 'pystructural.core.core_components',
-              'pystructural.core.element_geometries', 'pystructural.core.additional_components'],
-    url='https://github.com/RikHendriks/pystructural',
-    license='GNU General Public License v3.0',
+    description='A structural finite element method implementation',
+    long_description=readme,
     author='Rik Hendriks',
     author_email='rikhendriks@rocketmail.com',
-    description='A structural finite element method implementation'
+    url='https://github.com/RikHendriks/pystructural',
+    license=lic,
+    packages=find_packages(),
+    install_requires=[
+            'numpy',
+            'catecs',
+        ]
 )

@@ -1,4 +1,4 @@
-import cecs
+import catecs
 
 from pystructural.core.core_components import DOF, Support
 from pystructural.core.additional_components.calculation_components import *
@@ -10,7 +10,7 @@ __all__ = ["support_subclasses", "UpdateDOFs", "UpdateReducedDOFs"]
 support_subclasses = [Support]
 
 
-class UpdateDOFs(cecs.System):
+class UpdateDOFs(catecs.System):
     def __init__(self):
         self.dof_calculation_component = None
         super().__init__()
@@ -42,7 +42,7 @@ class UpdateDOFs(cecs.System):
                 current_dof_id += 1
 
 
-class UpdateReducedDOFs(cecs.System):
+class UpdateReducedDOFs(catecs.System):
     def __init__(self):
         self.dof_calculation_component = None
         super().__init__()

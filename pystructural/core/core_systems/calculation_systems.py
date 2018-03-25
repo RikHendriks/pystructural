@@ -1,4 +1,4 @@
-import cecs
+import catecs
 
 from .geometry_systems import UpdateGeometries
 from .element_systems import UpdateElements
@@ -9,13 +9,13 @@ from pystructural.core.additional_components.calculation_components import *
 __all__ = ['InitializeCalculation', 'LinearCalculation']
 
 
-class InitializeCalculation(cecs.System):
+class InitializeCalculation(catecs.System):
     def initialize(self):
         # Adds a general entity to the world, which holds the 'static' components
         self.world.add_entity(GeneralComponent())
 
 
-class LinearCalculation(cecs.System):
+class LinearCalculation(catecs.System):
     def process(self):
         # The name of the system category
         system_category_name = "linear calculation"
