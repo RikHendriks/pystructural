@@ -30,18 +30,18 @@ class ExecuteLinearCalculation(cecs.System):
 
     def process(self):
         # Determine the global stiffness matrix
+        # Initialize the global stiffness matrix
+        dim_global_stiffness_matrix = len(self.dof_calculation_component.global_to_local_dof_dict)
+        self.linear_calculation_component.global_stiffness_matrix =\
+            np.zeros([dim_global_stiffness_matrix, dim_global_stiffness_matrix])
         # Process all the 2d elements and put its local stiffness matrices in the global stiffness matrix
         for element_class in element_subclasses_2d:
             for entity, components in self.world.get_components(element_class.compatible_geometry, element_class):
-                # Initialize the global stiffness matrix
-                dim_global_stiffness_matrix = len(self.dof_calculation_component.global_to_local_dof_dict)
-                self.linear_calculation_component.global_stiffness_matrix = np.zeros([dim_global_stiffness_matrix, dim_global_stiffness_matrix])
-
                 # For each point in the element
                 for data in components[1].stiffness_matrix_generator():
                     i = self.dof_calculation_component.local_to_global_dof_dict[data[0][0][0]][data[0][0][1]]
                     j = self.dof_calculation_component.local_to_global_dof_dict[data[0][1][0]][data[0][1][1]]
-                    self.linear_calculation_component.global_stiffness_matrix[i][j] = data[1]
+                    self.linear_calculation_component.global_stiffness_matrix[i][j] += data[1]
 
         # Determine the reduced global stiffness matrix
         # Initialize the reduced global stiffness matrix as a copy of the global stiffness matrix
