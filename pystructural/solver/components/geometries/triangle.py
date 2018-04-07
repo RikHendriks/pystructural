@@ -1,6 +1,6 @@
 import numpy as np
 
-from pystructural.solver.core_components import Geometry
+from pystructural.solver.components import Geometry
 
 __all__ = ['Triangle2D']
 

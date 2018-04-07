@@ -1,3 +1,3 @@
-from . import core_components
-from .core_components import *
-from . import core_systems
+from . import components
+from .components import *
+from . import systems

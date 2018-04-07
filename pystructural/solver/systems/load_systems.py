@@ -1,6 +1,6 @@
 import catecs
 
-from pystructural.solver.core_components.loads import PointLoad2D
+from pystructural.solver.components.loads import PointLoad2D
 
 __all__ = ['UpdateLoads']
 
