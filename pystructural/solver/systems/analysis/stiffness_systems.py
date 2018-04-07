@@ -4,8 +4,8 @@ import catecs
 import copy
 
 from pystructural.solver.components.additional_components.calculation_components import *
-from pystructural.solver.systems.element_systems import element_subclasses_2d
-from pystructural.solver.systems.load_systems import load_subclasses_2d
+from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
+from pystructural.solver.systems.analysis.load_systems import load_subclasses_2d
 
 __all__ = ["ExecuteLinearCalculation"]
 

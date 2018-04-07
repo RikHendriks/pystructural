@@ -28,10 +28,9 @@ class FrameElement2D(Element):
     def get_dof(self):
         return DOF(displacement_x=True, displacement_y=True, rotation_z=True)
 
-    def get_stiffness_matrix_coordinate_to_node_and_dof_variable(self, x, y):
+    def get_stiffness_coordinate_to_node_and_dof_variable(self, x):
         dof_id_list = self.get_dof().get_dof_id_list()
-        return [self.geometry.point_id_list[x//3], dof_id_list[x % 3]],\
-               [self.geometry.point_id_list[y//3], dof_id_list[y % 3]]
+        return self.geometry.point_id_list[x//3], dof_id_list[x % 3]
 
     def compute_element_properties(self):
         # Compute the length of the beam

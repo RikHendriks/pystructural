@@ -21,14 +21,16 @@ class Element:
     def get_dof(self):
         pass
 
-    def get_stiffness_matrix_coordinate_to_node_and_dof_variable(self, x, y):
+    def get_stiffness_coordinate_to_node_and_dof_variable(self, x):
         pass
 
     def stiffness_matrix_dof_generator(self):
         dim = self.stiffness_matrix.shape[0]
         for i in range(0, dim):
             for j in range(0, dim):
-                yield self.get_stiffness_matrix_coordinate_to_node_and_dof_variable(i, j), self.stiffness_matrix[i][j]
+                yield [self.get_stiffness_coordinate_to_node_and_dof_variable(i),
+                       self.get_stiffness_coordinate_to_node_and_dof_variable(j)],\
+                      self.stiffness_matrix[i][j]
 
     def compute_element(self):
         # Compute all the matrices
