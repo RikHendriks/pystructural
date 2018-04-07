@@ -1,7 +1,7 @@
 import catecs
 
 from pystructural.solver.core_components import DOF
-from pystructural.solver.elements import FrameElement2D, LinearTriangleElement2D
+from pystructural.solver.core_components.elements import FrameElement2D, LinearTriangleElement2D
 
 __all__ = ["element_subclasses_2d", "UpdateElements"]
 

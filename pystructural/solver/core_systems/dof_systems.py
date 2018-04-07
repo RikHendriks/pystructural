@@ -1,7 +1,7 @@
 import catecs
 
 from pystructural.solver.core_components import DOF, Support
-from pystructural.solver.additional_components.calculation_components import *
+from pystructural.solver.core_components.additional_components.calculation_components import *
 
 __all__ = ["support_subclasses", "UpdateDOFs", "UpdateReducedDOFs"]
 

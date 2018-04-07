@@ -6,3 +6,9 @@ from .element import *
 from .connection import *
 from .support import *
 from .load import *
+from . import geometries
+from . import elements
+from . import materials
+from . import element_geometries
+from . import loads
+from . import additional_components

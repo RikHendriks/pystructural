@@ -2,9 +2,9 @@ import numpy as np
 
 from pystructural.solver.core_components import Element, DOF
 
-from pystructural.solver.geometries import *
-from pystructural.solver.materials import *
-from pystructural.solver.element_geometries import *
+from pystructural.solver.core_components.geometries import *
+from pystructural.solver.core_components.materials import *
+from pystructural.solver.core_components.element_geometries import *
 
 __all__ = ['FrameElement2D']
 
@@ -30,8 +30,8 @@ class FrameElement2D(Element):
 
     def get_stiffness_matrix_coordinate_to_node_and_dof_variable(self, x, y):
         dof_id_list = self.get_dof().get_dof_id_list()
-        return [self.geometry.point_id_list[x//3], dof_id_list[x%3]],\
-               [self.geometry.point_id_list[y//3], dof_id_list[y%3]]
+        return [self.geometry.point_id_list[x//3], dof_id_list[x % 3]],\
+               [self.geometry.point_id_list[y//3], dof_id_list[y % 3]]
 
     def compute_element_properties(self):
         # Compute the length of the beam

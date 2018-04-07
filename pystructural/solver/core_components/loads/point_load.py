@@ -2,7 +2,7 @@ import numpy as np
 
 from pystructural.solver.core_components import Load, DOF
 
-from pystructural.solver.geometries import *
+from pystructural.solver.core_components.geometries import *
 
 __all__ = ['PointLoad2D']
 
