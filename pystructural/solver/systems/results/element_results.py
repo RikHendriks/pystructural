@@ -22,7 +22,7 @@ class ElementResults(catecs.System):
 # TODO add a dimension variable to the element class
 def get_element_displacement_vector(dof_calculation_component, linear_calculation_component, element_instance):
     # Determine the dimension of the element displacement vector
-    dim = len(element_instance.geometry.point_id_list) * len(element_instance.geometry.point_id_list[0])
+    dim = element_instance.stiffness_matrix.shape[0]
 
     # Initialize the element displacement vector
     element_displacement_vector = np.zeros([dim])
@@ -31,7 +31,7 @@ def get_element_displacement_vector(dof_calculation_component, linear_calculatio
     # For every point in the element
     for i in range(dim):
         entity, dof_id = element_instance.get_stiffness_coordinate_to_node_and_dof_variable(i)
-        global_id = dof_calculation_component.local_to_global_dof[entity][dof_id]
+        global_id = dof_calculation_component.local_to_global_dof_dict[entity][dof_id]
         element_displacement_vector[i] += linear_calculation_component.displacement_vector[global_id]
 
     # Return the element displacement vector
