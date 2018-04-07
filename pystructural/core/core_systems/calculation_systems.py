@@ -3,6 +3,7 @@ import catecs
 from .geometry_systems import UpdateGeometries
 from .element_systems import UpdateElements
 from .dof_systems import UpdateDOFs, UpdateReducedDOFs
+from .load_systems import UpdateLoads
 from .stiffness_systems import ExecuteLinearCalculation
 from pystructural.core.additional_components.calculation_components import *
 
@@ -37,6 +38,9 @@ class LinearCalculation(catecs.System):
 
         # Add system -> update the reduced DOFs
         self.world.add_system(UpdateReducedDOFs(), system_category_name)
+
+        # Add system -> update the loads
+        self.world.add_system(UpdateLoads(), system_category_name)
 
         # Add system -> execute linear calculation (determine reduced stuff and solve the matrix equation)
         self.world.add_system(ExecuteLinearCalculation(), system_category_name)

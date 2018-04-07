@@ -5,6 +5,7 @@ import copy
 
 from pystructural.core.additional_components.calculation_components import *
 from pystructural.core.core_systems.element_systems import element_subclasses_2d
+from pystructural.core.core_systems.load_systems import load_subclasses_2d
 
 __all__ = ["ExecuteLinearCalculation"]
 
@@ -37,7 +38,7 @@ class ExecuteLinearCalculation(catecs.System):
         # Process all the 2d elements and put its local stiffness matrices in the global stiffness matrix
         for element_class in element_subclasses_2d:
             for entity, components in self.world.get_components(element_class.compatible_geometry, element_class):
-                # For each point in the element
+                # For each dof in the element
                 for data in components[1].stiffness_matrix_dof_generator():
                     i = self.dof_calculation_component.local_to_global_dof_dict[data[0][0][0]][data[0][0][1]]
                     j = self.dof_calculation_component.local_to_global_dof_dict[data[0][1][0]][data[0][1][1]]
@@ -60,10 +61,21 @@ class ExecuteLinearCalculation(catecs.System):
         self.linear_calculation_component.reduced_global_stiffness_matrix =\
             np.delete(self.linear_calculation_component.reduced_global_stiffness_matrix, remove_id_list, 1)
 
+        # TODO Change how this works based on forces that act where supports are and other edge cases that are not covered.
         # Determine the reduced load vector
-        # TODO change this based on Load classes
+        # Initialize the reduced load vector
         self.linear_calculation_component.reduced_load_vector =\
             np.zeros([len(self.linear_calculation_component.reduced_global_stiffness_matrix)])
+        # Process all the 2d loads and put them into the reduced load vector
+        for load_class in load_subclasses_2d:
+            for entity, components in self.world.get_components(load_class.compatible_geometry, load_class):
+                # For each dof in the load
+                for data in components[1].load_dof_generator():
+                    i = self.dof_calculation_component.local_to_global_dof_dict[data[0][0]][data[0][1]]
+                    r_i = self.dof_calculation_component.global_to_reduced_dof_dict[i]
+                    # If the load is in the reduced load vector then add it
+                    if r_i:
+                        self.linear_calculation_component.reduced_load_vector[r_i] += data[1]
 
         # Compute the reduced displacement vector
         self.linear_calculation_component.reduced_displacement_vector =\
