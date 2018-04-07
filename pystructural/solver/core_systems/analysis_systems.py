@@ -7,16 +7,16 @@ from .load_systems import UpdateLoads
 from .stiffness_systems import ExecuteLinearCalculation
 from pystructural.solver.additional_components.calculation_components import *
 
-__all__ = ['InitializeCalculation', 'LinearCalculation']
+__all__ = ['InitializeAnalysis', 'LinearAnalysis']
 
 
-class InitializeCalculation(catecs.System):
+class InitializeAnalysis(catecs.System):
     def initialize(self):
         # Adds a general entity to the world, which holds the 'static' components
         self.world.add_entity(GeneralComponent())
 
 
-class LinearCalculation(catecs.System):
+class LinearAnalysis(catecs.System):
     def process(self):
         # The name of the system category
         system_category_name = "linear calculation"
@@ -25,7 +25,7 @@ class LinearCalculation(catecs.System):
             self.world.remove_system_category(system_category_name)
 
         # Add system -> Initialize calculation
-        self.world.add_system(InitializeCalculation(), system_category_name)
+        self.world.add_system(InitializeAnalysis(), system_category_name)
 
         # Add system -> update the geometries
         self.world.add_system(UpdateGeometries(), system_category_name)
