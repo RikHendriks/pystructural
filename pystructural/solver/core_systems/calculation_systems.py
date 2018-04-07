@@ -5,7 +5,7 @@ from .element_systems import UpdateElements
 from .dof_systems import UpdateDOFs, UpdateReducedDOFs
 from .load_systems import UpdateLoads
 from .stiffness_systems import ExecuteLinearCalculation
-from pystructural.core.additional_components.calculation_components import *
+from pystructural.solver.additional_components.calculation_components import *
 
 __all__ = ['InitializeCalculation', 'LinearCalculation']
 

@@ -1,7 +1,7 @@
 import numpy as np
 import catecs
 
-from pystructural.core.geometries import Point2D, Line2D, Triangle2D
+from pystructural.solver.geometries import Point2D, Line2D, Triangle2D
 
 __all__ = ['geometry_subclasses_2d', 'UpdateGeometries']
 

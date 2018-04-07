@@ -1,4 +1,4 @@
-from pystructural.core.core_components.element_geometry import *
+from pystructural.solver.core_components.element_geometry import *
 
 __all__ = ['BeamElementGeometry']
 
