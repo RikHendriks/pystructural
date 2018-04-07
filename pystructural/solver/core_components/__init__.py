@@ -6,4 +6,3 @@ from .element import *
 from .connection import *
 from .support import *
 from .load import *
-from .structure import *
