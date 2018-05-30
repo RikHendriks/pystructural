@@ -17,7 +17,7 @@ Coming soon!
 import pystructural as ps
 
 
-# Create an structure instane
+# Create a structure instane
 structure = ps.core.Structure2D()
 
 # Add two frame elements to the structure
