@@ -12,17 +12,17 @@ support_subclasses = [Support]
 
 
 class UpdateDOFs(catecs.System):
-    def __init__(self):
+    def __init__(self, result_entity_id):
         self.dof_calculation_component = None
+        self.result_entity_id = result_entity_id
         super().__init__()
 
     def initialize(self):
-        # For the general component
-        for entity, _ in self.world.get_component(ResultComponent):
-            # If the general entity doesn't have the dof calculation component then add it
-            if not self.world.has_component(entity, DOFCalculationComponent):
-                self.world.add_component(entity, DOFCalculationComponent())
-            self.dof_calculation_component = self.world.get_component_from_entity(entity, DOFCalculationComponent)
+        # If the general entity doesn't have the dof calculation component then add it
+        if not self.world.has_component(self.result_entity_id, DOFCalculationComponent):
+            self.world.add_component(self.result_entity_id, DOFCalculationComponent())
+        self.dof_calculation_component = self.world.get_component_from_entity(self.result_entity_id,
+                                                                              DOFCalculationComponent)
 
     def process(self):
         # Set the current DOF id to zero
@@ -44,17 +44,17 @@ class UpdateDOFs(catecs.System):
 
 
 class UpdateReducedDOFs(catecs.System):
-    def __init__(self):
+    def __init__(self, result_entity_id):
         self.dof_calculation_component = None
+        self.result_entity_id = result_entity_id
         super().__init__()
 
     def initialize(self):
-        # For the general component
-        for entity, _ in self.world.get_component(ResultComponent):
-            # If the general entity doesn't have the dof calculation component then add it
-            if not self.world.has_component(entity, DOFCalculationComponent):
-                self.world.add_component(entity, DOFCalculationComponent())
-            self.dof_calculation_component = self.world.get_component_from_entity(entity, DOFCalculationComponent)
+        # If the general entity doesn't have the dof calculation component then add it
+        if not self.world.has_component(self.result_entity_id, DOFCalculationComponent):
+            self.world.add_component(self.result_entity_id, DOFCalculationComponent())
+        self.dof_calculation_component = self.world.get_component_from_entity(self.result_entity_id,
+                                                                              DOFCalculationComponent)
 
     def process(self):
         # Set the current DOF id to zero

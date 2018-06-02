@@ -3,7 +3,6 @@ import catecs
 
 import copy
 
-from pystructural.solver.results.result_components.result_components import ResultComponent
 from pystructural.solver.components.additional_components.calculation_components import *
 from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
 from pystructural.solver.systems.analysis.load_systems import load_subclasses_2d
@@ -12,23 +11,22 @@ __all__ = ["ExecuteLinearCalculation"]
 
 
 class ExecuteLinearCalculation(catecs.System):
-    def __init__(self):
+    def __init__(self, result_entity_id):
         self.dof_calculation_component = None
         self.linear_calculation_component = None
+        self.result_entity_id = result_entity_id
         super().__init__()
 
     def initialize(self):
-        # For the general component
-        for entity, _ in self.world.get_component(ResultComponent):
-            # If the general entity doesn't have the dof calculation component then add it
-            if not self.world.has_component(entity, DOFCalculationComponent):
-                self.world.add_component(entity, DOFCalculationComponent())
-            self.dof_calculation_component = self.world.get_component_from_entity(entity, DOFCalculationComponent)
+        # If the result entity doesn't have the dof calculation component then add it
+        if not self.world.has_component(self.result_entity_id, DOFCalculationComponent):
+            self.world.add_component(self.result_entity_id, DOFCalculationComponent())
+        self.dof_calculation_component = self.world.get_component_from_entity(self.result_entity_id, DOFCalculationComponent)
 
-            # If the general entity doesn't have the linear calculation component then add it
-            if not self.world.has_component(entity, LinearCalculationComponent):
-                self.world.add_component(entity, LinearCalculationComponent())
-            self.linear_calculation_component = self.world.get_component_from_entity(entity, LinearCalculationComponent)
+        # If the result entity doesn't have the linear calculation component then add it
+        if not self.world.has_component(self.result_entity_id, LinearCalculationComponent):
+            self.world.add_component(self.result_entity_id, LinearCalculationComponent())
+        self.linear_calculation_component = self.world.get_component_from_entity(self.result_entity_id, LinearCalculationComponent)
 
     def process(self):
         # Determine the global stiffness matrix

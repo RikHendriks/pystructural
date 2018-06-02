@@ -34,16 +34,16 @@ class LinearAnalysis(AnalysisSystem):
         self.world.add_system(UpdateElements(), self.name)
 
         # Add system -> update the DOFs
-        self.world.add_system(UpdateDOFs(), self.name)
+        self.world.add_system(UpdateDOFs(self.result_entity_id), self.name)
 
         # Add system -> update the reduced DOFs
-        self.world.add_system(UpdateReducedDOFs(), self.name)
+        self.world.add_system(UpdateReducedDOFs(self.result_entity_id), self.name)
 
         # Add system -> update the loads
         self.world.add_system(UpdateLoads(), self.name)
 
         # Add system -> execute linear calculation (determine reduced stuff and solve the matrix equation)
-        self.world.add_system(ExecuteLinearCalculation(), self.name)
+        self.world.add_system(ExecuteLinearCalculation(self.result_entity_id), self.name)
 
         # TODO change this to return system_category_name and process the function outside of this system
         # Process the 'linear calculation' system category
