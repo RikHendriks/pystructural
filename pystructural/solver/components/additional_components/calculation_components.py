@@ -1,8 +1,4 @@
-__all__ = ["GeneralComponent", "DOFCalculationComponent", "LinearCalculationComponent"]
-
-
-class GeneralComponent:
-    pass
+__all__ = ["DOFCalculationComponent", "LinearCalculationComponent"]
 
 
 class DOFCalculationComponent:

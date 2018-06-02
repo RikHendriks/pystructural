@@ -1,6 +1,7 @@
 import catecs
 
 from pystructural.solver.components import DOF, Support
+from pystructural.solver.results.result_components.result_components import ResultComponent
 from pystructural.solver.components.additional_components.calculation_components import *
 
 __all__ = ["support_subclasses", "UpdateDOFs", "UpdateReducedDOFs"]
@@ -17,7 +18,7 @@ class UpdateDOFs(catecs.System):
 
     def initialize(self):
         # For the general component
-        for entity, _ in self.world.get_component(GeneralComponent):
+        for entity, _ in self.world.get_component(ResultComponent):
             # If the general entity doesn't have the dof calculation component then add it
             if not self.world.has_component(entity, DOFCalculationComponent):
                 self.world.add_component(entity, DOFCalculationComponent())
@@ -49,7 +50,7 @@ class UpdateReducedDOFs(catecs.System):
 
     def initialize(self):
         # For the general component
-        for entity, _ in self.world.get_component(GeneralComponent):
+        for entity, _ in self.world.get_component(ResultComponent):
             # If the general entity doesn't have the dof calculation component then add it
             if not self.world.has_component(entity, DOFCalculationComponent):
                 self.world.add_component(entity, DOFCalculationComponent())

@@ -3,6 +3,7 @@ import catecs
 
 import copy
 
+from pystructural.solver.results.result_components.result_components import ResultComponent
 from pystructural.solver.components.additional_components.calculation_components import *
 from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
 from pystructural.solver.systems.analysis.load_systems import load_subclasses_2d
@@ -18,7 +19,7 @@ class ExecuteLinearCalculation(catecs.System):
 
     def initialize(self):
         # For the general component
-        for entity, _ in self.world.get_component(GeneralComponent):
+        for entity, _ in self.world.get_component(ResultComponent):
             # If the general entity doesn't have the dof calculation component then add it
             if not self.world.has_component(entity, DOFCalculationComponent):
                 self.world.add_component(entity, DOFCalculationComponent())

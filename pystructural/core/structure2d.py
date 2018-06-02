@@ -7,7 +7,6 @@ from ..solver.systems import LinearAnalysis
 __all__ = ['Structure2D']
 
 
-# TODO make the inputs for the positions also an id and check which is which
 class Structure2D:
     def __init__(self):
         self.world = catecs.World()
@@ -56,7 +55,7 @@ class Structure2D:
 
     def solve_linear_system(self):
         # Add linear calculation system
-        s_id = self.world.add_system(LinearAnalysis())
+        s_id = self.world.add_system(LinearAnalysis("linear_calculation"))
 
         # Process linear calculation system
         self.world.process_systems(s_id)
