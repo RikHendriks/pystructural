@@ -4,6 +4,8 @@ import catecs
 from ..solver.components import element_geometries, elements, geometries, loads, materials, support
 from ..solver.systems import LinearAnalysis
 
+from ..pre_processor.pre_processor import PreProcessor2D
+
 __all__ = ['Structure2D']
 
 
@@ -44,18 +46,27 @@ class Structure2D:
 
     def add_support(self, position, displacement_x=True, displacement_y=True, rotation_z=True):
         entity_id = self.position_to_id(position)
-        if entity_id is not None:
-            self.world.add_component(entity_id, support.Support(displacement_x=displacement_x,
-                                                                displacement_y=displacement_y, rotation_z=rotation_z))
+        if entity_id is None:
+            entity_id = self.add_node(position)
+        self.world.add_component(entity_id, support.Support(displacement_x=displacement_x,
+                                                            displacement_y=displacement_y,
+                                                            rotation_z=rotation_z))
 
     def add_point_load(self, position, load):
         entity_id = self.position_to_id(position)
-        if entity_id is not None:
-            self.world.add_component(entity_id, loads.PointLoad2D(load))
+        if entity_id is None:
+            entity_id = self.add_node(position)
+        self.world.add_component(entity_id, loads.PointLoad2D(load))
 
     def solve_linear_system(self):
+        # Add a preprocessor system and run it
+        pp_id = self.world.add_system(PreProcessor2D())
+        # Process the preprocessor system
+        self.world.process_systems(pp_id)
+        # Remove the preprocessor system
+        self.world.remove_system(pp_id)
+
         # Add linear calculation system
         s_id = self.world.add_system(LinearAnalysis("linear_calculation"))
-
         # Process linear calculation system
         self.world.process_systems(s_id)
