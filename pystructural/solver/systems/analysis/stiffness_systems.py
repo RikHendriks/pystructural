@@ -61,6 +61,7 @@ class ExecuteLinearCalculation(catecs.System):
             np.delete(self.linear_calculation_component.reduced_global_stiffness_matrix, remove_id_list, 1)
 
         # TODO Change how this works based on forces that act where supports are and other edge cases that are not covered.
+        # TODO Such one edge case is if a dof load is applied where the dof is not in the reduced vector.
         # Determine the reduced load vector
         # Initialize the reduced load vector
         self.linear_calculation_component.reduced_load_vector =\

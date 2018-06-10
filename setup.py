@@ -9,7 +9,7 @@ with open('LICENSE') as f:
 setup(
     name='pystructural',
     version='0.1',
-    description='A structural finite element method implementation',
+    description='A structural finite element method implementation.',
     long_description=readme,
     author='Rik Hendriks',
     author_email='rikhendriks@rocketmail.com',
@@ -19,5 +19,7 @@ setup(
     install_requires=[
             'numpy',
             'catecs',
+            'matplotlib',
+            'svgpathtools',
         ]
 )
