@@ -1,4 +1,39 @@
-__all__ = ["DOFCalculationComponent", "LinearCalculationComponent"]
+__all__ = ["GroupComponent", "DOFCalculationComponent", "LinearCalculationComponent"]
+
+
+class GroupComponent:
+    def __init__(self):
+        # The general group
+        self.groups = {}
+        self.entities = {}
+        # Current group id
+        self.current_group_id = 0
+
+    def create_group(self):
+        # Create a group
+        self.groups[self.current_group_id] = []
+        self.current_group_id += 1
+        return self.current_group_id - 1
+
+    def add_entity_to_group(self, entity_id, group_id):
+        # If the group id is created
+        if group_id in self.groups:
+            # Add the entity id to the given group
+            self.groups[group_id].append(entity_id)
+            self.entities[entity_id] = group_id
+
+    def remove_entity(self, entity_id):
+        # If the entity is in any group then delete that entity from the structure group component
+        if entity_id in self.entities:
+            self.groups[self.entities[entity_id]].remove(entity_id)
+            del self.entities[entity_id]
+
+    def get_group_id_from_entity(self, entity_id):
+        # If the group id exists
+        if entity_id in self.entities:
+            return self.entities[entity_id]
+        else:
+            return None
 
 
 class DOFCalculationComponent:

@@ -10,11 +10,11 @@ class LinearAnalysisResults:
     def __init__(self, structure, analysis_id):
         self.structure = structure
         self.analysis_id = analysis_id
-        self.result_entity_id = self.structure.world.systems[self.analysis_id].result_entity_id
-        self.dof_calculation_component = self.structure.world.get_component_from_entity(self.result_entity_id,
-                                                                                        DOFCalculationComponent)
-        self.linear_calculation_component = self.structure.world.get_component_from_entity(self.result_entity_id,
-                                                                                           LinearCalculationComponent)
+        self.result_entity_id = self.structure.systems[self.analysis_id].result_entity_id
+        self.dof_calculation_component = self.structure.get_component_from_entity(self.result_entity_id,
+                                                                                  DOFCalculationComponent)
+        self.linear_calculation_component = self.structure.get_component_from_entity(self.result_entity_id,
+                                                                                     LinearCalculationComponent)
 
     # TODO add a dimension variable to the element class
     def get_element_displacement_vector(self, element_instance):

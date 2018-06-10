@@ -29,6 +29,12 @@ class PreProcessor2D(catecs.System):
                     # Set their nodes correctly
                     self.world.get_component_from_entity(line_1_id, geometries.Line2D).point_id_list[1] = point_id
                     self.world.get_component_from_entity(line_2_id, geometries.Line2D).point_id_list[0] = point_id
+                    # Add the two lines to the group of the group of the original frame element entity
+                    group_id = self.world.group_component.get_group_id_from_entity(line_id)
+                    self.world.group_component.add_entity_to_group(line_1_id, group_id)
+                    self.world.group_component.add_entity_to_group(line_2_id, group_id)
+                    # Delete the original entity from the group
+                    self.world.group_component.remove_entity(line_id)
                     # Delete the line from the structure
                     self.world.delete_entity(line_id, True)
                     # Break the for loop
