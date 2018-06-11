@@ -22,7 +22,7 @@ class Structure2D(catecs.World):
         self.group_component = self.get_component_from_entity(self.general_entity_id,
                                                               additional_components.GroupComponent)
         # Initialize the id of the linear system
-        self.linear_analysis_system = None
+        self.linear_analysis_system_id = None
 
     def search_for_point(self, position, error=0.001):
         for entity, point in self.get_component(geometries.Point2D):
@@ -83,13 +83,13 @@ class Structure2D(catecs.World):
         self.run_system(PreProcessor2D())
 
         # Add linear calculation system
-        self.linear_analysis_system = self.add_system(LinearAnalysis("linear_calculation"))
+        self.linear_analysis_system_id = self.add_system(LinearAnalysis("linear_calculation"))
         # Process linear calculation system
-        self.process_systems(self.linear_analysis_system)
+        self.process_systems(self.linear_analysis_system_id)
 
     def show_structure(self, plot_window):
         # Create an instance of the post processor for this structure with the linear analysis
-        pp = PostProcessor(self, self.get_system(self.linear_analysis_system))
+        pp = PostProcessor(self, self.get_system(self.linear_analysis_system_id))
         # Draw the structure
         pp.draw_structure()
         # Show the structure

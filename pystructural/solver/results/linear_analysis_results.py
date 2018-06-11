@@ -7,10 +7,10 @@ __all__ = ['LinearAnalysisResults']
 
 
 class LinearAnalysisResults:
-    def __init__(self, structure, analysis_id):
+    def __init__(self, structure, analysis):
         self.structure = structure
-        self.analysis_id = analysis_id
-        self.result_entity_id = self.structure.systems[self.analysis_id].result_entity_id
+        self.analysis = analysis
+        self.result_entity_id = self.analysis.result_entity_id
         self.dof_calculation_component = self.structure.get_component_from_entity(self.result_entity_id,
                                                                                   DOFCalculationComponent)
         self.linear_calculation_component = self.structure.get_component_from_entity(self.result_entity_id,

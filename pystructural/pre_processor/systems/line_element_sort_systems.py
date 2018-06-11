@@ -1,7 +1,7 @@
 import copy
 import catecs
 
-from pystructural.pre_processor.components import *
+from pystructural.pre_processor.components import LineElementSortComponent
 
 from pystructural.solver.components.geometries.line import Line2D
 
