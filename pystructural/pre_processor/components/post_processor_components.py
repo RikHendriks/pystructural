@@ -12,7 +12,7 @@ class LineElementSortComponent:
             yield group_id
 
     def line_element_id_generator(self, group_id=None):
-        if group_id:
+        if group_id in self.groups:
             for line_id in self.groups[group_id]:
                 yield line_id
         else:

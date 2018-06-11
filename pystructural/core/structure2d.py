@@ -87,10 +87,8 @@ class Structure2D(catecs.World):
         # Process linear calculation system
         self.process_systems(self.linear_analysis_system_id)
 
-    def show_structure(self, plot_window):
+    def show_structure(self, plot_window, scale=1.0):
         # Create an instance of the post processor for this structure with the linear analysis
         pp = PostProcessor(self, self.get_system(self.linear_analysis_system_id))
-        # Draw the structure
-        pp.draw_structure()
         # Show the structure
-        pp.show_structure(plot_window)
+        pp.show_structure(plot_window, True, scale)
