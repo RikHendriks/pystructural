@@ -75,12 +75,8 @@ class Structure2D(catecs.World):
         self.add_component(entity_id, loads.PointLoad2D(load))
 
     def solve_linear_system(self):
-        # Add a preprocessor system and run it
-        pp_id = self.add_system(PreProcessor2D())
-        # Process the preprocessor system
-        self.process_systems(pp_id)
-        # Remove the preprocessor system
-        self.remove_system(pp_id)
+        # Run the system: preprocessor 2D
+        self.run_system(PreProcessor2D())
 
         # Add linear calculation system
         s_id = self.add_system(LinearAnalysis("linear_calculation"))

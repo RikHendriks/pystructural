@@ -1,7 +1,7 @@
 import copy
 import catecs
 
-from ..components.post_processor_components import *
+from pystructural.pre_processor.components import *
 
 from pystructural.solver.components.geometries.line import Line2D
 
@@ -20,7 +20,7 @@ class LineElementSort(catecs.System):
                                                                     LineElementSortComponent())
 
     def process(self):
-        for group_id in self.world.structure.group_component.groups:
+        for group_id in self.world.group_component.groups:
             # Initialize the group in the line element sort component
             self.line_element_sort_component.groups[group_id] = []
             # Initialize the start and end node list and the node list of the group
@@ -28,8 +28,8 @@ class LineElementSort(catecs.System):
             element_list = {}
             start_end_node_list = {}
             # Determine the start and end node of a group of line elements
-            for line_id in self.world.structure.group_component.groups[group_id]:
-                line = self.world.structure.get_component_from_entity(line_id, Line2D)
+            for line_id in self.world.group_component.groups[group_id]:
+                line = self.world.get_component_from_entity(line_id, Line2D)
                 # For the first and the second node
                 for point_id in line.point_id_list:
                     # Add the first or second node to the node list
