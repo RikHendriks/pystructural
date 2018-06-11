@@ -1,9 +1,10 @@
 # PyStructural
 PyStructural is a structural finite element method implementation in Python.
 
-The design philosophy of PyStructural is that PyStructal is:
-* Completely written in Python
-* Highly customizable
+The design philosophy of PyStructural is that PyStructal:
+* is completely written in Python
+* is highly customizable
+* uses an Entity Component System (ECS) as its core architecture
 
 ## Basic usage
 
