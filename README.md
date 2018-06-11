@@ -30,8 +30,7 @@ structure.add_point_load([5.0, 0.0], [0.0, -10.0, 0.0])
 structure.solve_linear_system()
 
 # Show structure
-pp = ps.post_processor.PostProcessor(structure)
-pp.show_structure([-5.0, 15.0, -5.0, 5.0])
+structure.show_structure([-5.0, 15.0, -5.0, 5.0])
 ```
 
 <coming soon, a nice picture of this structure>
