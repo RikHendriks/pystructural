@@ -13,10 +13,10 @@ The following shows an example of a simple structure that consists of a horizont
 import pystructural as ps
 
 
-# Create an structure instane
+# Create a structure instance
 structure = ps.core.Structure2D()
 
-# Add two frame elements to the structure
+# Add a frame element
 structure.add_frame_element([0.0, 0.0], [10.0, 0.0], 1.0, 1.0, 1.0, 1.0)
 
 # Add supports
@@ -29,7 +29,7 @@ structure.add_point_load([5.0, 0.0], [0.0, -10.0, 0.0])
 # Solve the linear system
 structure.solve_linear_system()
 
-# Show structure
+# Show the structure
 structure.show_structure([-5.0, 15.0, -5.0, 5.0])
 ```
 
