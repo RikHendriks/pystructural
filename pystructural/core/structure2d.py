@@ -5,7 +5,9 @@ from ..solver.components import element_geometries, elements, geometries, loads,
     additional_components
 from ..solver.systems import LinearAnalysis
 
-from ..pre_processor.pre_processor import PreProcessor2D
+from pystructural.pre_processor.pre_processor import PreProcessor2D
+
+from pystructural.post_processor.post_processor import PostProcessor
 
 __all__ = ['Structure2D']
 
@@ -19,6 +21,8 @@ class Structure2D(catecs.World):
         # Get the group component
         self.group_component = self.get_component_from_entity(self.general_entity_id,
                                                               additional_components.GroupComponent)
+        # Initialize the id of the linear system
+        self.linear_analysis_system = None
 
     def search_for_point(self, position, error=0.001):
         for entity, point in self.get_component(geometries.Point2D):
@@ -79,6 +83,14 @@ class Structure2D(catecs.World):
         self.run_system(PreProcessor2D())
 
         # Add linear calculation system
-        s_id = self.add_system(LinearAnalysis("linear_calculation"))
+        self.linear_analysis_system = self.add_system(LinearAnalysis("linear_calculation"))
         # Process linear calculation system
-        self.process_systems(s_id)
+        self.process_systems(self.linear_analysis_system)
+
+    def show_structure(self, plot_window):
+        # Create an instance of the post processor for this structure with the linear analysis
+        pp = PostProcessor(self, self.get_system(self.linear_analysis_system))
+        # Draw the structure
+        pp.draw_structure()
+        # Show the structure
+        pp.show_structure(plot_window)

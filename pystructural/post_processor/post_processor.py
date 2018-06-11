@@ -6,9 +6,10 @@ __all__ = ['PostProcessor']
 
 
 class PostProcessor:
-    def __init__(self, structure):
+    def __init__(self, structure, analysis_system):
         self.structure = structure
         self.canvas = Canvas()
+        self.linear_analysis_results = analysis_system
 
     def draw_structure(self, color='black'):
         for _, line in self.structure.get_component(Line2D):
