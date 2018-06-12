@@ -1,12 +1,14 @@
 import numpy as np
-import catecs
 
 from pystructural.solver.components.additional_components.calculation_components import *
 
-__all__ = ['LinearAnalysisResults']
+from pystructural.solver.components.geometries import line_elements, Point2D
+from pystructural.pre_processor.components import LineElementSortComponent
+
+__all__ = ['LinearAnalysisResults2D']
 
 
-class LinearAnalysisResults:
+class LinearAnalysisResults2D:
     def __init__(self, structure, analysis):
         self.structure = structure
         self.analysis = analysis
@@ -15,6 +17,68 @@ class LinearAnalysisResults:
                                                                                   DOFCalculationComponent)
         self.linear_calculation_component = self.structure.get_component_from_entity(self.result_entity_id,
                                                                                      LinearCalculationComponent)
+        # Get the line element sort component
+        self.line_element_sort = self.structure.get_component_from_entity(self.structure.general_entity_id,
+                                                                          LineElementSortComponent)
+
+    def group_tangent_vector(self, group_id):
+        # Get the generator for the group
+        line_element_generator = self.line_element_sort.line_element_id_generator(group_id)
+        # Get the id's of the first and the second node
+        first_node_tuple = next(line_element_generator)
+        second_node_tuple = next(line_element_generator)
+        # Get the position of the first and the second node
+        first_node_position = self.structure.get_component_from_entity(first_node_tuple[1], Point2D).point_list[0]
+        second_node_position = self.structure.get_component_from_entity(second_node_tuple[1], Point2D).point_list[0]
+        # Get the vector from the first to the second node
+        vector = second_node_position - first_node_position
+        # Get the tangent vector
+        tangent_vector = np.zeros(2)
+        tangent_vector[0] = vector[1]
+        tangent_vector[1] = -vector[0]
+        # Return the normalized tangent vector
+        return tangent_vector / np.linalg.norm(tangent_vector)
+
+    def displacement_generator(self, group_id):
+        # For every line in the group of line elements
+        for node_tuple in self.line_element_sort.line_element_id_generator(group_id):
+            # Get the corresponding element of the line
+            element = None
+            for line_element_class in line_elements:
+                if self.structure.get_component_from_entity(node_tuple[0], line_element_class):
+                    element = self.structure.get_component_from_entity(node_tuple[0], line_element_class)
+                    break
+            # Get the displacement vector of the element
+            displacement_vector = self.get_element_displacement_vector(element)
+            # Get the first or last three items depending on if the node is the first or the second node in the line
+            if node_tuple[2] == 0:
+                displacement_vector = displacement_vector[:3]
+            else:
+                displacement_vector = displacement_vector[-3:]
+            # Yield the position of the node and the displacement
+            yield self.structure.get_component_from_entity(node_tuple[1], Point2D).point_list[0], displacement_vector[
+                                                                                                  :2]
+
+    def global_dof_generator(self, group_id, dof):
+        # For every line in the group of line elements
+        for node_tuple in self.line_element_sort.line_element_id_generator(group_id):
+            # Get the corresponding element of the line
+            element = None
+            for line_element_class in line_elements:
+                if self.structure.get_component_from_entity(node_tuple[0], line_element_class):
+                    element = self.structure.get_component_from_entity(node_tuple[0], line_element_class)
+                    break
+            # Get the global force vector
+            global_force_vector = self.get_element_global_force(element)
+            # Get the first or last three items depending on if the node is the first or the second node in the line
+            # The minus for the 1 case is that for the plotting the values are all on one side
+            if node_tuple[2] == 0:
+                global_force_vector = global_force_vector[:3]
+            else:
+                global_force_vector = -global_force_vector[-3:]
+            # Yield the position of the node and the value of the dof
+            yield self.structure.get_component_from_entity(node_tuple[1], Point2D).point_list[0], global_force_vector[
+                dof]
 
     # TODO add a dimension variable to the element class
     def get_element_displacement_vector(self, element_instance):

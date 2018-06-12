@@ -52,11 +52,11 @@ class Structure2D(catecs.World):
             entity_end_id = self.add_node(end_position)
 
         # Create the frame element entity
-        frame_element_id  = self.add_entity(geometries.Line2D(entity_start_id, entity_end_id),
-                                            elements.FrameElement2D(),
-                                            materials.LinearElasticity2DMaterial(youngs_modulus, mass_density),
-                                            element_geometries.BeamElementGeometry(cross_section_area,
-                                                                                   moment_of_inertia))
+        frame_element_id = self.add_entity(geometries.Line2D(entity_start_id, entity_end_id),
+                                           elements.FrameElement2D(),
+                                           materials.LinearElasticity2DMaterial(youngs_modulus, mass_density),
+                                           element_geometries.BeamElementGeometry(cross_section_area,
+                                                                                  moment_of_inertia))
 
         # Create the group for the frame element entity
         group_id = self.group_component.create_group()
@@ -91,4 +91,4 @@ class Structure2D(catecs.World):
         # Create an instance of the post processor for this structure with the linear analysis
         pp = PostProcessor(self, self.get_system(self.linear_analysis_system_id))
         # Show the structure
-        pp.show_structure(plot_window, True, scale)
+        pp.show_structure(plot_window, True, True, True, True, scale)
