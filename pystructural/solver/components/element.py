@@ -14,6 +14,7 @@ class Element:
         self.element_geometry = None
         # Matrices
         self.strain_matrix = None
+        self.global_to_local_matrix = None
         self.stiffness_matrix = None
         self.mass_matrix = None
         self.nodal_force_vector = None
@@ -36,6 +37,8 @@ class Element:
         # Compute all the matrices
         # Element properties
         self.compute_element_properties()
+        # Global to local matrix
+        self.compute_global_to_local_matrix()
         # Stiffness matrix
         self.compute_stiffness_matrix()
         # Mass matrix
@@ -44,6 +47,9 @@ class Element:
         self.compute_nodal_force_vector()
 
     def compute_element_properties(self):
+        pass
+
+    def compute_global_to_local_matrix(self):
         pass
 
     def compute_stiffness_matrix(self):

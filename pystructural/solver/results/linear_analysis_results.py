@@ -68,16 +68,16 @@ class LinearAnalysisResults2D:
                 if self.structure.get_component_from_entity(node_tuple[0], line_element_class):
                     element = self.structure.get_component_from_entity(node_tuple[0], line_element_class)
                     break
-            # Get the global force vector
-            global_force_vector = self.get_element_global_force(element)
+            # Get the local force vector
+            local_force_vector = self.get_element_local_force(element)
             # Get the first or last three items depending on if the node is the first or the second node in the line
             # The minus for the 1 case is that for the plotting the values are all on one side
             if node_tuple[2] == 0:
-                global_force_vector = global_force_vector[:3]
+                local_force_vector = local_force_vector[:3]
             else:
-                global_force_vector = -global_force_vector[-3:]
+                local_force_vector = -local_force_vector[-3:]
             # Yield the position of the node and the value of the dof
-            yield self.structure.get_component_from_entity(node_tuple[1], Point2D).point_list[0], global_force_vector[
+            yield self.structure.get_component_from_entity(node_tuple[1], Point2D).point_list[0], local_force_vector[
                 dof]
 
     # TODO add a dimension variable to the element class
@@ -106,3 +106,7 @@ class LinearAnalysisResults2D:
 
         # Return the element global force vector
         return element_global_force_vector
+
+    def get_element_local_force(self, element_instance):
+        # Return the element local force vector
+        return np.matmul(element_instance.global_to_local_matrix, self.get_element_global_force(element_instance))

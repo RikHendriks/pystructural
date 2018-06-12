@@ -44,7 +44,6 @@ class FrameElement2D(Element):
         self.ei = self.material.youngs_modulus * self.element_geometry.moment_of_inertia
         # Compute the local stiffness matrix and the global to local matrix
         self.calculate_local_stiffness_matrix()
-        self.compute_global_to_local_matrix()
 
     def calculate_local_stiffness_matrix(self):
         """Calculate the local stiffness matrix.
