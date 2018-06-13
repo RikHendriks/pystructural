@@ -4,6 +4,7 @@ import catecs
 import copy
 
 from pystructural.solver.components.additional_components.calculation_components import *
+from pystructural.solver.components.connections.spring import Spring
 from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
 from pystructural.solver.systems.analysis.load_systems import load_subclasses_2d
 
@@ -42,6 +43,14 @@ class ExecuteLinearCalculation(catecs.System):
                     i = self.dof_calculation_component.local_to_global_dof_dict[data[0][0][0]][data[0][0][1]]
                     j = self.dof_calculation_component.local_to_global_dof_dict[data[0][1][0]][data[0][1][1]]
                     self.linear_calculation_component.global_stiffness_matrix[i][j] += data[1]
+
+        # Add the connection springs to the global stiffness matrix
+        for entity, component in self.world.get_component(Spring):
+            for dof, spring_value in component.spring_dof_generator():
+                if entity in self.dof_calculation_component.local_to_global_dof_dict:
+                    if dof in self.dof_calculation_component.local_to_global_dof_dict[entity]:
+                        global_id = self.dof_calculation_component.local_to_global_dof_dict[entity][dof]
+                        self.linear_calculation_component.global_stiffness_matrix[global_id][global_id] += spring_value
 
         # Determine the reduced global stiffness matrix
         # Initialize the reduced global stiffness matrix as a copy of the global stiffness matrix

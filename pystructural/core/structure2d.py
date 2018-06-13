@@ -1,7 +1,7 @@
 import numpy as np
 import catecs
 
-from ..solver.components import element_geometries, elements, geometries, loads, materials, support,\
+from ..solver.components import element_geometries, elements, geometries, connections, loads, materials, support,\
     additional_components
 from ..solver.systems import LinearAnalysis
 
@@ -71,6 +71,13 @@ class Structure2D(catecs.World):
             entity_id = self.add_node(position)
         self.add_component(entity_id, support.Support(displacement_x=displacement_x, displacement_y=displacement_y,
                                                       rotation_z=rotation_z))
+
+    def add_spring(self, position, spring_x=None, spring_y=None, rotation_spring_z=None):
+        entity_id = self.position_to_id(position)
+        if entity_id is None:
+            entity_id = self.add_node(position)
+        self.add_component(entity_id, connections.Spring(spring_x=spring_x, spring_y=spring_y,
+                                                         rotation_spring_z=rotation_spring_z))
 
     def add_point_load(self, position, load):
         entity_id = self.position_to_id(position)

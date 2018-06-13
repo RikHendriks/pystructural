@@ -10,5 +10,6 @@ from . import geometries
 from . import elements
 from . import materials
 from . import element_geometries
+from . import connections
 from . import loads
 from . import additional_components
