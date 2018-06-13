@@ -85,6 +85,10 @@ class Structure2D(catecs.World):
             entity_id = self.add_node(position)
         self.add_component(entity_id, loads.PointLoad2D(load))
 
+    def add_global_q_load(self, entity_id, q_load):
+        if entity_id in self.entities:
+            self.add_component(entity_id, loads.QLoad2D(q_load))
+
     def solve_linear_system(self):
         # Run the system: preprocessor 2D
         self.run_system(PreProcessor2D())

@@ -81,9 +81,9 @@ class ExecuteLinearCalculation(catecs.System):
                 # For each dof in the load
                 for data in components[1].load_dof_generator():
                     i = self.dof_calculation_component.local_to_global_dof_dict[data[0][0]][data[0][1]]
-                    r_i = self.dof_calculation_component.global_to_reduced_dof_dict[i]
                     # If the load is in the reduced load vector then add it
-                    if r_i:
+                    if i in self.dof_calculation_component.global_to_reduced_dof_dict:
+                        r_i = self.dof_calculation_component.global_to_reduced_dof_dict[i]
                         self.linear_calculation_component.reduced_load_vector[r_i] += data[1]
 
         # Compute the reduced displacement vector
