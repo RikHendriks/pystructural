@@ -28,9 +28,6 @@ class LinearTriangleElement2D(Element):
     def compute_strain_matrix(self):
         pass
 
-    def compute_global_to_local_matrix(self):
-        pass
-
     def compute_stiffness_matrix(self):
         pass
 

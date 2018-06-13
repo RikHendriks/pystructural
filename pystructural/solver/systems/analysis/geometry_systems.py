@@ -27,4 +27,4 @@ class UpdateGeometries(catecs.System):
                     component.point_list = np.array(point_list)
 
                 # Compute the area's of the geometries
-                component.compute_area()
+                component.compute_geometry_properties()

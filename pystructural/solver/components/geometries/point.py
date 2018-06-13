@@ -9,6 +9,3 @@ class Point2D(Geometry):
 
     def __init__(self, x, y):
         super().__init__(None, np.array([[x, y]]))
-
-    def compute_area(self):
-        self.area = 0.0

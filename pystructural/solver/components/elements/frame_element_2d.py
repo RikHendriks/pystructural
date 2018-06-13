@@ -16,8 +16,6 @@ class FrameElement2D(Element):
 
     def __init__(self):
         # Element properties
-        self.length = None
-        self.angle = None
         self.ea = None
         self.ei = None
         # Element matrices
@@ -33,11 +31,6 @@ class FrameElement2D(Element):
         return self.geometry.point_id_list[x//3], dof_id_list[x % 3]
 
     def compute_element_properties(self):
-        # Compute the length of the beam
-        self.length = self.geometry.area
-        # Compute the angle of the beam
-        n = self.geometry.point_list[1] - self.geometry.point_list[0]
-        self.angle = np.arctan2(n[1], n[0])
         # Compute the ea
         self.ea = self.material.youngs_modulus * self.element_geometry.cross_section_area
         # Compute the ei
@@ -51,50 +44,31 @@ class FrameElement2D(Element):
         :return: (Numpy Array) the local stiffness matrix.
         """
         self.local_stiffness_matrix = np.zeros((6, 6))
-        self.local_stiffness_matrix[0, 0] = 1.0 * (self.ea / self.length)
-        self.local_stiffness_matrix[0, 3] = -1.0 * (self.ea / self.length)
-        self.local_stiffness_matrix[3, 0] = -1.0 * (self.ea / self.length)
-        self.local_stiffness_matrix[3, 3] = 1.0 * (self.ea / self.length)
+        self.local_stiffness_matrix[0, 0] = 1.0 * (self.ea / self.geometry.length)
+        self.local_stiffness_matrix[0, 3] = -1.0 * (self.ea / self.geometry.length)
+        self.local_stiffness_matrix[3, 0] = -1.0 * (self.ea / self.geometry.length)
+        self.local_stiffness_matrix[3, 3] = 1.0 * (self.ea / self.geometry.length)
         # If node 1 is fixed and node 2 is fixed:
         # First quadrant
-        self.local_stiffness_matrix[1, 1] = 12.0 * (self.ei / (self.length ** 3))
-        self.local_stiffness_matrix[2, 1] = -6.0 * (self.ei / (self.length ** 2))
-        self.local_stiffness_matrix[1, 2] = -6.0 * (self.ei / (self.length ** 2))
-        self.local_stiffness_matrix[2, 2] = 4.0 * (self.ei / self.length)
+        self.local_stiffness_matrix[1, 1] = 12.0 * (self.ei / (self.geometry.length ** 3))
+        self.local_stiffness_matrix[2, 1] = -6.0 * (self.ei / (self.geometry.length ** 2))
+        self.local_stiffness_matrix[1, 2] = -6.0 * (self.ei / (self.geometry.length ** 2))
+        self.local_stiffness_matrix[2, 2] = 4.0 * (self.ei / self.geometry.length)
         # Second quadrant
-        self.local_stiffness_matrix[4, 1] = -12.0 * (self.ei / (self.length ** 3))
-        self.local_stiffness_matrix[5, 1] = -6.0 * (self.ei / (self.length ** 2))
-        self.local_stiffness_matrix[4, 2] = 6.0 * (self.ei / (self.length ** 2))
-        self.local_stiffness_matrix[5, 2] = 2.0 * (self.ei / self.length)
+        self.local_stiffness_matrix[4, 1] = -12.0 * (self.ei / (self.geometry.length ** 3))
+        self.local_stiffness_matrix[5, 1] = -6.0 * (self.ei / (self.geometry.length ** 2))
+        self.local_stiffness_matrix[4, 2] = 6.0 * (self.ei / (self.geometry.length ** 2))
+        self.local_stiffness_matrix[5, 2] = 2.0 * (self.ei / self.geometry.length)
         # Third quadrant
-        self.local_stiffness_matrix[1, 4] = -12.0 * (self.ei / (self.length ** 3))
-        self.local_stiffness_matrix[2, 4] = 6.0 * (self.ei / (self.length ** 2))
-        self.local_stiffness_matrix[1, 5] = -6.0 * (self.ei / (self.length ** 2))
-        self.local_stiffness_matrix[2, 5] = 2.0 * (self.ei / self.length)
+        self.local_stiffness_matrix[1, 4] = -12.0 * (self.ei / (self.geometry.length ** 3))
+        self.local_stiffness_matrix[2, 4] = 6.0 * (self.ei / (self.geometry.length ** 2))
+        self.local_stiffness_matrix[1, 5] = -6.0 * (self.ei / (self.geometry.length ** 2))
+        self.local_stiffness_matrix[2, 5] = 2.0 * (self.ei / self.geometry.length)
         # Fourth quadrant
-        self.local_stiffness_matrix[4, 4] = 12.0 * (self.ei / (self.length ** 3))
-        self.local_stiffness_matrix[5, 4] = 6.0 * (self.ei / (self.length ** 2))
-        self.local_stiffness_matrix[4, 5] = 6.0 * (self.ei / (self.length ** 2))
-        self.local_stiffness_matrix[5, 5] = 4.0 * (self.ei / self.length)
-
-    def compute_global_to_local_matrix(self):
-        """Calculate the local to global matrix.
-
-        :return: (Numpy Array) the local to global matrix of the element.
-        """
-        c = np.cos(self.angle)
-        s = np.sin(self.angle)
-        self.global_to_local_matrix = np.zeros((6, 6))
-        self.global_to_local_matrix[0, 0] = c
-        self.global_to_local_matrix[0, 1] = s
-        self.global_to_local_matrix[1, 0] = -s
-        self.global_to_local_matrix[1, 1] = c
-        self.global_to_local_matrix[2, 2] = 1.0
-        self.global_to_local_matrix[3, 3] = c
-        self.global_to_local_matrix[3, 4] = s
-        self.global_to_local_matrix[4, 3] = -s
-        self.global_to_local_matrix[4, 4] = c
-        self.global_to_local_matrix[5, 5] = 1.0
+        self.local_stiffness_matrix[4, 4] = 12.0 * (self.ei / (self.geometry.length ** 3))
+        self.local_stiffness_matrix[5, 4] = 6.0 * (self.ei / (self.geometry.length ** 2))
+        self.local_stiffness_matrix[4, 5] = 6.0 * (self.ei / (self.geometry.length ** 2))
+        self.local_stiffness_matrix[5, 5] = 4.0 * (self.ei / self.geometry.length)
 
     def rotate_by_local_to_global_matrix(self, input_matrix, clockwise=True):
         """Rotate the input vector or matrix by the local to global matrix.
@@ -104,11 +78,11 @@ class FrameElement2D(Element):
         :return: the rotated vector
         """
         if clockwise:
-            return np.matmul(np.matmul(np.transpose(self.global_to_local_matrix), input_matrix),
-                             self.global_to_local_matrix)
+            return np.matmul(np.matmul(np.transpose(self.geometry.global_to_local_matrix), input_matrix),
+                             self.geometry.global_to_local_matrix)
         else:
-            return np.matmul(np.matmul(self.global_to_local_matrix, input_matrix),
-                             np.transpose(self.global_to_local_matrix))
+            return np.matmul(np.matmul(self.geometry.global_to_local_matrix, input_matrix),
+                             np.transpose(self.geometry.global_to_local_matrix))
 
     def compute_stiffness_matrix(self):
         """Calculate the global stiffness matrix.

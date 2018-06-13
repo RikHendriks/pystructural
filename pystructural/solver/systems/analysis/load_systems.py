@@ -1,12 +1,12 @@
 import catecs
 
-from pystructural.solver.components.loads import PointLoad2D
+from pystructural.solver.components.loads import QLoad2D, PointLoad2D
 
 __all__ = ['load_subclasses_2d', 'UpdateLoads']
 
 
 # List of all the load subclasses
-load_subclasses_2d = [PointLoad2D]
+load_subclasses_2d = [QLoad2D, PointLoad2D]
 
 
 class UpdateLoads(catecs.System):

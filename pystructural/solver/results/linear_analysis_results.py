@@ -109,4 +109,4 @@ class LinearAnalysisResults2D:
 
     def get_element_local_force(self, element_instance):
         # Return the element local force vector
-        return np.matmul(element_instance.global_to_local_matrix, self.get_element_global_force(element_instance))
+        return np.matmul(element_instance.geometry.global_to_local_matrix, self.get_element_global_force(element_instance))
