@@ -35,18 +35,26 @@ class PostProcessor:
             poid = PointOfInterestDetector()
             # Initialize the variable for the previous position vector
             previous_position_vector = None
+            previous_position_value_vector = None
             # For every line in the group of line elements
             for position_vector, displacement_vector in self.linear_analysis_results.displacement_generator(group_id):
                 # Scale the displacement vector
                 displacement_vector *= scale
                 # Draw the line of the displacement vector
-                if previous_position_vector is not None:
-                    self.canvas.draw_line(previous_position_vector, position_vector + displacement_vector, color)
+                if previous_position_value_vector is not None:
+                    self.canvas.draw_line(previous_position_value_vector, position_vector + displacement_vector, color)
+                else:
+                    # Draw the line from zero
+                    self.canvas.draw_line(position_vector, position_vector + displacement_vector, color)
                 # Add the value to the point of interest detector
                 poid.add_value(position_vector, position_vector + displacement_vector,
                                np.linalg.norm(displacement_vector) / scale)
+                # Set the previous position dof position
+                previous_position_vector = copy.deepcopy(position_vector)
                 # Set the previous position vector
-                previous_position_vector = copy.deepcopy(position_vector + displacement_vector)
+                previous_position_value_vector = copy.deepcopy(position_vector + displacement_vector)
+            # Draw the last line
+            self.canvas.draw_line(previous_position_value_vector, previous_position_vector, color)
             # Plot the point of interests
             poi = poid.get_points_of_interest()
             for _, text_position, value in poi:
@@ -61,19 +69,27 @@ class PostProcessor:
             # Get the tangent vector for the group of line elements
             tangent_vector = self.linear_analysis_results.group_tangent_vector(group_id)
             # Initialize the variable for the previous dof value
-            previous_dof_value_position = None
+            previous_dof_vector = None
+            previous_dof_value_vector = None
             for position_vector, dof_value in self.linear_analysis_results.global_dof_generator(group_id, dof):
                 # Scale the dof value
                 dof_value *= scale
                 # Draw the line of the dof value
-                if previous_dof_value_position is not None:
+                if previous_dof_value_vector is not None:
                     # Draw the line
-                    self.canvas.draw_line(previous_dof_value_position, position_vector + tangent_vector * dof_value,
+                    self.canvas.draw_line(previous_dof_value_vector, position_vector + tangent_vector * dof_value,
                                           color)
+                else:
+                    # Draw the line from zero
+                    self.canvas.draw_line(position_vector, position_vector + tangent_vector * dof_value, color)
                 # Add the value to the point of interest detector
                 poid.add_value(position_vector, position_vector + tangent_vector * dof_value, dof_value / scale)
+                # Set the previous position dof position
+                previous_dof_vector = copy.deepcopy(position_vector)
                 # Set the previous position dof value position
-                previous_dof_value_position = copy.deepcopy(position_vector + tangent_vector * dof_value)
+                previous_dof_value_vector = copy.deepcopy(position_vector + tangent_vector * dof_value)
+            # Draw the last line
+            self.canvas.draw_line(previous_dof_value_vector, previous_dof_vector, color)
             # Plot the point of interests
             poi = poid.get_points_of_interest()
             for _, text_position, value in poi:
