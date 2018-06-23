@@ -98,8 +98,15 @@ class Structure2D(catecs.World):
         # Process linear calculation system
         self.process_systems(self.linear_analysis_system_id)
 
-    def show_structure(self, plot_window, scale=1.0):
+    def show_structure(self, plot_window=None, path_svg=None, scale=1.0):
         # Create an instance of the post processor for this structure with the linear analysis
         pp = PostProcessor(self, self.get_system(self.linear_analysis_system_id))
+        # Draw the structure
+        pp.draw_structure()
+        # Draw the structure results
+        pp.draw_structure_results(True, True, True, True, scale)
         # Show the structure
-        pp.show_structure(plot_window, True, True, True, True, scale)
+        pp.show_structure(plot_window)
+        # If there is a path given for the svg then save the structure as an svg
+        if path_svg is not None:
+            pp.save_as_svg(path_svg)

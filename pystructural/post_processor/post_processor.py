@@ -79,9 +79,8 @@ class PostProcessor:
             for _, text_position, value in poi:
                 self.canvas.draw_text(text_position, str(round(value, decimal_rounding)))
 
-    def show_structure(self, plot_window, draw_displacements=False, draw_shear_force=False, draw_normal_force=False,
-                       draw_torque=False, scale=1.0, decimal_rounding=2):
-        self.draw_structure()
+    def draw_structure_results(self, draw_displacements=False, draw_shear_force=False, draw_normal_force=False,
+                               draw_torque=False, scale=1.0, decimal_rounding=2):
         if draw_displacements:
             self.draw_displacements(scale, decimal_rounding, 'purple')
         if draw_normal_force:
@@ -90,7 +89,14 @@ class PostProcessor:
             self.draw_dof(1, scale, decimal_rounding, 'green')
         if draw_torque:
             self.draw_dof(2, scale, decimal_rounding, 'red')
+
+    def show_structure(self, plot_window):
+        # Show the structure with matplotlib
         self.canvas.show_matplotlib(plot_window=plot_window, show_plot=True)
+
+    def save_as_svg(self, path):
+        # Save the structure as an svg
+        self.canvas.save_as_svg(path + '.svg')
 
 
 class PointOfInterestDetector:

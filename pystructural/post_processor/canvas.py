@@ -32,6 +32,12 @@ class Canvas:
             plt.show()
 
     # TODO change this to matplotlib and remove the dependencies to svgpathtools
-    def save_svg(self, filename):
-        lines = [svg.Line(start[0] + start[1] * 1j, end[0] + end[1] * 1j) for start, end in self.lines]
-        svg.wsvg(lines, filename=filename)
+    def save_as_svg(self, filename):
+        lines = [svg.Line(start[0] + start[1] * -1j, end[0] + end[1] * -1j) for [start, end], _ in self.lines]
+        line_colors = [color for [_, _], color in self.lines]
+        text_path = [svg.Line(coordinate[0] + coordinate[1] * -1j, coordinate[0] + 1.0 + coordinate[1] * -1j) for
+                     coordinate, _, _, _ in self.texts]
+        text = [text for _, text, _, _ in self.texts]
+        svg.wsvg(lines, line_colors, stroke_widths=[0.01] * len(lines),
+                 text=text, text_path=text_path, font_size=[0.1] * len(text),
+                 filename=filename)
