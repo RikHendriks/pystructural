@@ -7,7 +7,7 @@ from ..solver.systems import LinearAnalysis
 
 from pystructural.pre_processor.pre_processor import PreProcessor2D
 
-from pystructural.post_processor.post_processor import PostProcessor
+from pystructural.post_processor.post_processor import PostProcessor2D
 
 __all__ = ['Structure2D']
 
@@ -129,7 +129,7 @@ class Structure2D(catecs.World):
 
     def show_structure(self, plot_window=None, path_svg=None, scale=1.0):
         # Create an instance of the post processor for this structure with the linear analysis
-        pp = PostProcessor(self, self.get_system(self.linear_analysis_system_id))
+        pp = PostProcessor2D(self, self.get_system(self.linear_analysis_system_id))
         # Draw the structure
         pp.draw_structure()
         # Draw the structure results

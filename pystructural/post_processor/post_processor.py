@@ -8,11 +8,10 @@ from pystructural.pre_processor.components import LineElementSortComponent
 
 from pystructural.solver.results import LinearAnalysisResults2D
 
-__all__ = ['PostProcessor']
+__all__ = ['PostProcessor2D']
 
 
-# TODO change this to a 2D processor
-class PostProcessor:
+class PostProcessor2D:
     def __init__(self, structure, analysis_system):
         # Set the structure variable
         self.structure = structure
