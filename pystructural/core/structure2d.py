@@ -98,6 +98,35 @@ class Structure2D(catecs.World):
         # Process linear calculation system
         self.process_systems(self.linear_analysis_system_id)
 
+    def _determine_plot_window(self):
+        # Initialize the plot window
+        plot_window = [0.0, 0.0, 0.0, 0.0]
+        # For all the nodes in the structure
+        for _, point in self.get_component(geometries.Point2D):
+            # Get the coordinates of the point
+            p = point.point_list[0]
+            # If x of the point is smaller than min x in plot window
+            if p[0] < plot_window[0]:
+                plot_window[0] = p[0]
+            # If x of the point is greater than max x in plot window
+            if p[0] > plot_window[1]:
+                plot_window[1] = p[0]
+            # If y of the point is smaller than min y in plot window
+            if p[1] < plot_window[2]:
+                plot_window[2] = p[1]
+            # If y of the point is greater than max y in plot window
+            if p[1] > plot_window[3]:
+                plot_window[3] = p[1]
+        # Add margins to the plot window
+        x_margin = max(2.5, 0.02 * (plot_window[1] - plot_window[0]))
+        y_margin = max(2.5, 0.02 * (plot_window[3] - plot_window[2]))
+        plot_window[0] -= x_margin
+        plot_window[1] += x_margin
+        plot_window[2] -= y_margin
+        plot_window[3] += y_margin
+        # Return the plot window
+        return plot_window
+
     def show_structure(self, plot_window=None, path_svg=None, scale=1.0):
         # Create an instance of the post processor for this structure with the linear analysis
         pp = PostProcessor(self, self.get_system(self.linear_analysis_system_id))
@@ -106,7 +135,10 @@ class Structure2D(catecs.World):
         # Draw the structure results
         pp.draw_structure_results(True, True, True, True, scale)
         # Show the structure
-        pp.show_structure(plot_window)
+        if plot_window is None:
+            pp.show_structure(self._determine_plot_window())
+        else:
+            pp.show_structure(plot_window)
         # If there is a path given for the svg then save the structure as an svg
         if path_svg is not None:
             pp.save_as_svg(path_svg)
