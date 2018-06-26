@@ -3,6 +3,8 @@ import catecs
 
 from ..solver.components import element_geometries, elements, geometries, connections, loads, materials, support,\
     additional_components
+
+from ..solver.components.load_combination import LoadCombinationsComponent
 from ..solver.systems import LinearAnalysis
 
 from pystructural.pre_processor.pre_processor import PreProcessor2D
@@ -21,6 +23,8 @@ class Structure2D(catecs.World):
         # Get the group component
         self.group_component = self.get_component_from_entity(self.general_entity_id,
                                                               additional_components.GroupComponent)
+        # Get the load combinations component
+        self.load_combinations_component = self.add_component(self.general_entity_id, LoadCombinationsComponent())
         # Initialize the id of the linear system
         self.linear_analysis_system_id = None
 
@@ -40,18 +44,18 @@ class Structure2D(catecs.World):
     def add_node(self, position):
         return self.add_entity(geometries.Point2D(position[0], position[1]))
 
-    def add_component_at_position(self, position, component_instance):
+    def add_component_at_position(self, position, component_instance, unique=True):
         # Determine the entity based on the position
         entity_id = self.position_to_id(position)
         if entity_id is None:
             entity_id = self.add_node(position)
 
         # Add the component to the entity
-        self.add_component_at_entity(entity_id, component_instance)
+        self.add_component_at_entity(entity_id, component_instance, unique)
 
-    def add_component_at_entity(self, entity_id, component_instance):
+    def add_component_at_entity(self, entity_id, component_instance, unique=True):
         # If there is a component with the type in the entity
-        if self.has_component(entity_id, type(component_instance)):
+        if self.has_component(entity_id, type(component_instance)) and unique:
             self.get_component_from_entity(entity_id, type(component_instance)) + component_instance
         else:
             self.add_component(entity_id, component_instance)
@@ -98,11 +102,11 @@ class Structure2D(catecs.World):
         # Create the spring component
         point_load_component = loads.PointLoad2D(point_load)
         # Add the component to the position
-        self.add_component_at_position(position, point_load_component)
+        self.add_component_at_position(position, point_load_component, unique=False)
 
     def add_global_q_load(self, entity_id, q_load):
         if entity_id in self.entities:
-            self.add_component_at_entity(entity_id, loads.QLoad2D(q_load))
+            self.add_component_at_entity(entity_id, loads.QLoad2D(q_load), unique=False)
 
     def solve_linear_system(self, minimum_element_distance=0.1):
         # Run the system: preprocessor 2D
