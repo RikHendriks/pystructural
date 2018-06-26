@@ -8,7 +8,10 @@ from pystructural.solver.components.connections.spring import Spring
 from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
 from pystructural.solver.systems.analysis.load_systems import load_subclasses_2d
 
-__all__ = ["ExecuteLinearCalculation"]
+__all__ = ['ExecuteLinearCalculation',
+           'UpdateGlobalAndReducedStiffnessMatrices',
+           'UpdateLoadCombinations',
+           'UpdateDisplacementAndLoadVectors']
 
 
 class ExecuteLinearCalculation(catecs.System):
@@ -22,18 +25,37 @@ class ExecuteLinearCalculation(catecs.System):
         # If the result entity doesn't have the dof calculation component then add it
         if not self.world.has_component(self.result_entity_id, DOFCalculationComponent):
             self.world.add_component(self.result_entity_id, DOFCalculationComponent())
-        self.dof_calculation_component = self.world.get_component_from_entity(self.result_entity_id, DOFCalculationComponent)
+        self.dof_calculation_component = self.world.get_component_from_entity(self.result_entity_id,
+                                                                              DOFCalculationComponent)
 
         # If the result entity doesn't have the linear calculation component then add it
         if not self.world.has_component(self.result_entity_id, LinearCalculationComponent):
             self.world.add_component(self.result_entity_id, LinearCalculationComponent())
-        self.linear_calculation_component = self.world.get_component_from_entity(self.result_entity_id, LinearCalculationComponent)
+        self.linear_calculation_component = self.world.get_component_from_entity(self.result_entity_id,
+                                                                                 LinearCalculationComponent)
+
+    def process(self):
+        # Run system instance: update global and reduced stiffness matrices
+        self.world.run_system(UpdateGlobalAndReducedStiffnessMatrices(self.dof_calculation_component,
+                                                                      self.linear_calculation_component))
+        # Run system instance: update load combinations
+        self.world.run_system(UpdateLoadCombinations(self.dof_calculation_component, self.linear_calculation_component))
+        # Run system instance: update displacement and load vectors
+        self.world.run_system(UpdateDisplacementAndLoadVectors(self.dof_calculation_component,
+                                                               self.linear_calculation_component))
+
+
+class UpdateGlobalAndReducedStiffnessMatrices(catecs.System):
+    def __init__(self, dof_calculation_component, linear_calculation_component):
+        self.dof_calculation_component = dof_calculation_component
+        self.linear_calculation_component = linear_calculation_component
+        super().__init__()
 
     def process(self):
         # Determine the global stiffness matrix
         # Initialize the global stiffness matrix
         dim_global_stiffness_matrix = len(self.dof_calculation_component.global_to_local_dof_dict)
-        self.linear_calculation_component.global_stiffness_matrix =\
+        self.linear_calculation_component.global_stiffness_matrix = \
             np.zeros([dim_global_stiffness_matrix, dim_global_stiffness_matrix])
         # Process all the 2d elements and put its local stiffness matrices in the global stiffness matrix
         for element_class in element_subclasses_2d:
@@ -54,7 +76,7 @@ class ExecuteLinearCalculation(catecs.System):
 
         # Determine the reduced global stiffness matrix
         # Initialize the reduced global stiffness matrix as a copy of the global stiffness matrix
-        self.linear_calculation_component.reduced_global_stiffness_matrix =\
+        self.linear_calculation_component.reduced_global_stiffness_matrix = \
             copy.deepcopy(self.linear_calculation_component.global_stiffness_matrix)
         # Initialize the remove id list
         remove_id_list = []
@@ -64,16 +86,24 @@ class ExecuteLinearCalculation(catecs.System):
             if i not in self.dof_calculation_component.global_to_reduced_dof_dict:
                 remove_id_list.append(i)
         # Remove the rows and columns to get the reduced global stiffness matrix
-        self.linear_calculation_component.reduced_global_stiffness_matrix =\
+        self.linear_calculation_component.reduced_global_stiffness_matrix = \
             np.delete(self.linear_calculation_component.reduced_global_stiffness_matrix, remove_id_list, 0)
-        self.linear_calculation_component.reduced_global_stiffness_matrix =\
+        self.linear_calculation_component.reduced_global_stiffness_matrix = \
             np.delete(self.linear_calculation_component.reduced_global_stiffness_matrix, remove_id_list, 1)
 
+
+class UpdateLoadCombinations(catecs.System):
+    def __init__(self, dof_calculation_component, linear_calculation_component):
+        self.dof_calculation_component = dof_calculation_component
+        self.linear_calculation_component = linear_calculation_component
+        super().__init__()
+
+    def process(self):
         # TODO Change how this works based on forces that act where supports are and other edge cases that are not covered.
         # TODO Such one edge case is if a dof load is applied where the dof is not in the reduced vector.
         # Determine the reduced load vector
         # Initialize the reduced load vector
-        self.linear_calculation_component.reduced_load_vector =\
+        self.linear_calculation_component.reduced_load_vector = \
             np.zeros([len(self.linear_calculation_component.reduced_global_stiffness_matrix)])
         # Process all the 2d loads and put them into the reduced load vector
         for load_class in load_subclasses_2d:
@@ -86,22 +116,30 @@ class ExecuteLinearCalculation(catecs.System):
                         r_i = self.dof_calculation_component.global_to_reduced_dof_dict[i]
                         self.linear_calculation_component.reduced_load_vector[r_i] += data[1]
 
+
+class UpdateDisplacementAndLoadVectors(catecs.System):
+    def __init__(self, dof_calculation_component, linear_calculation_component):
+        self.dof_calculation_component = dof_calculation_component
+        self.linear_calculation_component = linear_calculation_component
+        super().__init__()
+
+    def process(self):
         # Compute the reduced displacement vector
-        self.linear_calculation_component.reduced_displacement_vector =\
+        self.linear_calculation_component.reduced_displacement_vector = \
             np.linalg.solve(self.linear_calculation_component.reduced_global_stiffness_matrix,
                             self.linear_calculation_component.reduced_load_vector)
 
         # Determine the displacement vector
         # Initialize the displacement vector
-        self.linear_calculation_component.displacement_vector =\
+        self.linear_calculation_component.displacement_vector = \
             np.zeros([len(self.linear_calculation_component.global_stiffness_matrix)])
         # Put the values of the reduced displacement vector in the displacement vector
         for i in range(0, len(self.linear_calculation_component.reduced_displacement_vector)):
-            self.linear_calculation_component.displacement_vector\
-                [self.dof_calculation_component.reduced_to_global_dof_dict[i]] =\
+            self.linear_calculation_component.displacement_vector \
+                [self.dof_calculation_component.reduced_to_global_dof_dict[i]] = \
                 self.linear_calculation_component.reduced_displacement_vector[i]
 
         # Determine the load vector
-        self.linear_calculation_component.load_vector =\
+        self.linear_calculation_component.load_vector = \
             np.matmul(self.linear_calculation_component.global_stiffness_matrix,
                       self.linear_calculation_component.displacement_vector)
