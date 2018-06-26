@@ -40,6 +40,22 @@ class Structure2D(catecs.World):
     def add_node(self, position):
         return self.add_entity(geometries.Point2D(position[0], position[1]))
 
+    def add_component_at_position(self, position, component_instance):
+        # Determine the entity based on the position
+        entity_id = self.position_to_id(position)
+        if entity_id is None:
+            entity_id = self.add_node(position)
+
+        # Add the component to the entity
+        self.add_component_at_entity(entity_id, component_instance)
+
+    def add_component_at_entity(self, entity_id, component_instance):
+        # If there is a component with the type in the entity
+        if self.has_component(entity_id, type(component_instance)):
+            self.get_component_from_entity(entity_id, type(component_instance)) + component_instance
+        else:
+            self.add_component(entity_id, component_instance)
+
     def add_frame_element(self, start_position, end_position, youngs_modulus, mass_density, cross_section_area,
                           moment_of_inertia):
         entity_start_id = self.position_to_id(start_position)
@@ -66,32 +82,31 @@ class Structure2D(catecs.World):
         return frame_element_id
 
     def add_support(self, position, displacement_x=True, displacement_y=True, rotation_z=True):
-        entity_id = self.position_to_id(position)
-        if entity_id is None:
-            entity_id = self.add_node(position)
-        self.add_component(entity_id, support.Support(displacement_x=displacement_x, displacement_y=displacement_y,
-                                                      rotation_z=rotation_z))
+        # Create the support component
+        support_component = support.Support(displacement_x=displacement_x, displacement_y=displacement_y,
+                                            rotation_z=rotation_z)
+        # Add the component to the position
+        self.add_component_at_position(position, support_component)
 
     def add_spring(self, position, spring_x=None, spring_y=None, rotation_spring_z=None):
-        entity_id = self.position_to_id(position)
-        if entity_id is None:
-            entity_id = self.add_node(position)
-        self.add_component(entity_id, connections.Spring(spring_x=spring_x, spring_y=spring_y,
-                                                         rotation_spring_z=rotation_spring_z))
+        # Create the spring component
+        spring_component = connections.Spring(spring_x=spring_x, spring_y=spring_y, rotation_spring_z=rotation_spring_z)
+        # Add the component to the position
+        self.add_component_at_position(position, spring_component)
 
-    def add_point_load(self, position, load):
-        entity_id = self.position_to_id(position)
-        if entity_id is None:
-            entity_id = self.add_node(position)
-        self.add_component(entity_id, loads.PointLoad2D(load))
+    def add_point_load(self, position, point_load):
+        # Create the spring component
+        point_load_component = loads.PointLoad2D(point_load)
+        # Add the component to the position
+        self.add_component_at_position(position, point_load_component)
 
     def add_global_q_load(self, entity_id, q_load):
         if entity_id in self.entities:
-            self.add_component(entity_id, loads.QLoad2D(q_load))
+            self.add_component_at_entity(entity_id, loads.QLoad2D(q_load))
 
-    def solve_linear_system(self):
+    def solve_linear_system(self, minimum_element_distance=0.1):
         # Run the system: preprocessor 2D
-        self.run_system(PreProcessor2D())
+        self.run_system(PreProcessor2D(minimum_element_distance))
 
         # Add linear calculation system
         self.linear_analysis_system_id = self.add_system(LinearAnalysis("linear_calculation"))
@@ -118,8 +133,8 @@ class Structure2D(catecs.World):
             if p[1] > plot_window[3]:
                 plot_window[3] = p[1]
         # Add margins to the plot window
-        x_margin = max(2.5, 0.02 * (plot_window[1] - plot_window[0]))
-        y_margin = max(2.5, 0.02 * (plot_window[3] - plot_window[2]))
+        x_margin = max(2.0, 0.02 * (plot_window[1] - plot_window[0]))
+        y_margin = max(2.0, 0.02 * (plot_window[3] - plot_window[2]))
         plot_window[0] -= x_margin
         plot_window[1] += x_margin
         plot_window[2] -= y_margin

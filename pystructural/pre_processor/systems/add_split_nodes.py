@@ -7,8 +7,8 @@ __all__ = ['AddSplitNodes']
 
 
 class AddSplitNodes(catecs.System):
-    def __init__(self, minimum_distance):
-        self.minimum_distance = minimum_distance
+    def __init__(self, minimum_element_distance):
+        self.minimum_distance = minimum_element_distance
         super().__init__()
 
     def process(self):

@@ -18,6 +18,10 @@ class PointLoad2D(Load):
         # Initialize the init of the super class
         super().__init__()
 
+    def __add__(self, other):
+        self.point_load_list += other.point_load_list
+        return self
+
     def get_dof(self):
         return DOF(displacement_x=True, displacement_y=True, rotation_z=True)
 

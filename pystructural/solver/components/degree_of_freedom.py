@@ -13,6 +13,21 @@ class DOF:
         self.rotation_y = rotation_y
         self.rotation_z = rotation_z
 
+    def __add__(self, other):
+        self.update_dof(other)
+        return self
+
+    def __neg__(self):
+        # Negate all the bool variables
+        self.displacement_x = not self.displacement_x
+        self.displacement_y = not self.displacement_y
+        self.displacement_z = not self.displacement_z
+        self.rotation_x = not self.rotation_x
+        self.rotation_y = not self.rotation_y
+        self.rotation_z = not self.rotation_z
+        # Return the negation
+        return self
+
     def update_dof(self, other_dof):
         # Displacement x
         if other_dof.displacement_x is True:
