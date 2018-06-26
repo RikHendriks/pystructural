@@ -98,15 +98,20 @@ class Structure2D(catecs.World):
         # Add the component to the position
         self.add_component_at_position(position, spring_component)
 
-    def add_point_load(self, position, point_load):
+    def add_load_combination(self, load_combination_name, load_cases):
+        self.load_combinations_component.add_load_combination(load_combination_name, load_cases)
+
+    def add_point_load(self, position, point_load, load_case=None):
         # Create the spring component
-        point_load_component = loads.PointLoad2D(point_load)
+        lc_id = self.load_combinations_component.add_load_case(load_case)
+        point_load_component = loads.PointLoad2D(point_load, lc_id)
         # Add the component to the position
         self.add_component_at_position(position, point_load_component, unique=False)
 
-    def add_global_q_load(self, entity_id, q_load):
+    def add_global_q_load(self, entity_id, q_load, load_case=None):
         if entity_id in self.entities:
-            self.add_component_at_entity(entity_id, loads.QLoad2D(q_load), unique=False)
+            lc_id = self.load_combinations_component.add_load_case(load_case)
+            self.add_component_at_entity(entity_id, loads.QLoad2D(q_load, lc_id), unique=False)
 
     def solve_linear_system(self, minimum_element_distance=0.1):
         # Run the system: preprocessor 2D

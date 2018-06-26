@@ -13,13 +13,13 @@ __all__ = ['QLoad2D']
 class QLoad2D(Load):
     compatible_geometry = Line2D
 
-    def __init__(self, q_load):
+    def __init__(self, q_load, load_case_id=None):
         # Check if the q load is not a list but a value
         if isinstance(q_load, list):
             raise TypeError("The input must be a value")
         self.q_load = q_load
         # Initialize the init of the super class
-        super().__init__()
+        super().__init__(load_case_id)
 
     def __add__(self, other):
         self.q_load += other.q_load

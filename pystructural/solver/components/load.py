@@ -4,9 +4,11 @@ __all__ = ['Load']
 class Load:
     compatible_geometry = None
 
-    def __init__(self):
+    def __init__(self, load_case_id):
         # Geometry
         self.geometry = None
+        # Load combination id
+        self.load_combination_id = load_case_id
 
     def get_dof(self):
         pass

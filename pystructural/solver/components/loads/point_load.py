@@ -10,13 +10,13 @@ __all__ = ['PointLoad2D']
 class PointLoad2D(Load):
     compatible_geometry = Point2D
 
-    def __init__(self, point_load):
+    def __init__(self, point_load, load_case_id=None):
         # Check if the point load is of length 3 else give an error
         if len(point_load) != 3:
             raise TypeError("The input must be a list or numpy array with 3 elements.")
         self.point_load_list = np.array(point_load)
         # Initialize the init of the super class
-        super().__init__()
+        super().__init__(load_case_id)
 
     def __add__(self, other):
         self.point_load_list += other.point_load_list
