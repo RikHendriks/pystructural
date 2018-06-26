@@ -135,9 +135,9 @@ class UpdateDisplacementAndLoadVectors(catecs.System):
             np.zeros([len(self.linear_calculation_component.global_stiffness_matrix)])
         # Put the values of the reduced displacement vector in the displacement vector
         for i in range(0, len(self.linear_calculation_component.reduced_displacement_vector)):
-            self.linear_calculation_component.displacement_vector \
-                [self.dof_calculation_component.reduced_to_global_dof_dict[i]] = \
-                self.linear_calculation_component.reduced_displacement_vector[i]
+            self.linear_calculation_component.displacement_vector[
+                self.dof_calculation_component.reduced_to_global_dof_dict[i]] = \
+                    self.linear_calculation_component.reduced_displacement_vector[i]
 
         # Determine the load vector
         self.linear_calculation_component.load_vector = \
