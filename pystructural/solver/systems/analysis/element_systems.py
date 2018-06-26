@@ -10,7 +10,6 @@ __all__ = ["element_subclasses_2d", "UpdateElements"]
 element_subclasses_2d = [FrameElement2D, LinearTriangleElement2D]
 
 
-# TODO add errors when no geometry, material and element_geometry is found
 class UpdateElements(catecs.System):
     def process(self):
         # Process all the 2d elements

@@ -44,7 +44,6 @@ class Canvas:
         if show_plot:
             plt.show()
 
-    # TODO change this to matplotlib and remove the dependencies to svgpathtools
     def save_as_svg(self, filename):
         lines = [svg.Line(start[0] + start[1] * -1j, end[0] + end[1] * -1j) for [start, end], _ in self.lines]
         line_colors = [color for [_, _], color in self.lines]

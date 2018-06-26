@@ -45,6 +45,5 @@ class LinearAnalysis(AnalysisSystem):
         # Add system -> execute linear calculation (determine reduced stuff and solve the matrix equation)
         self.world.add_system(ExecuteLinearCalculation(self.result_entity_id), self.name)
 
-        # TODO change this to return system_category_name and process the function outside of this system
         # Process the 'linear calculation' system category
         self.world.process_system_categories(self.name)
