@@ -114,11 +114,14 @@ class Structure2D(catecs.World):
             self.add_component_at_entity(entity_id, loads.QLoad2D(q_load, lc_id), unique=False)
 
     def solve_linear_system(self, minimum_element_distance=0.1):
+        # Add the generic load combination
+        self.load_combinations_component.add_generic_load_combination()
+
         # Run the system: preprocessor 2D
         self.run_system(PreProcessor2D(minimum_element_distance))
 
         # Add linear calculation system
-        self.linear_analysis_system_id = self.add_system(LinearAnalysis("linear_calculation"))
+        self.linear_analysis_system_id = self.add_system(LinearAnalysis("linear_calculation", 0))
         # Process linear calculation system
         self.process_systems(self.linear_analysis_system_id)
 
@@ -151,13 +154,14 @@ class Structure2D(catecs.World):
         # Return the plot window
         return plot_window
 
-    def show_structure(self, plot_window=None, path_svg=None, scale=1.0):
+    def show_structure(self, load_combination='generic_load_combination', plot_window=None, path_svg=None, scale=1.0):
         # Create an instance of the post processor for this structure with the linear analysis
         pp = PostProcessor2D(self, self.get_system(self.linear_analysis_system_id))
         # Draw the structure
         pp.draw_structure()
         # Draw the structure results
-        pp.draw_structure_results(True, True, True, True, scale)
+        load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
+        pp.draw_structure_results(load_combination_id, True, True, True, True, scale)
         # Show the structure
         if plot_window is None:
             pp.show_structure(self._determine_plot_window())

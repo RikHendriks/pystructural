@@ -11,6 +11,7 @@ from pystructural.solver.results import LinearAnalysisResults2D
 __all__ = ['PostProcessor2D']
 
 
+# TODO Change this class with load combinations in mind
 class PostProcessor2D:
     def __init__(self, structure, analysis_system):
         # Set the structure variable
@@ -27,7 +28,7 @@ class PostProcessor2D:
         for _, line in self.structure.get_component(Line2D):
             self.canvas.draw_line(line.point_list[0], line.point_list[1], color)
 
-    def draw_displacements(self, scale=1.0, decimal_rounding=2, color='blue'):
+    def draw_displacements(self, load_combination, scale=1.0, decimal_rounding=2, color='blue'):
         # For every group of line elements
         for group_id in self.line_element_sort.group_id_generator():
             # Point of interest detector class instance
@@ -36,7 +37,7 @@ class PostProcessor2D:
             previous_position_vector = None
             previous_position_value_vector = None
             # For every line in the group of line elements
-            for position_vector, displacement_vector in self.linear_analysis_results.displacement_generator(group_id):
+            for position_vector,displacement_vector in self.linear_analysis_results.displacement_generator(group_id, load_combination):
                 # Scale the displacement vector
                 displacement_vector *= scale
                 # Draw the line of the displacement vector
@@ -60,7 +61,7 @@ class PostProcessor2D:
                 self.canvas.draw_text(text_position, str(round(value, decimal_rounding)))
 
     # TODO change this to local dof generator
-    def draw_dof(self, dof, scale=1.0, decimal_rounding=2, color='red'):
+    def draw_dof(self, dof, load_combination, scale=1.0, decimal_rounding=2, color='red'):
         # For every group of line elements
         for group_id in self.line_element_sort.group_id_generator():
             # Point of interest detector class instance
@@ -70,7 +71,7 @@ class PostProcessor2D:
             # Initialize the variable for the previous dof value
             previous_dof_vector = None
             previous_dof_value_vector = None
-            for position_vector, dof_value in self.linear_analysis_results.global_dof_generator(group_id, dof):
+            for position_vector, dof_value in self.linear_analysis_results.global_dof_generator(group_id, dof, load_combination):
                 # Scale the dof value
                 dof_value *= scale
                 # Draw the line of the dof value
@@ -94,16 +95,16 @@ class PostProcessor2D:
             for _, text_position, value in poi:
                 self.canvas.draw_text(text_position, str(round(value, decimal_rounding)))
 
-    def draw_structure_results(self, draw_displacements=False, draw_shear_force=False, draw_normal_force=False,
-                               draw_torque=False, scale=1.0, decimal_rounding=2):
+    def draw_structure_results(self, load_combination, draw_displacements=False, draw_shear_force=False,
+                               draw_normal_force=False, draw_torque=False, scale=1.0, decimal_rounding=2):
         if draw_displacements:
-            self.draw_displacements(scale, decimal_rounding, 'purple')
+            self.draw_displacements(load_combination, scale, decimal_rounding, 'purple')
         if draw_normal_force:
-            self.draw_dof(0, scale, decimal_rounding, 'blue')
+            self.draw_dof(0, load_combination, scale, decimal_rounding, 'blue')
         if draw_shear_force:
-            self.draw_dof(1, scale, decimal_rounding, 'green')
+            self.draw_dof(1, load_combination, scale, decimal_rounding, 'green')
         if draw_torque:
-            self.draw_dof(2, scale, decimal_rounding, 'red')
+            self.draw_dof(2, load_combination, scale, decimal_rounding, 'red')
 
     def show_structure(self, plot_window):
         # Show the structure with matplotlib

@@ -1,4 +1,7 @@
-__all__ = ["GroupComponent", "DOFCalculationComponent", "LinearCalculationComponent"]
+__all__ = ['GroupComponent', 'DOFCalculationComponent',
+           'LinearCalculationComponent',
+           'ReducedLoadVectorsComponent',
+           'DisplacementAndLoadVectorsComponent']
 
 
 class GroupComponent:
@@ -53,11 +56,20 @@ class LinearCalculationComponent:
         # stiffness matrices
         self.global_stiffness_matrix = None
         self.reduced_global_stiffness_matrix = None
-        # Displacement vectors
-        self.displacement_vector = None
-        self.reduced_displacement_vector = None
-        # Load vectors
-        self.load_vector = None
-        self.reduced_load_vector = None
         # Dof calculation component
         self.dof_calculation_component = None
+
+
+class ReducedLoadVectorsComponent:
+    def __init__(self):
+        # The reduced load vector
+        self.reduced_load_vectors = {}
+
+
+class DisplacementAndLoadVectorsComponent:
+    def __init__(self):
+        # The reduced displacement vectors
+        self.reduced_displacement_vectors = {}
+        # The displacement and load vectors
+        self.displacement_vectors = {}
+        self.load_vectors = {}

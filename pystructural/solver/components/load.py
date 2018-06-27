@@ -8,7 +8,7 @@ class Load:
         # Geometry
         self.geometry = None
         # Load combination id
-        self.load_combination_id = load_case_id
+        self.load_case_id = load_case_id
 
     def get_dof(self):
         pass
