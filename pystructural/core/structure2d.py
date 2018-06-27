@@ -99,6 +99,8 @@ class Structure2D(catecs.World):
         self.add_component_at_position(position, spring_component)
 
     def add_load_combination(self, load_combination_name, load_cases):
+        # Add a new load combination to the
+        load_cases = {self.load_combinations_component.load_case_names[k]: v for k, v in load_cases.items()}
         self.load_combinations_component.add_load_combination(load_combination_name, load_cases)
 
     def add_point_load(self, position, point_load, load_case=None):
@@ -114,14 +116,17 @@ class Structure2D(catecs.World):
             self.add_component_at_entity(entity_id, loads.QLoad2D(q_load, lc_id), unique=False)
 
     def solve_linear_system(self, minimum_element_distance=0.1):
-        # Add the generic load combination
-        self.load_combinations_component.add_generic_load_combination()
+        # If there is no load combination defined
+        if len(self.load_combinations_component.load_combinations) is 0:
+            # Add the generic load combination
+            self.load_combinations_component.add_generic_load_combination()
 
         # Run the system: preprocessor 2D
         self.run_system(PreProcessor2D(minimum_element_distance))
-
-        # Add linear calculation system
-        self.linear_analysis_system_id = self.add_system(LinearAnalysis("linear_calculation", 0))
+        # Add linear calculation system and solve
+        self.linear_analysis_system_id =\
+            self.add_system(LinearAnalysis("linear_calculation",
+                                           list(self.load_combinations_component.load_combinations.keys())))
         # Process linear calculation system
         self.process_systems(self.linear_analysis_system_id)
 

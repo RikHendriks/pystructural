@@ -13,3 +13,4 @@ from . import element_geometries
 from . import connections
 from . import loads
 from . import additional_components
+from . import load_combination
