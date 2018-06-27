@@ -66,7 +66,6 @@ class LoadCombinationsComponent:
         # Add the permanent load cases to each load combination
         for load_case in load_combination_list:
             load_case.update(permanent_load_cases)
-        print(load_combination_list)
         # Add the load combinations
         for i in range(len(load_combination_list)):
             self.add_load_combination(load_combination_name + str(i), load_combination_list[i], True)
