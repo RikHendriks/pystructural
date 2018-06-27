@@ -100,8 +100,7 @@ class Structure2D(catecs.World):
 
     def add_load_combination(self, load_combination_name, load_cases):
         # Add a new load combination to the
-        load_cases = {self.load_combinations_component.load_case_names[k]: v for k, v in load_cases.items()}
-        self.load_combinations_component.add_load_combination(load_combination_name, load_cases)
+        self.load_combinations_component.add_load_combination(load_combination_name, load_cases, True)
 
     def add_point_load(self, position, point_load, load_case=None):
         # Create the spring component
