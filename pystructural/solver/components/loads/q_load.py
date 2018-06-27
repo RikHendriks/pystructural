@@ -5,7 +5,6 @@ from pystructural.solver.components.geometries import *
 __all__ = ['QLoad2D']
 
 
-# TODO change the class so that it works for the q_1 and q_2 load and check if the values are correct
 # TODO change the class based on if a node is hinged or not
 # TODO change the class such that it also has a normal force
 # TODO change the class such that it is possible to choose for a global or local q_load
