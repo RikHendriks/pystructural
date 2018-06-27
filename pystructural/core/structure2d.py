@@ -110,9 +110,14 @@ class Structure2D(catecs.World):
         self.add_component_at_position(position, point_load_component, unique=False)
 
     def add_global_q_load(self, entity_id, q_load, load_case=None):
+        def q_load_func(x):
+            return q_load
+        self.add_global_q_load_func(entity_id, q_load_func, load_case)
+
+    def add_global_q_load_func(self, entity_id, q_load_func, load_case=None):
         if entity_id in self.entities:
             lc_id = self.load_combinations_component.add_load_case(load_case)
-            self.add_component_at_entity(entity_id, loads.QLoad2D(q_load, lc_id), unique=False)
+            self.add_component_at_entity(entity_id, loads.QLoad2D(q_load_func, lc_id), unique=False)
 
     def solve_linear_system(self, minimum_element_distance=0.1):
         # If there is no load combination defined

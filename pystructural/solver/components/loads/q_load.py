@@ -13,24 +13,22 @@ __all__ = ['QLoad2D']
 class QLoad2D(Load):
     compatible_geometry = Line2D
 
-    def __init__(self, q_load, load_case_id=None):
-        # Check if the q load is not a list but a value
-        if isinstance(q_load, list):
-            raise TypeError("The input must be a value")
-        self.q_load = q_load
+    def __init__(self, q_load_func, load_case_id=None):
+        # Initialize the q-load function
+        self.q_load_func = q_load_func
         # Initialize the init of the super class
         super().__init__(load_case_id)
 
     def __add__(self, other):
-        self.q_load += other.q_load
+        self.q_load_func = lambda x: self.q_load_func(x) + other.q_load_func(x)
         return self
 
     def get_dof(self):
         return DOF(displacement_y=True, rotation_z=True)
 
     def load_dof_generator(self):
-        q_1 = self.q_load
-        q_2 = self.q_load
+        q_1 = self.q_load_func(self.geometry.point_list[0])
+        q_2 = self.q_load_func(self.geometry.point_list[1])
         for i in range(2):
             for dof in self.get_dof().get_dof_id_list():
                 if i == 0:
