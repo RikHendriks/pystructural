@@ -99,6 +99,22 @@ class LinearAnalysisResults2D:
         # Return the node displacement vector
         return node_displacement_vector
 
+    def get_node_global_force(self, node_instance, load_combination):
+        # Initialize the node displacement vector
+        node_force_vector = np.zeros([3])
+
+        # Determine the entity id
+        node_id = node_instance.point_id_list[0]
+
+        # Determine the node displacement vector
+        for i in range(3):
+            global_id = self.dof_calculation_component.local_to_global_dof_dict[node_id][i]
+            node_force_vector += \
+                self.displacement_and_load_vectors_component.load_vectors[load_combination][global_id]
+
+        # Return the node displacement vector
+        return node_force_vector
+
     # TODO add a dimension variable to the element class
     def get_element_displacement_vector(self, element_instance, load_combination):
         # Determine the dimension of the element displacement vector
