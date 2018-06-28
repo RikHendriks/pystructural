@@ -52,13 +52,15 @@ class PostProcessor2D:
             # Displacement block symbol
             if support.displacement_x is False and support.displacement_y is False:
                 if offset is True:
-                    self.canvas.draw_symbol(canvas_symbols.get_displacement_block(), scale, coordinate + scale * np.array([0.0, -0.5]), color)
+                    self.canvas.draw_symbol(canvas_symbols.get_displacement_block(), scale,
+                                            coordinate + scale * np.array([0.0, -0.5]), color)
                 else:
                     self.canvas.draw_symbol(canvas_symbols.get_displacement_block(), scale, coordinate, color)
             # Displacement free x symbol
             elif support.displacement_y is False:
                 if offset is True:
-                    self.canvas.draw_symbol(canvas_symbols.get_displacement_free_x(), scale, coordinate + scale * np.array([0.0, -0.5]), color)
+                    self.canvas.draw_symbol(canvas_symbols.get_displacement_free_x(), scale,
+                                            coordinate + scale * np.array([0.0, -0.5]), color)
                 else:
                     self.canvas.draw_symbol(canvas_symbols.get_displacement_free_x(), scale, coordinate, color)
                 # Spring x symbol
@@ -66,7 +68,8 @@ class PostProcessor2D:
             # Displacement free y symbol
             elif support.displacement_x is False:
                 if offset is True:
-                    self.canvas.draw_symbol(canvas_symbols.get_displacement_free_y(), scale, coordinate + scale * np.array([0.0, -0.5]), color)
+                    self.canvas.draw_symbol(canvas_symbols.get_displacement_free_y(), scale,
+                                            coordinate + scale * np.array([0.0, -0.5]), color)
                 else:
                     self.canvas.draw_symbol(canvas_symbols.get_displacement_free_y(), scale, coordinate, color)
                 # Spring y symbol
@@ -81,7 +84,7 @@ class PostProcessor2D:
             previous_position_vector = None
             previous_position_value_vector = None
             # For every line in the group of line elements
-            for position_vector,displacement_vector in self.linear_analysis_results.displacement_generator(group_id, load_combination):
+            for position_vector, displacement_vector in self.linear_analysis_results.displacement_generator(group_id, load_combination):
                 # Scale the displacement vector
                 displacement_vector *= scale
                 # Draw the line of the displacement vector
