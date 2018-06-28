@@ -168,6 +168,8 @@ class Structure2D(catecs.World):
         pp = PostProcessor2D(self, self.get_system(self.linear_analysis_system_id))
         # Draw the structure
         pp.draw_structure()
+        # Draw the supports
+        pp.draw_supports(0.25)
         # Draw the structure results
         load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
         pp.draw_structure_results(load_combination_id, True, True, True, True, scale)

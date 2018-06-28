@@ -3,10 +3,13 @@ import copy
 
 from .canvas import Canvas
 
-from pystructural.solver.components.geometries import Line2D
+from pystructural.solver.components.geometries import Point2D, Line2D
+from pystructural.solver.components.support import Support
 from pystructural.pre_processor.components import LineElementSortComponent
 
 from pystructural.solver.results import LinearAnalysisResults2D
+
+from . import canvas_symbols
 
 __all__ = ['PostProcessor2D']
 
@@ -27,6 +30,47 @@ class PostProcessor2D:
     def draw_structure(self, color='black'):
         for _, line in self.structure.get_component(Line2D):
             self.canvas.draw_line(line.point_list[0], line.point_list[1], color)
+
+    def draw_supports(self, scale=1.0, color='black'):
+        # For every support in the structure
+        for entity_id, support in self.structure.get_component(Support):
+            # Get the coordinates of the support
+            coordinate = self.structure.get_component_from_entity(entity_id, Point2D).point_list[0]
+            # Set the offset boolean
+            offset = False
+            # Rotation block symbol
+            if support.rotation_z is False:
+                self.canvas.draw_symbol(canvas_symbols.get_rotation_block_symbol(), scale, coordinate, color)
+                offset = True
+            # Rotation spring symbol
+            # TODO add the rotation spring symbol
+            """
+            elif support.rotation_spring_z is not None:
+                self.canvas.draw_symbol(canvas_symbols.get_rotation_spring_symbol(), scale, coordinate, color)
+                offset = True
+            """
+            # Displacement block symbol
+            if support.displacement_x is False and support.displacement_y is False:
+                if offset is True:
+                    self.canvas.draw_symbol(canvas_symbols.get_displacement_block(), scale, coordinate + scale * np.array([0.0, -0.5]), color)
+                else:
+                    self.canvas.draw_symbol(canvas_symbols.get_displacement_block(), scale, coordinate, color)
+            # Displacement free x symbol
+            elif support.displacement_y is False:
+                if offset is True:
+                    self.canvas.draw_symbol(canvas_symbols.get_displacement_free_x(), scale, coordinate + scale * np.array([0.0, -0.5]), color)
+                else:
+                    self.canvas.draw_symbol(canvas_symbols.get_displacement_free_x(), scale, coordinate, color)
+                # Spring x symbol
+                # TODO add the spring x symbol here
+            # Displacement free y symbol
+            elif support.displacement_x is False:
+                if offset is True:
+                    self.canvas.draw_symbol(canvas_symbols.get_displacement_free_y(), scale, coordinate + scale * np.array([0.0, -0.5]), color)
+                else:
+                    self.canvas.draw_symbol(canvas_symbols.get_displacement_free_y(), scale, coordinate, color)
+                # Spring y symbol
+                # TODO add the spring y symbol here
 
     def draw_displacements(self, load_combination, scale=1.0, decimal_rounding=2, color='blue'):
         # For every group of line elements
