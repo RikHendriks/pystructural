@@ -215,8 +215,7 @@ class Structure2D(catecs.World):
             return None
         else:
             entity_id, _ = tuple
-        # If the line exists
-        if entity_id is not None:
+
             # Get the element instance
             for line_element_class in geometries.line_elements:
                 if self.has_component(entity_id, line_element_class):
@@ -233,8 +232,6 @@ class Structure2D(catecs.World):
             else:
                 return self.post_processor.linear_analysis_results.get_element_global_force_vector(element_instance,
                                                                                                    load_combination_id)
-        else:
-            return None
 
     def show_structure(self, load_combination='generic_load_combination', plot_window=None, path_svg=None, scale=1.0):
         # Draw the structure
