@@ -1,6 +1,6 @@
 import numpy as np
 
-__all__ = ['point_is_near_point', 'point_is_on_line', 'is_collinear']
+__all__ = ['point_is_near_point', 'point_is_on_line', 'point_projection_is_on_line', 'is_collinear']
 
 
 def point_is_near_point(point_0, point_1, error=0.001):
@@ -12,6 +12,20 @@ def point_is_near_point(point_0, point_1, error=0.001):
     :return:
     """
     return np.linalg.norm(point_0 - point_1) < error
+
+
+def point_line_projection(point, line_start, line_end):
+    """Return the point projection to the line.
+
+    :param point:
+    :param line_start:
+    :param line_end:
+    :return:
+    """
+    # Determine the projection of the point to the line
+    v = line_end - line_start
+    w = point - line_start
+    return np.dot(v, w) * v / np.linalg.norm(v)
 
 
 def point_is_on_line(point, line_start, line_end, error=0.001):
@@ -32,19 +46,17 @@ def point_is_on_line(point, line_start, line_end, error=0.001):
 def point_projection_is_on_line(point, line_start, line_end):
     """Return true iff the point projection intersects the line.
 
-    :param point: 
+    :param point:
     :param line_start:
     :param line_end:
     :return:
     """
-    # We take the dot product to determine if the point intersects the line
-    v = line_end - point
-    w = point - line_start
-    return np.dot(v, w) > 0
+    # Determine the projection of the point to the line
+    return point_is_on_line(point_line_projection(point, line_start, line_end), line_start, line_end)
 
 
 def is_collinear(point_0, point_1, point_2, error=0.001):
-    """Return true iff the three points are collinear
+    """Return true iff the three points are collinear.
 
     :param point_0:
     :param point_1:
