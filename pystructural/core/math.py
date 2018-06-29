@@ -29,6 +29,20 @@ def point_is_on_line(point, line_start, line_end, error=0.001):
     return np.linalg.det(np.column_stack((v, w))) < error and np.dot(v, w) > 0
 
 
+def point_projection_is_on_line(point, line_start, line_end):
+    """Return true iff the point projection intersects the line.
+
+    :param point: 
+    :param line_start:
+    :param line_end:
+    :return:
+    """
+    # We take the dot product to determine if the point intersects the line
+    v = line_end - point
+    w = point - line_start
+    return np.dot(v, w) > 0
+
+
 def is_collinear(point_0, point_1, point_2, error=0.001):
     """Return true iff the three points are collinear
 
