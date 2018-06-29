@@ -15,7 +15,7 @@ __all__ = ['Structure2D']
 
 
 class Structure2D(catecs.World):
-    def __init__(self):
+    def __init__(self, minimum_element_distance=0.1):
         # Initialize the world
         super().__init__()
         # Initialize the general entity for all the static components of the structure
@@ -27,17 +27,25 @@ class Structure2D(catecs.World):
         self.load_combinations_component = self.add_component(self.general_entity_id, LoadCombinationsComponent())
         # Initialize the id of the linear system
         self.linear_analysis_system_id = None
+        # Initialize the post processor
+        self.post_processor = None
+        # Initialize the variables of the structure
+        self.minimum_element_distance = minimum_element_distance
 
     def search_for_point(self, coordinate, error=0.001):
         for entity, point in self.get_component(geometries.Point2D):
             if np.linalg.norm(coordinate - point.point_list[0]) < error:
-                return entity
+                return entity, point
         else:
             return None
 
     def position_to_id(self, coordinate):
         if isinstance(coordinate, list):
-            return self.search_for_point(coordinate)
+            tuple = self.search_for_point(coordinate)
+            if tuple is None:
+                return tuple
+            else:
+                return tuple[0]
         else:
             return coordinate
 
@@ -119,20 +127,22 @@ class Structure2D(catecs.World):
             lc_id = self.load_combinations_component.add_load_case(load_case)
             self.add_component_at_entity(entity_id, loads.QLoad2D(q_load_func, lc_id), unique=False)
 
-    def solve_linear_system(self, minimum_element_distance=0.1):
+    def solve_linear_system(self):
         # If there is no load combination defined
         if len(self.load_combinations_component.load_combinations) is 0:
             # Add the generic load combination
             self.load_combinations_component.add_generic_load_combination()
 
         # Run the system: preprocessor 2D
-        self.run_system(PreProcessor2D(minimum_element_distance))
+        self.run_system(PreProcessor2D(self.minimum_element_distance))
         # Add linear calculation system and solve
         self.linear_analysis_system_id =\
             self.add_system(LinearAnalysis("linear_calculation",
                                            list(self.load_combinations_component.load_combinations.keys())))
         # Process linear calculation system
         self.process_systems(self.linear_analysis_system_id)
+        # Create an instance of the post processor for this structure with the linear analysis
+        self.post_processor = PostProcessor2D(self, self.get_system(self.linear_analysis_system_id))
 
     def _determine_plot_window(self):
         # Initialize the plot window
@@ -163,21 +173,39 @@ class Structure2D(catecs.World):
         # Return the plot window
         return plot_window
 
+    def get_point_displacement_vector(self, coordinate, load_combination='generic_load_combination'):
+        # Get the entity id and the instance of the point
+        entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance+0.01)
+        # If the point exists
+        if point is not None:
+            load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
+            return self.post_processor.linear_analysis_results.get_node_displacement_vector(point, load_combination_id)
+        else:
+            return None
+
+    def get_point_global_force_vector(self, coordinate, load_combination='generic_load_combination'):
+        # Get the entity id and the instance of the point
+        entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance + 0.01)
+        # If the point exists
+        if point is not None:
+            load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
+            return self.post_processor.linear_analysis_results.get_node_global_force(point, load_combination_id)
+        else:
+            return None
+
     def show_structure(self, load_combination='generic_load_combination', plot_window=None, path_svg=None, scale=1.0):
-        # Create an instance of the post processor for this structure with the linear analysis
-        pp = PostProcessor2D(self, self.get_system(self.linear_analysis_system_id))
         # Draw the structure
-        pp.draw_structure()
+        self.post_processor.draw_structure()
         # Draw the supports
-        pp.draw_supports(0.25)
+        self.post_processor.draw_supports(0.25)
         # Draw the structure results
         load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
-        pp.draw_structure_results(load_combination_id, True, True, True, True, scale)
+        self.post_processor.draw_structure_results(load_combination_id, True, True, True, True, scale)
         # Show the structure
         if plot_window is None:
-            pp.show_structure(self._determine_plot_window())
+            self.post_processor.show_structure(self._determine_plot_window())
         else:
-            pp.show_structure(plot_window)
+            self.post_processor.show_structure(plot_window)
         # If there is a path given for the svg then save the structure as an svg
         if path_svg is not None:
-            pp.save_as_svg(path_svg)
+            self.post_processor.save_as_svg(path_svg)

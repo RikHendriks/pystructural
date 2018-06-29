@@ -1,5 +1,7 @@
 import numpy as np
 
+import copy
+
 from pystructural.solver.components.additional_components.calculation_components import *
 
 from pystructural.solver.components.geometries import line_elements, Point2D
@@ -92,8 +94,11 @@ class LinearAnalysisResults2D:
 
         # Determine the node displacement vector
         for i in range(3):
-            global_id = self.dof_calculation_component.local_to_global_dof_dict[node_id][i]
-            node_displacement_vector += \
+            j = copy.deepcopy(i)
+            if j == 2:
+                j = 5
+            global_id = self.dof_calculation_component.local_to_global_dof_dict[node_id][j]
+            node_displacement_vector[i] += \
                 self.displacement_and_load_vectors_component.displacement_vectors[load_combination][global_id]
 
         # Return the node displacement vector
@@ -108,8 +113,11 @@ class LinearAnalysisResults2D:
 
         # Determine the node displacement vector
         for i in range(3):
-            global_id = self.dof_calculation_component.local_to_global_dof_dict[node_id][i]
-            node_force_vector += \
+            j = copy.deepcopy(i)
+            if j == 2:
+                j = 5
+            global_id = self.dof_calculation_component.local_to_global_dof_dict[node_id][j]
+            node_force_vector[i] += \
                 self.displacement_and_load_vectors_component.load_vectors[load_combination][global_id]
 
         # Return the node displacement vector
