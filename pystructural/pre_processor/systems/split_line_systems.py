@@ -1,6 +1,6 @@
 import catecs
 
-from pystructural.core.math import point_is_near_point, point_is_on_line
+from pystructural.core.math_ps import point_is_near_point, point_is_on_line
 from pystructural.solver.components.geometries import Line2D, Point2D
 
 __all__ = ['SplitLine']

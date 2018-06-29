@@ -74,7 +74,7 @@ class LinearAnalysisResults2D:
                     element = self.structure.get_component_from_entity(node_tuple[0], line_element_class)
                     break
             # Get the local force vector
-            local_force_vector = self.get_element_local_force(element, load_combination)
+            local_force_vector = self.get_element_local_force_vector(element, load_combination)
             # Get the first or last three items depending on if the node is the first or the second node in the line
             # The minus for the 1 case is that for the plotting the values are all on one side
             if node_tuple[2] == 0:
@@ -142,7 +142,7 @@ class LinearAnalysisResults2D:
         # Return the element displacement vector
         return element_displacement_vector
 
-    def get_element_global_force(self, element_instance, load_combination):
+    def get_element_global_force_vector(self, element_instance, load_combination):
         # Get the displacement vector of the element
         element_displacement_vector = self.get_element_displacement_vector(element_instance, load_combination)
         # Calculate the global force vector of the element
@@ -151,7 +151,7 @@ class LinearAnalysisResults2D:
         # Return the element global force vector
         return element_global_force_vector
 
-    def get_element_local_force(self, element_instance, load_combination):
+    def get_element_local_force_vector(self, element_instance, load_combination):
         # Return the element local force vector
         return np.matmul(element_instance.geometry.global_to_local_matrix,
-                         self.get_element_global_force(element_instance, load_combination))
+                         self.get_element_global_force_vector(element_instance, load_combination))

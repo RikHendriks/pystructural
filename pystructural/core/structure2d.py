@@ -1,6 +1,8 @@
 import numpy as np
 import catecs
 
+from ..core import math_ps
+
 from ..solver.components import element_geometries, elements, geometries, connections, loads, materials, support,\
     additional_components
 
@@ -34,7 +36,7 @@ class Structure2D(catecs.World):
 
     def search_for_point(self, coordinate, error=0.001):
         for entity, point in self.get_component(geometries.Point2D):
-            if np.linalg.norm(coordinate - point.point_list[0]) < error:
+            if math_ps.point_is_near_point(coordinate, point.point_list[0], error):
                 return entity, point
         else:
             return None
@@ -48,6 +50,17 @@ class Structure2D(catecs.World):
                 return tuple[0]
         else:
             return coordinate
+
+    def search_for_line_element(self, coordinate, error=0.001):
+        # For every line 2d in teh structure
+        for entity, line in self.get_component(geometries.Line2D):
+            # If the projection of the given coordinate is on the line 2d
+            if math_ps.point_projection_is_on_line(coordinate, line.point_list[0], line.point_list[1]):
+                # If the distance from the coordinate and the projection is smaller than the given error return
+                if math_ps.point_line_projection_distance(coordinate, line.point_list[0], line.point_list[1]) < error:
+                    return entity, line
+        else:
+            return None
 
     def add_node(self, position):
         return self.add_entity(geometries.Point2D(position[0], position[1]))
@@ -178,6 +191,7 @@ class Structure2D(catecs.World):
         entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance+0.01)
         # If the point exists
         if point is not None:
+            # Get the load combination id
             load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
             return self.post_processor.linear_analysis_results.get_node_displacement_vector(point, load_combination_id)
         else:
@@ -188,8 +202,37 @@ class Structure2D(catecs.World):
         entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance + 0.01)
         # If the point exists
         if point is not None:
+            # Get the load combination id
             load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
             return self.post_processor.linear_analysis_results.get_node_global_force(point, load_combination_id)
+        else:
+            return None
+
+    def get_line_force_vector(self, coordinate, load_combination='generic_load_combination', local=False):
+        # Get the entity id and the instance of the line
+        tuple = self.search_for_line_element(coordinate)
+        if tuple is None:
+            return None
+        else:
+            entity_id, _ = tuple
+        # If the line exists
+        if entity_id is not None:
+            # Get the element instance
+            for line_element_class in geometries.line_elements:
+                if self.has_component(entity_id, line_element_class):
+                    element_instance = self.get_component_from_entity(entity_id, line_element_class)
+                    break
+            else:
+                return None
+            # Get the load combination id
+            load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
+            # Get the element local force vector
+            if local:
+                return self.post_processor.linear_analysis_results.get_element_local_force_vector(element_instance,
+                                                                                                  load_combination_id)
+            else:
+                return self.post_processor.linear_analysis_results.get_element_global_force_vector(element_instance,
+                                                                                                   load_combination_id)
         else:
             return None
 
