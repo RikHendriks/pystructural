@@ -28,27 +28,27 @@ class Structure2D(catecs.World):
         # Initialize the id of the linear system
         self.linear_analysis_system_id = None
 
-    def search_for_point(self, position, error=0.001):
+    def search_for_point(self, coordinate, error=0.001):
         for entity, point in self.get_component(geometries.Point2D):
-            if np.linalg.norm(position - point.point_list[0]) < error:
+            if np.linalg.norm(coordinate - point.point_list[0]) < error:
                 return entity
         else:
             return None
 
-    def position_to_id(self, position):
-        if isinstance(position, list):
-            return self.search_for_point(position)
+    def position_to_id(self, coordinate):
+        if isinstance(coordinate, list):
+            return self.search_for_point(coordinate)
         else:
-            return position
+            return coordinate
 
     def add_node(self, position):
         return self.add_entity(geometries.Point2D(position[0], position[1]))
 
-    def add_component_at_position(self, position, component_instance, unique=True):
+    def add_component_at_coordinate(self, coordinate, component_instance, unique=True):
         # Determine the entity based on the position
-        entity_id = self.position_to_id(position)
+        entity_id = self.position_to_id(coordinate)
         if entity_id is None:
-            entity_id = self.add_node(position)
+            entity_id = self.add_node(coordinate)
 
         # Add the component to the entity
         self.add_component_at_entity(entity_id, component_instance, unique)
@@ -60,16 +60,16 @@ class Structure2D(catecs.World):
         else:
             self.add_component(entity_id, component_instance)
 
-    def add_frame_element(self, start_position, end_position, youngs_modulus, mass_density, cross_section_area,
+    def add_frame_element(self, start_coordinate, end_coordinate, youngs_modulus, mass_density, cross_section_area,
                           moment_of_inertia):
-        entity_start_id = self.position_to_id(start_position)
-        entity_end_id = self.position_to_id(end_position)
+        entity_start_id = self.position_to_id(start_coordinate)
+        entity_end_id = self.position_to_id(end_coordinate)
 
         if entity_start_id is None:
-            entity_start_id = self.add_node(start_position)
+            entity_start_id = self.add_node(start_coordinate)
 
         if entity_end_id is None:
-            entity_end_id = self.add_node(end_position)
+            entity_end_id = self.add_node(end_coordinate)
 
         # Create the frame element entity
         frame_element_id = self.add_entity(geometries.Line2D(entity_start_id, entity_end_id),
@@ -85,29 +85,29 @@ class Structure2D(catecs.World):
         # Return the frame element entity id
         return frame_element_id
 
-    def add_support(self, position, displacement_x=True, displacement_y=True, rotation_z=True):
+    def add_support(self, coordinate, displacement_x=True, displacement_y=True, rotation_z=True):
         # Create the support component
         support_component = support.Support(displacement_x=displacement_x, displacement_y=displacement_y,
                                             rotation_z=rotation_z)
         # Add the component to the position
-        self.add_component_at_position(position, support_component)
+        self.add_component_at_coordinate(coordinate, support_component)
 
-    def add_spring(self, position, spring_x=None, spring_y=None, rotation_spring_z=None):
+    def add_spring(self, coordinate, spring_x=None, spring_y=None, rotation_spring_z=None):
         # Create the spring component
         spring_component = connections.Spring(spring_x=spring_x, spring_y=spring_y, rotation_spring_z=rotation_spring_z)
         # Add the component to the position
-        self.add_component_at_position(position, spring_component)
+        self.add_component_at_coordinate(coordinate, spring_component)
 
     def add_load_combination(self, load_combination_name, load_cases):
         # Add a new load combination to the
         self.load_combinations_component.add_load_combination(load_combination_name, load_cases, True)
 
-    def add_point_load(self, position, point_load, load_case=None):
+    def add_point_load(self, coordinate, point_load, load_case=None):
         # Create the spring component
         lc_id = self.load_combinations_component.add_load_case(load_case)
         point_load_component = loads.PointLoad2D(point_load, lc_id)
         # Add the component to the position
-        self.add_component_at_position(position, point_load_component, unique=False)
+        self.add_component_at_coordinate(coordinate, point_load_component, unique=False)
 
     def add_global_q_load(self, entity_id, q_load, load_case=None):
         def q_load_func(x):
