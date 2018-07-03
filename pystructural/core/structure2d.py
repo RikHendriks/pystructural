@@ -1,17 +1,12 @@
-import numpy as np
 import catecs
 
+from pystructural.post_processor.post_processor import PostProcessor2D
+from pystructural.pre_processor.pre_processor import PreProcessor2D
 from ..core import math_ps
-
-from ..solver.components import element_geometries, elements, geometries, connections, loads, materials, support,\
+from ..solver.components import element_geometries, elements, geometries, connections, loads, materials, support, \
     additional_components
-
 from ..solver.components.load_combination import LoadCombinationsComponent
 from ..solver.systems import LinearAnalysis
-
-from pystructural.pre_processor.pre_processor import PreProcessor2D
-
-from pystructural.post_processor.post_processor import PostProcessor2D
 
 __all__ = ['Structure2D']
 
@@ -233,14 +228,16 @@ class Structure2D(catecs.World):
                 return self.post_processor.linear_analysis_results.get_element_global_force_vector(element_instance,
                                                                                                    load_combination_id)
 
-    def show_structure(self, load_combination='generic_load_combination', plot_window=None, path_svg=None, scale=1.0):
+    def show_structure(self, load_combination='generic_load_combination', plot_window=None, path_svg=None,
+                       displacement_scale=100.0, dof_scale=0.1, support_scale=0.25):
         # Draw the structure
         self.post_processor.draw_structure()
         # Draw the supports
-        self.post_processor.draw_supports(0.25)
+        self.post_processor.draw_supports(support_scale)
         # Draw the structure results
         load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
-        self.post_processor.draw_structure_results(load_combination_id, True, True, True, True, scale)
+        self.post_processor.draw_structure_results(load_combination_id, True, True, True, True,
+                                                   displacement_scale, dof_scale)
         # Show the structure
         if plot_window is None:
             self.post_processor.show_structure(self._determine_plot_window())
