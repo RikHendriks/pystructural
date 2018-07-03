@@ -56,11 +56,13 @@ class LoadCombinationsComponent:
                                  switch_load_cases]
         # If there are switch list load cases
         if switch_list_load_cases:
-            switch_list_load_cases = itertools.product(*[load_case.items() for load_case in switch_list_load_cases])
-            switch_list_load_cases = [{load_case[0]: load_case[1] for load_case in load_combination} for
-                                      load_combination in switch_list_load_cases]
+            switch_list_load_cases = [itertools.product(*[load_case.items() for load_case in switch_load_case]) for
+                                      switch_load_case in switch_list_load_cases]
+            switch_list_load_cases = [[{load_case[0]: load_case[1] for load_case in load_combination} for
+                                      load_combination in switch_load_case] for
+                                      switch_load_case in switch_list_load_cases]
         # Add the three load cases to each other to obtain all the load combinations
-        load_combination_list = itertools.product(switch_load_cases, switch_list_load_cases)
+        load_combination_list = itertools.product(switch_load_cases, *switch_list_load_cases)
         load_combination_list = [{k: v for load_case in load_combination for k, v in load_case.items()} for
                                  load_combination in load_combination_list]
         # Add the permanent load cases to each load combination
