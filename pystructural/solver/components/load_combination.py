@@ -32,7 +32,11 @@ class LoadCombinationsComponent:
 
     def add_load_combination(self, load_combination_name, load_cases, is_name=False):
         if is_name:
-            load_cases = {self.load_case_names[k]: v for k, v in load_cases.items()}
+            load_cases_dict = {}
+            for k, v in load_cases.items():
+                self.add_load_case(k)
+                load_cases_dict[self.load_case_names[k]] = v
+            load_cases = load_cases_dict
         # Load cases is a dict of {load_case_name: factor}
         self.load_combinations[self.current_load_combination_id] = load_cases
         self.load_combination_names[load_combination_name] = self.current_load_combination_id
