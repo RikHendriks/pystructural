@@ -114,9 +114,9 @@ class Structure2D(catecs.World):
         # Add the component to the position
         self.add_component_at_coordinate(coordinate, spring_component)
 
-    def add_load_combination(self, load_combination_name, load_cases):
+    def add_load_combination(self, load_combination_name, load_cases, check_copy=False):
         # Add a new load combination to the
-        self.load_combinations_component.add_load_combination(load_combination_name, load_cases, True)
+        self.load_combinations_component.add_load_combination(load_combination_name, load_cases, True, check_copy)
 
     def add_point_load(self, coordinate, point_load, load_case=None):
         # Create the spring component
