@@ -203,6 +203,17 @@ class Structure2D(catecs.World):
         else:
             return None
 
+    def get_point_support_global_force_vector(self, coordinate, load_combination='generic_load_combination'):
+        # Get the entity id and the instance of the point
+        entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance + 0.01)
+        # If the point exists
+        if point is not None:
+            # Get the load combination id
+            load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
+            return self.post_processor.linear_analysis_results.get_support_node_global_force(point, load_combination_id)
+        else:
+            return None
+
     def get_line_force_vector(self, coordinate, load_combination='generic_load_combination', local=False):
         # Get the entity id and the instance of the line
         tuple = self.search_for_line_element(coordinate)
