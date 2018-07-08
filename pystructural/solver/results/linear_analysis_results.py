@@ -4,6 +4,7 @@ import copy
 
 from pystructural.solver.components.additional_components.calculation_components import *
 
+from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
 from pystructural.solver.components.geometries import line_elements, Point2D
 from pystructural.pre_processor.components import LineElementSortComponent
 
@@ -105,7 +106,7 @@ class LinearAnalysisResults2D:
         return node_displacement_vector
 
     def get_node_global_force(self, node_instance, load_combination):
-        # Initialize the node displacement vector
+        # Initialize the node global force vector
         node_force_vector = np.zeros([3])
 
         # Determine the entity id
@@ -120,8 +121,28 @@ class LinearAnalysisResults2D:
             node_force_vector[i] += \
                 self.displacement_and_load_vectors_component.load_vectors[load_combination][global_id]
 
-        # Return the node displacement vector
+        # Return the node global force vector
         return node_force_vector
+
+    def get_support_node_global_force(self, node_instance, load_combination):
+        # Intialize the support force vector
+        support_force_vector = np.zeros(3)
+
+        # Determine the entity id
+        node_id = node_instance.point_id_list[0]
+
+        # For all elements in the structure
+        for element_class in element_subclasses_2d:
+            for entity, components in self.structure.get_components(element_class.compatible_geometry, element_class):
+                # Check if the node_instance is used in the element
+                for i in range(len(components[1].geometry.point_id_list)):
+                    if node_id == components[1].geometry.point_id_list[i]:
+                        support_force_vector += self.get_element_global_force_vector(components[1], load_combination)[
+                            3*i:3*i+3]
+                        break
+
+        # Return the support global force vector
+        return support_force_vector
 
     # TODO add a dimension variable to the element class
     def get_element_displacement_vector(self, element_instance, load_combination):

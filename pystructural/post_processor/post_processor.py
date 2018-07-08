@@ -1,15 +1,13 @@
-import numpy as np
 import copy
 
-from .canvas import Canvas
+import numpy as np
 
+from pystructural.pre_processor.components import LineElementSortComponent
 from pystructural.solver.components.geometries import Point2D, Line2D
 from pystructural.solver.components.support import Support
-from pystructural.pre_processor.components import LineElementSortComponent
-
 from pystructural.solver.results import LinearAnalysisResults2D
-
 from . import canvas_symbols
+from .canvas import Canvas
 
 __all__ = ['PostProcessor2D']
 
@@ -143,15 +141,16 @@ class PostProcessor2D:
                 self.canvas.draw_text(text_position, str(round(value, decimal_rounding)))
 
     def draw_structure_results(self, load_combination, draw_displacements=False, draw_shear_force=False,
-                               draw_normal_force=False, draw_torque=False, scale=1.0, decimal_rounding=2):
+                               draw_normal_force=False, draw_torque=False,
+                               displacement_scale=1.0, dof_scale=1.0, decimal_rounding=2):
         if draw_displacements:
-            self.draw_displacements(load_combination, scale, decimal_rounding, 'purple')
+            self.draw_displacements(load_combination, displacement_scale, decimal_rounding, 'purple')
         if draw_normal_force:
-            self.draw_dof(0, load_combination, scale, decimal_rounding, 'blue')
+            self.draw_dof(0, load_combination, dof_scale, decimal_rounding, 'blue')
         if draw_shear_force:
-            self.draw_dof(1, load_combination, scale, decimal_rounding, 'green')
+            self.draw_dof(1, load_combination, dof_scale, decimal_rounding, 'green')
         if draw_torque:
-            self.draw_dof(2, load_combination, scale, decimal_rounding, 'red')
+            self.draw_dof(2, load_combination, dof_scale, decimal_rounding, 'red')
 
     def show_structure(self, plot_window):
         # Show the structure with matplotlib

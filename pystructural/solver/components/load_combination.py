@@ -30,12 +30,22 @@ class LoadCombinationsComponent:
         else:
             return self._add_new_load_case(load_case_name)
 
-    def add_load_combination(self, load_combination_name, load_cases, is_name=False):
+    def add_load_combination(self, load_combination_id, load_cases, is_name=False, check_copy=False):
+        # If the load cases are given with names instead of id's
         if is_name:
-            load_cases = {self.load_case_names[k]: v for k, v in load_cases.items()}
+            load_cases_dict = {}
+            for k, v in load_cases.items():
+                self.add_load_case(k)
+                load_cases_dict[self.load_case_names[k]] = v
+            load_cases = load_cases_dict
+        # If the load case already exists as a load combination then don't add it
+        if check_copy:
+            for load_combination_id in self.load_combinations:
+                if load_cases == self.load_combinations[load_combination_id]:
+                    return load_combination_id
         # Load cases is a dict of {load_case_name: factor}
         self.load_combinations[self.current_load_combination_id] = load_cases
-        self.load_combination_names[load_combination_name] = self.current_load_combination_id
+        self.load_combination_names[load_combination_id] = self.current_load_combination_id
         self.current_load_combination_id += 1
         return self.current_load_combination_id - 1
 
@@ -45,7 +55,8 @@ class LoadCombinationsComponent:
                 yield load_combination_id, self.load_combinations[load_combination_id][load_case_id]
 
     def load_combination_creator(self, load_combination_name,
-                                 permanent_load_cases=None, switch_load_cases=None, switch_list_load_cases=None):
+                                 permanent_load_cases=None, switch_load_cases=None, switch_list_load_cases=None,
+                                 check_copy=False):
         # If there is are permanent load cases
         if permanent_load_cases is None:
             permanent_load_cases = {}
@@ -56,11 +67,13 @@ class LoadCombinationsComponent:
                                  switch_load_cases]
         # If there are switch list load cases
         if switch_list_load_cases:
-            switch_list_load_cases = itertools.product(*[load_case.items() for load_case in switch_list_load_cases])
-            switch_list_load_cases = [{load_case[0]: load_case[1] for load_case in load_combination} for
-                                      load_combination in switch_list_load_cases]
+            switch_list_load_cases = [itertools.product(*[load_case.items() for load_case in switch_load_case]) for
+                                      switch_load_case in switch_list_load_cases]
+            switch_list_load_cases = [[{load_case[0]: load_case[1] for load_case in load_combination} for
+                                      load_combination in switch_load_case] for
+                                      switch_load_case in switch_list_load_cases]
         # Add the three load cases to each other to obtain all the load combinations
-        load_combination_list = itertools.product(switch_load_cases, switch_list_load_cases)
+        load_combination_list = itertools.product(switch_load_cases, *switch_list_load_cases)
         load_combination_list = [{k: v for load_case in load_combination for k, v in load_case.items()} for
                                  load_combination in load_combination_list]
         # Add the permanent load cases to each load combination
@@ -68,7 +81,7 @@ class LoadCombinationsComponent:
             load_case.update(permanent_load_cases)
         # Add the load combinations
         for i in range(len(load_combination_list)):
-            self.add_load_combination(load_combination_name + str(i), load_combination_list[i], True)
+            self.add_load_combination(load_combination_name + str(i), load_combination_list[i], True, check_copy)
 
 
 def powerset(iterable):
