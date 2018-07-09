@@ -5,6 +5,7 @@ class Element:
     compatible_geometry = None
     compatible_materials = None
     compatible_element_geometries = None
+    element_dimension = None
 
     def __init__(self):
         # Geometry

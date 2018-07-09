@@ -9,6 +9,7 @@ class LinearTriangleElement2D(Element):
     compatible_geometry = Triangle2D
     compatible_materials = []
     compatible_element_geometries = []
+    element_dimension = 6
 
     def __init__(self):
         super().__init__()

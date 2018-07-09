@@ -13,6 +13,7 @@ class FrameElement2D(Element):
     compatible_geometry = Line2D
     compatible_materials = [LinearElasticity2DMaterial]
     compatible_element_geometries = [BeamElementGeometry]
+    element_dimension = 6
 
     def __init__(self):
         # Element properties

@@ -11,7 +11,6 @@ from pystructural.pre_processor.components import LineElementSortComponent
 __all__ = ['LinearAnalysisResults2D']
 
 
-# TODO Change this class with the new components from the linear calculation component
 class LinearAnalysisResults2D:
     def __init__(self, structure, analysis):
         self.structure = structure
@@ -144,10 +143,9 @@ class LinearAnalysisResults2D:
         # Return the support global force vector
         return support_force_vector
 
-    # TODO add a dimension variable to the element class
     def get_element_displacement_vector(self, element_instance, load_combination):
         # Determine the dimension of the element displacement vector
-        dim = element_instance.stiffness_matrix.shape[0]
+        dim = element_instance.element_dimension
 
         # Initialize the element displacement vector
         element_displacement_vector = np.zeros([dim])
