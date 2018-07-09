@@ -132,7 +132,7 @@ class Structure2D(catecs.World):
 
     def add_global_q_load_line(self, entity_id, q_load, x_start, x_end, load_case=None):
         def q_load_func(x):
-            if x_start <= x <= x_end:
+            if x_start <= x[0] <= x_end:
                 return q_load
             else:
                 return 0.0
