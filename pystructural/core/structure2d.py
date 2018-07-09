@@ -130,6 +130,14 @@ class Structure2D(catecs.World):
             return q_load
         self.add_global_q_load_func(entity_id, q_load_func, load_case)
 
+    def add_global_q_load_line(self, entity_id, q_load, x_start, x_end, load_case=None):
+        def q_load_func(x):
+            if x_start <= x <= x_end:
+                return q_load
+            else:
+                return 0.0
+        self.add_global_q_load_func(entity_id, q_load_func, load_case)
+
     def add_global_q_load_func(self, entity_id, q_load_func, load_case=None):
         if entity_id in self.entities:
             lc_id = self.load_combinations_component.add_load_case(load_case)
