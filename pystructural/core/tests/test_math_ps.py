@@ -77,3 +77,11 @@ def test_is_collinear():
     assert is_collinear(p1, l1, l2)
     assert is_collinear(-p1, l1, l2)
     assert not is_collinear(p2, l1, l2)
+
+
+def test_line_to_unit_interval():
+    assert False
+
+
+def test_line_embedding():
+    assert False

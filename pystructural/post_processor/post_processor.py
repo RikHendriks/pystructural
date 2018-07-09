@@ -73,6 +73,7 @@ class PostProcessor2D:
                 # Spring y symbol
                 # TODO add the spring y symbol here
 
+    # TODO place the general draw function outside of the following three functions
     def draw_displacements(self, load_combination, scale=1.0, decimal_rounding=2, color='blue'):
         # For every group of line elements
         for group_id in self.line_element_sort.group_id_generator():
@@ -82,7 +83,8 @@ class PostProcessor2D:
             previous_position_vector = None
             previous_position_value_vector = None
             # For every line in the group of line elements
-            for position_vector, displacement_vector in self.linear_analysis_results.displacement_generator(group_id, load_combination):
+            for position_vector, displacement_vector in \
+                    self.linear_analysis_results.displacement_generator(group_id, load_combination):
                 # Scale the displacement vector
                 displacement_vector *= scale
                 # Draw the line of the displacement vector
@@ -116,7 +118,8 @@ class PostProcessor2D:
             # Initialize the variable for the previous dof value
             previous_dof_vector = None
             previous_dof_value_vector = None
-            for position_vector, dof_value in self.linear_analysis_results.global_dof_generator(group_id, dof, load_combination):
+            for position_vector, dof_value in self.linear_analysis_results.global_dof_generator(group_id, dof,
+                                                                                                load_combination):
                 # Scale the dof value
                 dof_value *= scale
                 # Draw the line of the dof value
@@ -137,6 +140,63 @@ class PostProcessor2D:
             self.canvas.draw_line(previous_dof_value_vector, previous_dof_vector, color)
             # Plot the point of interests
             poi = poid.get_points_of_interest()
+            for _, text_position, value in poi:
+                self.canvas.draw_text(text_position, str(round(value, decimal_rounding)))
+
+    def draw_dof_load_combinations(self, dof, load_combinations, scale=1.0, decimal_rounding=2, color_min='red',
+                                   color_max='blue'):
+        # For every group of line elements
+        for group_id in self.line_element_sort.group_id_generator():
+            # Point of interest detector class instance for the min and the max values
+            poid_min = PointOfInterestDetector()
+            poid_max = PointOfInterestDetector()
+            # Get the tangent vector for the group of line elements
+            tangent_vector = self.linear_analysis_results.group_tangent_vector(group_id)
+            # Initialize the variable for the previous dof value
+            previous_dof_vector = None
+            previous_dof_value_vector_min = None
+            previous_dof_value_vector_max = None
+            for position_vector, dof_value_list in \
+                    self.linear_analysis_results.global_dof_load_combinations_generator(group_id, dof,
+                                                                                        load_combinations):
+                # Scale the dof value
+                dof_value_min = scale * min(0, *dof_value_list)
+                dof_value_max = scale * max(0, *dof_value_list)
+                # Draw the line of the dof value min
+                if previous_dof_value_vector_min is not None:
+                    # Draw the line
+                    self.canvas.draw_line(previous_dof_value_vector_min, position_vector + tangent_vector *
+                                          dof_value_min, color_min)
+                else:
+                    # Draw the line from zero
+                    self.canvas.draw_line(position_vector, position_vector + tangent_vector * dof_value_min, color_min)
+                # Draw the line of the dof value max
+                if previous_dof_value_vector_max is not None:
+                    # Draw the line
+                    self.canvas.draw_line(previous_dof_value_vector_max, position_vector + tangent_vector *
+                                          dof_value_max, color_max)
+                else:
+                    # Draw the line from zero
+                    self.canvas.draw_line(position_vector, position_vector + tangent_vector * dof_value_max,
+                                          color_max)
+                # Add the value to the point of interest detector
+                poid_min.add_value(position_vector, position_vector + tangent_vector * dof_value_min, dof_value_min /
+                                   scale)
+                poid_max.add_value(position_vector, position_vector + tangent_vector * dof_value_max, dof_value_max /
+                                   scale)
+                # Set the previous position dof position
+                previous_dof_vector = copy.deepcopy(position_vector)
+                # Set the previous position dof value position
+                previous_dof_value_vector_min = copy.deepcopy(position_vector + tangent_vector * dof_value_min)
+                previous_dof_value_vector_max = copy.deepcopy(position_vector + tangent_vector * dof_value_max)
+            # Draw the last line
+            self.canvas.draw_line(previous_dof_value_vector_min, previous_dof_vector, color_min)
+            self.canvas.draw_line(previous_dof_value_vector_max, previous_dof_vector, color_max)
+            # Plot the point of interests
+            poi = poid_min.get_points_of_interest()
+            for _, text_position, value in poi:
+                self.canvas.draw_text(text_position, str(round(value, decimal_rounding)))
+            poi = poid_max.get_points_of_interest()
             for _, text_position, value in poi:
                 self.canvas.draw_text(text_position, str(round(value, decimal_rounding)))
 

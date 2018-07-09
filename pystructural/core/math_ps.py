@@ -1,7 +1,8 @@
 import numpy as np
 
 __all__ = ['point_is_near_point', 'point_line_projection', 'point_line_projection_distance',
-           'point_is_on_line', 'point_projection_is_on_line', 'is_collinear']
+           'point_is_on_line', 'point_projection_is_on_line', 'is_collinear',
+           'line_to_unit_interval', 'line_embedding']
 
 
 def point_is_near_point(point_0, point_1, error=0.001):
@@ -84,3 +85,32 @@ def is_collinear(point_0, point_1, point_2, error=0.001):
     v = point_2 - point_1
     w = point_0 - point_1
     return np.linalg.det(np.column_stack((v, w))) < error
+
+
+def line_to_unit_interval(point, line_start, line_end, error=0.001):
+    """Put a point on the unit interval of a line.
+
+    :param point:
+    :param line_start:
+    :param line_end:
+    :param error:
+    :return:
+    """
+    if point_is_on_line(point, line_start, line_end, error):
+        return np.linalg.norm(point - line_start) / np.linalg.norm(line_end - line_start)
+    else:
+        return None
+
+
+def line_embedding(unit, line_start, line_end):
+    """Embed a unit on to the line.
+
+    :param unit:
+    :param line_start:
+    :param line_end:
+    :return:
+    """
+    if 0.0 <= unit <= 1:
+        return (1 - unit) * line_start + unit * line_end
+    else:
+        return None

@@ -8,6 +8,8 @@ from pystructural.solver.systems.analysis.element_systems import element_subclas
 from pystructural.solver.components.geometries import line_elements, Point2D
 from pystructural.pre_processor.components import LineElementSortComponent
 
+from .results import *
+
 __all__ = ['LinearAnalysisResults2D']
 
 
@@ -85,6 +87,24 @@ class LinearAnalysisResults2D:
             yield self.structure.get_component_from_entity(node_tuple[1], Point2D).point_list[0], local_force_vector[
                 dof]
 
+    def global_dof_load_combinations_generator(self, group_id, dof, load_combinations):
+        # Initialize a LineResult instance
+        line_start = self.structure.get_component_from_entity(self.line_element_sort.groups[group_id][0][1], Point2D)
+        line_end = self.structure.get_component_from_entity(self.line_element_sort.groups[group_id][-1][1], Point2D)
+        lr = LineResults(line_start.point_list[0], line_end.point_list[0])
+
+        # For each load combination add the line values of the group
+        for load_combination in load_combinations:
+            line_values = []
+            for position_vector, dof_value in self.global_dof_generator(group_id, dof, load_combination):
+                line_values.append([position_vector, dof_value])
+            # Add the line values to the LineResults instance
+            lr.add_line_values(line_values)
+
+        # For each combined line value
+        for position_vector, dof_value_list in lr.combined_line_value_generator():
+            yield position_vector, dof_value_list
+
     def get_node_displacement_vector(self, node_instance, load_combination):
         # Initialize the node displacement vector
         node_displacement_vector = np.zeros([3])
@@ -124,7 +144,7 @@ class LinearAnalysisResults2D:
         return node_force_vector
 
     def get_support_node_global_force(self, node_instance, load_combination):
-        # Intialize the support force vector
+        # Initialize the support force vector
         support_force_vector = np.zeros(3)
 
         # Determine the entity id
