@@ -32,6 +32,12 @@ class FrameElement2D(Element):
         dof_id_list = self.get_dof().get_dof_id_list()
         return self.geometry.point_id_list[x//3], dof_id_list[x % 3]
 
+    def get_node_and_dof_variable_to_stiffness_coordinate(self, node_id, dof_id):
+        if dof_id == self.geometry.point_id_list[0]:
+            return {0: 0, 1: 1, 5: 2}[dof_id]
+        else:
+            return {0: 3, 1: 4, 5: 5}[dof_id]
+
     def compute_element_properties(self):
         # Compute the ea
         self.ea = self.material.youngs_modulus * self.element_geometry.cross_section_area

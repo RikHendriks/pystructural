@@ -118,30 +118,37 @@ class Structure2D(catecs.World):
         # Add a new load combination to the
         self.load_combinations_component.add_load_combination(load_combination_name, load_cases, True, check_copy)
 
-    def add_point_load(self, coordinate, point_load, load_case=None):
+    def add_point_load(self, coordinate, point_load, load_case=None, is_imposed=False):
         # Create the spring component
         lc_id = self.load_combinations_component.add_load_case(load_case)
         point_load_component = loads.PointLoad2D(point_load, lc_id)
         # Add the component to the position
         self.add_component_at_coordinate(coordinate, point_load_component, unique=False)
+        # Add the imposed load component
+        if is_imposed:
+            self.add_component_at_coordinate(coordinate, loads.ImposedLoadComponent(), unique=False)
 
-    def add_global_q_load(self, entity_id, q_load, load_case=None):
+    def add_global_q_load(self, entity_id, q_load, load_case=None, is_imposed=False):
         def q_load_func(x):
             return q_load
-        self.add_global_q_load_func(entity_id, q_load_func, load_case)
+        self.add_global_q_load_func(entity_id, q_load_func, load_case, is_imposed)
 
-    def add_global_q_load_line(self, entity_id, q_load, x_start, x_end, load_case=None):
+    def add_global_q_load_line(self, entity_id, q_load, x_start, x_end, load_case=None, is_imposed=False):
         def q_load_func(x):
             if x_start <= x[0] <= x_end:
                 return q_load
             else:
                 return 0.0
-        self.add_global_q_load_func(entity_id, q_load_func, load_case)
+        self.add_global_q_load_func(entity_id, q_load_func, load_case, is_imposed)
 
-    def add_global_q_load_func(self, entity_id, q_load_func, load_case=None):
+    def add_global_q_load_func(self, entity_id, q_load_func, load_case=None, is_imposed=False):
         if entity_id in self.entities:
             lc_id = self.load_combinations_component.add_load_case(load_case)
             self.add_component_at_entity(entity_id, loads.QLoad2D(q_load_func, lc_id), unique=False)
+            # Add the imposed load component
+            if is_imposed:
+                self.add_component_at_entity(entity_id, loads.ImposedLoadComponent(), unique=False)
+
 
     def solve_linear_system(self):
         # If there is no load combination defined

@@ -3,10 +3,12 @@ import numpy as np
 import copy
 
 from pystructural.solver.components.additional_components.calculation_components import *
+from pystructural.solver.components.loads import ImposedLoadComponent
 
 from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
 from pystructural.solver.components.geometries import line_elements, Point2D
 from pystructural.pre_processor.components import LineElementSortComponent
+from pystructural.solver.systems.analysis.load_systems import load_subclasses_2d
 
 from .results import *
 
@@ -147,15 +149,12 @@ class LinearAnalysisResults2D:
         # Initialize the support force vector
         support_force_vector = np.zeros(3)
 
-        # Determine the entity id
-        node_id = node_instance.point_id_list[0]
-
         # For all elements in the structure
         for element_class in element_subclasses_2d:
             for entity, components in self.structure.get_components(element_class.compatible_geometry, element_class):
                 # Check if the node_instance is used in the element
                 for i in range(len(components[1].geometry.point_id_list)):
-                    if node_id == components[1].geometry.point_id_list[i]:
+                    if node_instance.entity_id == components[1].geometry.point_id_list[i]:
                         support_force_vector += self.get_element_global_force_vector(components[1], load_combination)[
                             3*i:3*i+3]
                         break
@@ -186,6 +185,21 @@ class LinearAnalysisResults2D:
         element_displacement_vector = self.get_element_displacement_vector(element_instance, load_combination)
         # Calculate the global force vector of the element
         element_global_force_vector = np.matmul(element_instance.stiffness_matrix, element_displacement_vector)
+
+        # Subtract the imposed loads from the force vector
+        # For each imposed load
+        for load_class in load_subclasses_2d:
+            components = self.structure.get_components_from_entity(element_instance.entity_id,
+                                                                   load_class.compatible_geometry, load_class,
+                                                                   ImposedLoadComponent)
+            if components is not None:
+                # For each dof in the load
+                for data in components[1].load_dof_generator():
+                    i = element_instance.get_node_and_dof_variable_to_stiffness_coordinate(data[0][0], data[0][1])
+                    factor = self.structure.load_combinations_component.load_combinations[load_combination][
+                        components[1].load_case_id]
+                    # Subtract the imposed load from the load vector
+                    element_global_force_vector[i] -= factor * data[1]
 
         # Return the element global force vector
         return element_global_force_vector

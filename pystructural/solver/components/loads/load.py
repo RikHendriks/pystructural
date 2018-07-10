@@ -1,4 +1,4 @@
-__all__ = ['Load']
+__all__ = ['Load', 'ImposedLoadComponent']
 
 
 class Load:
@@ -15,3 +15,7 @@ class Load:
 
     def load_dof_generator(self):
         pass
+
+
+class ImposedLoadComponent:
+    pass

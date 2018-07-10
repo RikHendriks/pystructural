@@ -18,6 +18,12 @@ class LinearTriangleElement2D(Element):
     def get_dof(self):
         return DOF(displacement_x=True, displacement_y=True)
 
+    def get_stiffness_coordinate_to_node_and_dof_variable(self, x):
+        pass
+
+    def get_node_and_dof_variable_to_stiffness_coordinate(self, node_id, dof_id):
+        pass
+
     def compute_element_properties(self):
         pass
 
