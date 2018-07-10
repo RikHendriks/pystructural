@@ -87,7 +87,7 @@ class LinearAnalysisResults2D:
             yield self.structure.get_component_from_entity(node_tuple[1], Point2D).point_list[0], local_force_vector[
                 dof]
 
-    def global_dof_load_combinations_generator(self, group_id, dof, load_combinations):
+    def global_dof_enveloping_generator(self, group_id, dof, load_combinations):
         # Initialize a LineResult instance
         line_start = self.structure.get_component_from_entity(self.line_element_sort.groups[group_id][0][1], Point2D)
         line_end = self.structure.get_component_from_entity(self.line_element_sort.groups[group_id][-1][1], Point2D)

@@ -266,15 +266,14 @@ class Structure2D(catecs.World):
         if path_svg is not None:
             self.post_processor.save_as_svg(path_svg)
 
-    def show_structure_min_max_load_combinations(self, dof, plot_window=None, path_svg=None, dof_scale=0.1,
-                                                 support_scale=0.25):
+    def show_structure_dof_enveloping(self, dof, plot_window=None, path_svg=None, dof_scale=0.1, support_scale=0.25):
         # Draw the structure
         self.post_processor.draw_structure()
         # Draw the supports
         self.post_processor.draw_supports(support_scale)
         # Draw the structure min max results
-        self.post_processor.draw_dof_load_combinations(dof, self.load_combinations_component.load_combinations.keys(),
-                                                       dof_scale)
+        self.post_processor.draw_dof_enveloping(dof, self.load_combinations_component.load_combinations.keys(),
+                                                dof_scale)
         # Show the structure
         if plot_window is None:
             self.post_processor.show_structure(self._determine_plot_window())

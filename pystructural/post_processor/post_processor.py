@@ -143,8 +143,8 @@ class PostProcessor2D:
             for _, text_position, value in poi:
                 self.canvas.draw_text(text_position, str(round(value, decimal_rounding)))
 
-    def draw_dof_load_combinations(self, dof, load_combinations, scale=1.0, decimal_rounding=2, color_min='red',
-                                   color_max='blue'):
+    def draw_dof_enveloping(self, dof, load_combinations, scale=1.0, decimal_rounding=2, color_min='red',
+                            color_max='blue'):
         # For every group of line elements
         for group_id in self.line_element_sort.group_id_generator():
             # Point of interest detector class instance for the min and the max values
@@ -157,8 +157,8 @@ class PostProcessor2D:
             previous_dof_value_vector_min = None
             previous_dof_value_vector_max = None
             for position_vector, dof_value_list in \
-                    self.linear_analysis_results.global_dof_load_combinations_generator(group_id, dof,
-                                                                                        load_combinations):
+                    self.linear_analysis_results.global_dof_enveloping_generator(group_id, dof,
+                                                                                 load_combinations):
                 # Scale the dof value
                 dof_value_min = scale * min(0, *dof_value_list)
                 dof_value_max = scale * max(0, *dof_value_list)
