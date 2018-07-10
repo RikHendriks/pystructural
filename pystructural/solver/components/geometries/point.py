@@ -1,6 +1,6 @@
 import numpy as np
 
-from pystructural.solver.components import Geometry
+from pystructural.solver.components.geometries import Geometry
 
 __all__ = ['Point2D']
 

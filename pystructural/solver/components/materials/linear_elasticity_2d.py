@@ -1,4 +1,4 @@
-from pystructural.solver.components.material import *
+from pystructural.solver.components.materials.material import *
 
 __all__ = ['LinearElasticity2DMaterial']
 

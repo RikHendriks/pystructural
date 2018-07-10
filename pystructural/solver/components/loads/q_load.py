@@ -1,4 +1,5 @@
-from pystructural.solver.components import Load, DOF
+from pystructural.solver.components import DOF
+from pystructural.solver.components.loads import Load
 
 from pystructural.solver.components.geometries import *
 

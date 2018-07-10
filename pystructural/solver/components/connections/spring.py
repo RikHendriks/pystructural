@@ -1,4 +1,4 @@
-from pystructural.solver.components.connection import Connection
+from pystructural.solver.components.connections.connection import Connection
 from pystructural.solver.components.degree_of_freedom import DOF
 
 __all__ = ['Spring']

@@ -1,6 +1,7 @@
 import numpy as np
 
-from pystructural.solver.components import Element, DOF
+from pystructural.solver.components import DOF
+from pystructural.solver.components.elements import Element
 
 from pystructural.solver.components.geometries import *
 from pystructural.solver.components.materials import *

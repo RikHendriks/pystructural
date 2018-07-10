@@ -1,3 +1,4 @@
+from .geometry import *
 from .point import *
 from .line import *
 from .triangle import *
