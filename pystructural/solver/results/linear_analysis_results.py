@@ -193,13 +193,12 @@ class LinearAnalysisResults2D:
                 # For each dof in the load
                 for data in components[1].load_dof_generator():
                     i = element_instance.get_node_and_dof_variable_to_stiffness_coordinate(data[0][0], data[0][1])
-                    try:
+                    if components[1].load_case_id in \
+                            self.structure.load_combinations_component.load_combinations[load_combination]:
                         factor = self.structure.load_combinations_component.load_combinations[load_combination][
                             components[1].load_case_id]
-                    except KeyError:
-                        factor = 0.0
-                    # Subtract the imposed load from the load vector
-                    element_global_force_vector[i] -= factor * data[1]
+                        # Subtract the imposed load from the load vector
+                        element_global_force_vector[i] -= factor * data[1]
         # Return the element global force vector
         return element_global_force_vector
 

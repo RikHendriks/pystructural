@@ -188,11 +188,10 @@ class UpdateDisplacementAndLoadVectors(catecs.System):
                 # For each dof in the load
                 for data in components[1].load_dof_generator():
                     i = self.dof_calculation_component.local_to_global_dof_dict[data[0][0]][data[0][1]]
-                    try:
+                    if components[1].load_case_id in \
+                            self.world.load_combinations_component.load_combinations[load_combination_id]:
                         factor = self.world.load_combinations_component.load_combinations[load_combination_id][
                             components[1].load_case_id]
-                    except KeyError:
-                        factor = 0.0
-                    # Subtract the imposed load from the load vector
-                    self.displacement_and_load_vectors_component.load_vectors[load_combination_id][i] -= \
-                        factor * data[1]
+                        # Subtract the imposed load from the load vector
+                        self.displacement_and_load_vectors_component.load_vectors[load_combination_id][i] -= \
+                            factor * data[1]
