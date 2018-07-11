@@ -24,5 +24,4 @@ class AddSplitNodes(catecs.System):
             # Add points at the splits
             for i in range(splits - 1):
                 node_position = line_start_point + (i + 1) * (line_vector / float(splits))
-                print(node_position)
                 self.world.add_entity(Point2D(*node_position))
