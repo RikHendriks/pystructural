@@ -56,7 +56,7 @@ def point_is_on_line(point, line_start, line_end, error=0.001):
     # We take the wedge- and dot product to determine if the point intersects the line
     v = line_end - point
     w = point - line_start
-    return np.linalg.det(np.column_stack((v, w))) < error and np.dot(v, w) >= 0
+    return abs(np.linalg.det(np.column_stack((v, w)))) < error and np.dot(v, w) >= 0
 
 
 def point_projection_is_on_line(point, line_start, line_end, error=0.001):

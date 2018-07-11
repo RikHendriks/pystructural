@@ -52,6 +52,8 @@ def test_point_is_on_line():
     assert not point_is_on_line(-p1, l1, l2)
     assert not point_is_on_line(p2, l1, l2)
 
+    assert not point_is_on_line(np.array([5.0, 0.0]), np.array([0.0, 0.0]), np.array([10.0, 10.0]))
+
 
 def test_point_projection_is_on_line():
     l1 = np.array([0.0, 0.0])
