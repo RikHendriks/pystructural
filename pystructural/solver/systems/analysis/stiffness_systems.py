@@ -3,11 +3,10 @@ import catecs
 
 import copy
 
-from pystructural.solver.components.loads import ImposedLoadComponent
 from pystructural.solver.components.additional_components.calculation_components import *
 from pystructural.solver.components.connections.spring import Spring
 from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
-from pystructural.solver.systems.analysis.load_systems import load_subclasses_2d
+from pystructural.solver.systems.analysis.load_systems import load_subclasses_2d, imposed_load_subclasses_2d
 
 __all__ = ['ExecuteLinearCalculation',
            'UpdateGlobalAndReducedStiffnessMatrices',
@@ -184,9 +183,8 @@ class UpdateDisplacementAndLoadVectors(catecs.System):
 
         # Subtract the imposed loads from the load vector
         # For each imposed load
-        for load_class in load_subclasses_2d:
-            for entity, components in self.world.get_components(load_class.compatible_geometry, load_class,
-                                                                ImposedLoadComponent):
+        for load_class in imposed_load_subclasses_2d:
+            for entity, components in self.world.get_components(load_class.compatible_geometry, load_class):
                 # For each dof in the load
                 for data in components[1].load_dof_generator():
                     i = self.dof_calculation_component.local_to_global_dof_dict[data[0][0]][data[0][1]]

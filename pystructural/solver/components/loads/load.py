@@ -1,4 +1,4 @@
-__all__ = ['Load', 'ImposedLoadComponent']
+__all__ = ['Load', 'ImposedLoad']
 
 
 class Load:
@@ -17,5 +17,6 @@ class Load:
         pass
 
 
-class ImposedLoadComponent:
-    pass
+class ImposedLoad(Load):
+    def __init__(self, load_case_id):
+        super().__init__(load_case_id)
