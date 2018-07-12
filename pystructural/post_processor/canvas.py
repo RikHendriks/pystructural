@@ -60,8 +60,8 @@ class Canvas:
             # Make a copy of the plot window
             plot_window = copy.deepcopy(self.plot_window)
             # Add margins to the plot window
-            x_margin = max(1.0, 0.02 * (plot_window[1] - plot_window[0]))
-            y_margin = max(1.0, 0.02 * (plot_window[3] - plot_window[2]))
+            x_margin = max(1.0, 0.05 * (plot_window[1] - plot_window[0]))
+            y_margin = max(1.0, 0.05 * (plot_window[3] - plot_window[2]))
             plot_window[0] -= x_margin
             plot_window[1] += x_margin
             plot_window[2] -= y_margin
