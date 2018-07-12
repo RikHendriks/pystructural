@@ -1,6 +1,7 @@
-import numpy as np
+import copy
 
 import matplotlib.pyplot as plt
+import numpy as np
 import svgpathtools as svg
 
 __all__ = ['Canvas',
@@ -12,8 +13,27 @@ class Canvas:
     def __init__(self):
         self.lines = []
         self.texts = []
+        self.plot_window = [0.0, 0.0, 0.0, 0.0]
+
+    def expand_plot_window(self, p):
+        # If x of the point is smaller than min x in plot window
+        if p[0] < self.plot_window[0]:
+            self.plot_window[0] = p[0]
+        # If x of the point is greater than max x in plot window
+        if p[0] > self.plot_window[1]:
+            self.plot_window[1] = p[0]
+        # If y of the point is smaller than min y in plot window
+        if p[1] < self.plot_window[2]:
+            self.plot_window[2] = p[1]
+        # If y of the point is greater than max y in plot window
+        if p[1] > self.plot_window[3]:
+            self.plot_window[3] = p[1]
 
     def draw_line(self, start, end, color='black'):
+        # If the line is (partially) outside the border then increase the borders
+        self.expand_plot_window(start)
+        self.expand_plot_window(end)
+        # Append the line to the line list
         self.lines.append([np.array([start, end]), color])
 
     def draw_lines(self, lines, color='black'):
@@ -36,7 +56,21 @@ class Canvas:
         for text in self.texts:
             plt.text(text[0][0], text[0][1], text[1], fontsize=text[2], color=text[3])
         # Redefine the axis of the plot
-        plt.axis(plot_window)
+        if plot_window is None:
+            # Make a copy of the plot window
+            plot_window = copy.deepcopy(self.plot_window)
+            # Add margins to the plot window
+            x_margin = max(1.0, 0.02 * (plot_window[1] - plot_window[0]))
+            y_margin = max(1.0, 0.02 * (plot_window[3] - plot_window[2]))
+            plot_window[0] -= x_margin
+            plot_window[1] += x_margin
+            plot_window[2] -= y_margin
+            plot_window[3] += y_margin
+            # Set the axis
+            plt.axis(plot_window)
+        else:
+            # Set the axis
+            plt.axis(plot_window)
         # Save the plotted file
         if filename is not None:
             plt.savefig(filename)

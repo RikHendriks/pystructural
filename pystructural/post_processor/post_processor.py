@@ -212,7 +212,7 @@ class PostProcessor2D:
         if draw_torque:
             self.draw_dof(2, load_combination, dof_scale, decimal_rounding, 'red')
 
-    def show_structure(self, plot_window):
+    def show_structure(self, plot_window=None):
         # Show the structure with matplotlib
         self.canvas.show_matplotlib(plot_window=plot_window, show_plot=True)
 

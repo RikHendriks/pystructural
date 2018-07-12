@@ -165,35 +165,6 @@ class Structure2D(catecs.World):
         # Create an instance of the post processor for this structure with the linear analysis
         self.post_processor = PostProcessor2D(self, self.get_system(self.linear_analysis_system_id))
 
-    def _determine_plot_window(self):
-        # Initialize the plot window
-        plot_window = [0.0, 0.0, 0.0, 0.0]
-        # For all the nodes in the structure
-        for _, point in self.get_component(geometries.Point2D):
-            # Get the coordinates of the point
-            p = point.point_list[0]
-            # If x of the point is smaller than min x in plot window
-            if p[0] < plot_window[0]:
-                plot_window[0] = p[0]
-            # If x of the point is greater than max x in plot window
-            if p[0] > plot_window[1]:
-                plot_window[1] = p[0]
-            # If y of the point is smaller than min y in plot window
-            if p[1] < plot_window[2]:
-                plot_window[2] = p[1]
-            # If y of the point is greater than max y in plot window
-            if p[1] > plot_window[3]:
-                plot_window[3] = p[1]
-        # Add margins to the plot window
-        x_margin = max(2.0, 0.02 * (plot_window[1] - plot_window[0]))
-        y_margin = max(2.0, 0.02 * (plot_window[3] - plot_window[2]))
-        plot_window[0] -= x_margin
-        plot_window[1] += x_margin
-        plot_window[2] -= y_margin
-        plot_window[3] += y_margin
-        # Return the plot window
-        return plot_window
-
     def get_point_displacement_vector(self, coordinate, load_combination='generic_load_combination'):
         # Get the entity id and the instance of the point
         entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance+0.01)
@@ -264,7 +235,7 @@ class Structure2D(catecs.World):
                                                    displacement_scale, dof_scale)
         # Show the structure
         if plot_window is None:
-            self.post_processor.show_structure(self._determine_plot_window())
+            self.post_processor.show_structure()
         else:
             self.post_processor.show_structure(plot_window)
         # If there is a path given for the svg then save the structure as an svg
@@ -281,7 +252,7 @@ class Structure2D(catecs.World):
                                                 dof_scale)
         # Show the structure
         if plot_window is None:
-            self.post_processor.show_structure(self._determine_plot_window())
+            self.post_processor.show_structure()
         else:
             self.post_processor.show_structure(plot_window)
         # If there is a path given for the svg then save the structure as an svg
