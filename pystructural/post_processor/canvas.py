@@ -48,6 +48,15 @@ class Canvas:
         symbol = translate_lines(symbol, translation)
         self.draw_lines(symbol, color)
 
+    def clear(self):
+        # Delete the data in the canvas
+        del self.lines
+        del self.texts
+        # Reinitialize the data in the canvas
+        self.lines = []
+        self.texts = []
+        self.plot_window = [0.0, 0.0, 0.0, 0.0]
+
     def show_matplotlib(self, filename=None, plot_window=None, show_plot=False):
         # Plot each line to matplotlib
         for line in self.lines:
@@ -77,6 +86,8 @@ class Canvas:
         # Show the plot
         if show_plot:
             plt.show()
+        # Clear the plot
+        plt.gcf().clear()
 
     def save_as_svg(self, filename):
         lines = [svg.Line(start[0] + start[1] * -1j, end[0] + end[1] * -1j) for [start, end], _ in self.lines]

@@ -212,9 +212,18 @@ class PostProcessor2D:
         if draw_torque:
             self.draw_dof(2, load_combination, dof_scale, decimal_rounding, 'red')
 
+    def clear_canvas(self):
+        # Clear the canvas
+        self.canvas.clear()
+
+
     def show_structure(self, plot_window=None):
         # Show the structure with matplotlib
         self.canvas.show_matplotlib(plot_window=plot_window, show_plot=True)
+
+    def save_as_png(self, path, plot_window=None):
+        # Save the structure as an png
+        self.canvas.show_matplotlib(filename=path + '.png', plot_window=plot_window, show_plot=False)
 
     def save_as_svg(self, path):
         # Save the structure as an svg

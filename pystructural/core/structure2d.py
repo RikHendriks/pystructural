@@ -223,7 +223,7 @@ class Structure2D(catecs.World):
                 return self.post_processor.linear_analysis_results.get_element_global_force_vector(element_instance,
                                                                                                    load_combination_id)
 
-    def show_structure(self, load_combination='generic_load_combination', plot_window=None, path_svg=None,
+    def show_structure(self, load_combination='generic_load_combination', plot_window=None,
                        displacement_scale=100.0, dof_scale=0.1, support_scale=0.25):
         # Draw the structure
         self.post_processor.draw_structure()
@@ -234,13 +234,9 @@ class Structure2D(catecs.World):
         self.post_processor.draw_structure_results(load_combination_id, True, True, True, True,
                                                    displacement_scale, dof_scale)
         # Show the structure
-        if plot_window is None:
-            self.post_processor.show_structure()
-        else:
-            self.post_processor.show_structure(plot_window)
-        # If there is a path given for the svg then save the structure as an svg
-        if path_svg is not None:
-            self.post_processor.save_as_svg(path_svg)
+        self.post_processor.show_structure(plot_window)
+        # Clear the canvas
+        self.post_processor.clear_canvas()
 
     def show_structure_dof_enveloping(self, dof, plot_window=None, path_svg=None, dof_scale=0.1, support_scale=0.25):
         # Draw the structure
@@ -251,10 +247,35 @@ class Structure2D(catecs.World):
         self.post_processor.draw_dof_enveloping(dof, self.load_combinations_component.load_combinations.keys(),
                                                 dof_scale)
         # Show the structure
-        if plot_window is None:
-            self.post_processor.show_structure()
-        else:
-            self.post_processor.show_structure(plot_window)
+        self.post_processor.show_structure(plot_window)
         # If there is a path given for the svg then save the structure as an svg
         if path_svg is not None:
             self.post_processor.save_as_svg(path_svg)
+        # Clear the canvas
+        self.post_processor.clear_canvas()
+
+    def save_structure_as_png(self, path, load_combination='generic_load_combination', plot_window=None):
+        # Draw the structure
+        self.post_processor.draw_structure()
+        # Draw the supports
+        self.post_processor.draw_supports(1.0)
+        # Draw the structure results
+        load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
+        self.post_processor.draw_structure_results(load_combination_id, True, True, True, True, 1.0, 1.0)
+        # Save the structure
+        self.post_processor.save_as_png(path, plot_window)
+        # Clear the canvas
+        self.post_processor.clear_canvas()
+
+    def save_structure_as_svg(self, path, load_combination='generic_load_combination', plot_window=None):
+        # Draw the structure
+        self.post_processor.draw_structure()
+        # Draw the supports
+        self.post_processor.draw_supports(1.0)
+        # Draw the structure results
+        load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
+        self.post_processor.draw_structure_results(load_combination_id, True, True, True, True, 1.0, 1.0)
+        # Save the structure
+        self.post_processor.save_as_svg(path)
+        # Clear the canvas
+        self.post_processor.clear_canvas()
