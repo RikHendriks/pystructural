@@ -156,7 +156,7 @@ class PostProcessor2D:
             previous_dof_vector = None
             previous_dof_value_vector_min = None
             previous_dof_value_vector_max = None
-            for position_vector, dof_value_list in \
+            for position_vector, dof_value_list, _ in \
                     self.linear_analysis_results.global_dof_enveloping_generator(group_id, dof,
                                                                                  load_combinations):
                 # Scale the dof value

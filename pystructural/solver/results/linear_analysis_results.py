@@ -98,13 +98,13 @@ class LinearAnalysisResults2D:
         for load_combination in load_combinations:
             line_values = []
             for position_vector, dof_value in self.global_dof_generator(group_id, dof, load_combination):
-                line_values.append([position_vector, dof_value])
+                line_values.append([position_vector, dof_value, load_combination])
             # Add the line values to the LineResults instance
             lr.add_line_values(line_values)
 
         # For each combined line value
-        for position_vector, dof_value_list in lr.combined_line_value_generator():
-            yield position_vector, dof_value_list
+        for position_vector, dof_value_list, load_combination_list in lr.combined_line_value_generator():
+            yield position_vector, dof_value_list, load_combination_list
 
     def get_node_displacement_vector(self, node_instance, load_combination):
         # Initialize the node displacement vector
