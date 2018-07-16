@@ -103,6 +103,8 @@ class LinearAnalysisResults2D:
             # Yield the position of the node and the value of the dof
             yield self.structure.get_component_from_entity(node_tuple[1], Point2D).point_list[0], local_force_vector
 
+    # TODO define a load combination variable that automaticly deletes every load combination not in the variable
+    # from the yield
     def global_dof_enveloping_generator(self, group_id):
         # Initialize a LineResult instance if the group id doesn't have one yet
         if group_id not in self.line_results:

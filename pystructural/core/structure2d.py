@@ -223,15 +223,6 @@ class Structure2D(catecs.World):
                 return self.post_processor.linear_analysis_results.get_element_global_force_vector(element_instance,
                                                                                                    load_combination_id)
 
-    def save_min_max_combinations_as_png(self, path, dof, coordinates, plot_window=None):
-        # For each min max load combination
-        for dof_value, load_combination, position_vector, is_min in \
-                self.post_processor.min_max_load_combinations_generator(dof, coordinates):
-            # Get the name of the load combination
-            lc_name = self.load_combinations_component.load_combination_names_inverse[load_combination]
-            # Save the load combination as a png
-            self.save_structure_as_png(path + '_' + lc_name, lc_name, plot_window)
-
     def show_structure(self, load_combination='generic_load_combination', plot_window=None,
                        displacement_scale=100.0, dof_scale=0.1, support_scale=0.25):
         # Draw the structure
@@ -275,6 +266,27 @@ class Structure2D(catecs.World):
         self.post_processor.save_as_png(path, plot_window)
         # Clear the canvas
         self.post_processor.clear_canvas()
+
+    def save_enveloping_structure_as_png(self, path, dof, plot_window=None):
+        # Draw the structure
+        self.post_processor.draw_structure()
+        # Draw the supports
+        self.post_processor.draw_supports(1.0)
+        # Draw the structure min max results
+        self.post_processor.draw_dof_enveloping(dof, self.load_combinations_component.load_combinations.keys(), 1.0)
+        # Save the structure
+        self.post_processor.save_as_png(path, plot_window)
+        # Clear the canvas
+        self.post_processor.clear_canvas()
+
+    def save_min_max_combinations_as_png(self, path, dof, coordinates, plot_window=None):
+        # For each min max load combination
+        for dof_value, load_combination, position_vector, is_min in \
+                self.post_processor.min_max_load_combinations_generator(dof, coordinates):
+            # Get the name of the load combination
+            lc_name = self.load_combinations_component.load_combination_names_inverse[load_combination]
+            # Save the load combination as a png
+            self.save_structure_as_png(path + '_' + lc_name, lc_name, plot_window)
 
     def save_structure_as_svg(self, path, load_combination='generic_load_combination'):
         # Draw the structure
