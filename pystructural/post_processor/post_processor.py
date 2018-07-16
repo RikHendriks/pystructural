@@ -2,6 +2,7 @@ import copy
 
 import numpy as np
 
+from pystructural.core.math_ps import point_is_near_point
 from pystructural.pre_processor.components import LineElementSortComponent
 from pystructural.solver.components.geometries import Point2D, Line2D
 from pystructural.solver.components.support import Support
@@ -118,10 +119,10 @@ class PostProcessor2D:
             # Initialize the variable for the previous dof value
             previous_dof_vector = None
             previous_dof_value_vector = None
-            for position_vector, dof_value in self.linear_analysis_results.global_dof_generator(group_id, dof,
+            for position_vector, dof_value in self.linear_analysis_results.global_dof_generator(group_id,
                                                                                                 load_combination):
                 # Scale the dof value
-                dof_value *= scale
+                dof_value = dof_value[dof] * scale
                 # Draw the line of the dof value
                 if previous_dof_value_vector is not None:
                     # Draw the line
@@ -157,11 +158,12 @@ class PostProcessor2D:
             previous_dof_value_vector_min = None
             previous_dof_value_vector_max = None
             for position_vector, dof_value_list, _ in \
-                    self.linear_analysis_results.global_dof_enveloping_generator(group_id, dof,
-                                                                                 load_combinations):
+                    self.linear_analysis_results.global_dof_enveloping_generator(group_id):
+                # Create new dof value list based on which dofs load combinations are used in the enveloping drawing
+                # TODO read above ^^
                 # Scale the dof value
-                dof_value_min = scale * min(0, *dof_value_list)
-                dof_value_max = scale * max(0, *dof_value_list)
+                dof_value_min = scale * min(0, *[dof_value[dof] for dof_value in dof_value_list])
+                dof_value_max = scale * max(0, *[dof_value[dof] for dof_value in dof_value_list])
                 # Draw the line of the dof value min
                 if previous_dof_value_vector_min is not None:
                     # Draw the line
@@ -216,7 +218,6 @@ class PostProcessor2D:
         # Clear the canvas
         self.canvas.clear()
 
-
     def show_structure(self, plot_window=None):
         # Show the structure with matplotlib
         self.canvas.show_matplotlib(plot_window=plot_window, show_plot=True)
@@ -228,6 +229,25 @@ class PostProcessor2D:
     def save_as_svg(self, path):
         # Save the structure as an svg
         self.canvas.save_as_svg(path + '.svg')
+
+    def min_max_load_combinations_generator(self, dof, coordinates):
+        # For each group
+        for group_id in self.line_element_sort.group_id_generator():
+            # For each combined line value
+            for position_vector, dof_value_list, load_combination_list in \
+                    self.linear_analysis_results.global_dof_enveloping_generator(group_id):
+                # Check if their is a coordinate on the given position vector
+                norms = map(lambda x: point_is_near_point(position_vector, x), coordinates)
+                if True in norms:
+                    # Determine the dof value list of the correct dof
+                    dof_value_list = [dof_value[dof] for dof_value in dof_value_list]
+                    # Yield the min and max value at the position True is min False is max
+                    # Yield min
+                    index_min = dof_value_list.index(min(dof_value_list))
+                    yield min(dof_value_list), load_combination_list[index_min], position_vector, True
+                    # Yield max
+                    index_max = dof_value_list.index(max(dof_value_list))
+                    yield max(dof_value_list), load_combination_list[index_max], position_vector, False
 
 
 class PointOfInterestDetector:

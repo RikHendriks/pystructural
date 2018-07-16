@@ -14,6 +14,7 @@ class LoadCombinationsComponent:
         self.load_combinations = {}
         self.current_load_combination_id = 0
         self.load_combination_names = {}
+        self.load_combination_names_inverse = {}
 
     def _add_new_load_case(self, load_case_name):
         self.load_cases[self.current_load_case_id] = load_case_name
@@ -30,7 +31,7 @@ class LoadCombinationsComponent:
         else:
             return self._add_new_load_case(load_case_name)
 
-    def add_load_combination(self, load_combination_id, load_cases, is_name=False, check_copy=False):
+    def add_load_combination(self, load_combination_name, load_cases, is_name=False, check_copy=False):
         # If the load cases are given with names instead of id's
         if is_name:
             load_cases_dict = {}
@@ -40,12 +41,13 @@ class LoadCombinationsComponent:
             load_cases = load_cases_dict
         # If the load case already exists as a load combination then don't add it
         if check_copy:
-            for load_combination_id in self.load_combinations:
-                if load_cases == self.load_combinations[load_combination_id]:
-                    return load_combination_id
+            for load_combination_name in self.load_combinations:
+                if load_cases == self.load_combinations[load_combination_name]:
+                    return load_combination_name
         # Load cases is a dict of {load_case_name: factor}
         self.load_combinations[self.current_load_combination_id] = load_cases
-        self.load_combination_names[load_combination_id] = self.current_load_combination_id
+        self.load_combination_names[load_combination_name] = self.current_load_combination_id
+        self.load_combination_names_inverse[self.current_load_combination_id] = load_combination_name
         self.current_load_combination_id += 1
         return self.current_load_combination_id - 1
 

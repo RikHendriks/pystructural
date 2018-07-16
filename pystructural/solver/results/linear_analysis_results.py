@@ -28,6 +28,22 @@ class LinearAnalysisResults2D:
         # Get the line element sort component
         self.line_element_sort = self.structure.get_component_from_entity(self.structure.general_entity_id,
                                                                           LineElementSortComponent)
+        # Initialize the line results dict
+        self.line_results = {}
+
+    def calculate_line_result(self, group_id):
+        line_start = self.structure.get_component_from_entity(self.line_element_sort.groups[group_id][0][1],
+                                                              Point2D)
+        line_end = self.structure.get_component_from_entity(self.line_element_sort.groups[group_id][-1][1], Point2D)
+        self.line_results[group_id] = LineResults(line_start.point_list[0], line_end.point_list[0])
+
+        # For each load combination add the line values of the group
+        for load_combination in self.structure.load_combinations_component.load_combinations:
+            line_values = []
+            for position_vector, dof_value in self.global_dof_generator(group_id, load_combination):
+                line_values.append([position_vector, dof_value, load_combination])
+            # Add the line values to the LineResults instance
+            self.line_results[group_id].add_line_values(line_values)
 
     def group_tangent_vector(self, group_id):
         # Get the generator for the group
@@ -67,7 +83,7 @@ class LinearAnalysisResults2D:
             yield self.structure.get_component_from_entity(node_tuple[1], Point2D).point_list[0], displacement_vector[
                                                                                                   :2]
 
-    def global_dof_generator(self, group_id, dof, load_combination):
+    def global_dof_generator(self, group_id, load_combination):
         # For every line in the group of line elements
         for node_tuple in self.line_element_sort.line_element_id_generator(group_id):
             # Get the corresponding element of the line
@@ -85,25 +101,16 @@ class LinearAnalysisResults2D:
             else:
                 local_force_vector = -local_force_vector[-3:]
             # Yield the position of the node and the value of the dof
-            yield self.structure.get_component_from_entity(node_tuple[1], Point2D).point_list[0], local_force_vector[
-                dof]
+            yield self.structure.get_component_from_entity(node_tuple[1], Point2D).point_list[0], local_force_vector
 
-    def global_dof_enveloping_generator(self, group_id, dof, load_combinations):
-        # Initialize a LineResult instance
-        line_start = self.structure.get_component_from_entity(self.line_element_sort.groups[group_id][0][1], Point2D)
-        line_end = self.structure.get_component_from_entity(self.line_element_sort.groups[group_id][-1][1], Point2D)
-        lr = LineResults(line_start.point_list[0], line_end.point_list[0])
-
-        # For each load combination add the line values of the group
-        for load_combination in load_combinations:
-            line_values = []
-            for position_vector, dof_value in self.global_dof_generator(group_id, dof, load_combination):
-                line_values.append([position_vector, dof_value, load_combination])
-            # Add the line values to the LineResults instance
-            lr.add_line_values(line_values)
+    def global_dof_enveloping_generator(self, group_id):
+        # Initialize a LineResult instance if the group id doesn't have one yet
+        if group_id not in self.line_results:
+            self.calculate_line_result(group_id)
 
         # For each combined line value
-        for position_vector, dof_value_list, load_combination_list in lr.combined_line_value_generator():
+        for position_vector, dof_value_list, load_combination_list in self.line_results[group_id]\
+                .combined_line_value_generator():
             yield position_vector, dof_value_list, load_combination_list
 
     def get_node_displacement_vector(self, node_instance, load_combination):
