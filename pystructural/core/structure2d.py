@@ -267,7 +267,7 @@ class Structure2D(catecs.World):
         # Clear the canvas
         self.post_processor.clear_canvas()
 
-    def save_structure_as_svg(self, path, load_combination='generic_load_combination', plot_window=None):
+    def save_structure_as_svg(self, path, load_combination='generic_load_combination'):
         # Draw the structure
         self.post_processor.draw_structure()
         # Draw the supports
