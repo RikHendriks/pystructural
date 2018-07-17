@@ -45,23 +45,6 @@ class Structure(catecs.World):
                                                            additional_components.PhaseComponent).phase_id_list:
                         yield entity_id, components
 
-
-class Structure2D(Structure):
-    def __init__(self, minimum_element_distance=0.1):
-        # Initialize the world
-        super().__init__(minimum_element_distance=minimum_element_distance)
-        # Initialize the general entity for all the static components of the structure
-        self.general_entity_id = self.add_entity(additional_components.GroupComponent())
-        # Get the group component
-        self.group_component = self.get_component_from_entity(self.general_entity_id,
-                                                              additional_components.GroupComponent)
-        # Get the load combinations component
-        self.load_combinations_component = self.add_component(self.general_entity_id, LoadCombinationsComponent())
-        # Initialize the id of the linear system
-        self.linear_analysis_system_id = None
-        # Initialize the post processor
-        self.post_processor = None
-
     def search_for_point(self, coordinate, error=0.001):
         for entity, point in self.get_component(geometries.Point2D):
             if math_ps.point_is_near_point(coordinate, point.point_list[0], error):
@@ -78,6 +61,30 @@ class Structure2D(Structure):
                 return tuple[0]
         else:
             return coordinate
+
+    def add_component_at_entity(self, entity_id, component_instance, unique=True):
+        # If there is a component with the type in the entity
+        if self.has_component(entity_id, type(component_instance)) and unique:
+            self.get_component_from_entity(entity_id, type(component_instance)) + component_instance
+        else:
+            self.add_component(entity_id, component_instance)
+
+
+class Structure2D(Structure):
+    def __init__(self, minimum_element_distance=0.1):
+        # Initialize the world
+        super().__init__(minimum_element_distance=minimum_element_distance)
+        # Initialize the general entity for all the static components of the structure
+        self.general_entity_id = self.add_entity(additional_components.GroupComponent())
+        # Get the group component
+        self.group_component = self.get_component_from_entity(self.general_entity_id,
+                                                              additional_components.GroupComponent)
+        # Get the load combinations component
+        self.load_combinations_component = self.add_component(self.general_entity_id, LoadCombinationsComponent())
+        # Initialize the id of the linear system
+        self.linear_analysis_system_id = None
+        # Initialize the post processor
+        self.post_processor = None
 
     def search_for_line_element(self, coordinate, error=0.001):
         # For every line 2d in teh structure
@@ -101,13 +108,6 @@ class Structure2D(Structure):
 
         # Add the component to the entity
         self.add_component_at_entity(entity_id, component_instance, unique)
-
-    def add_component_at_entity(self, entity_id, component_instance, unique=True):
-        # If there is a component with the type in the entity
-        if self.has_component(entity_id, type(component_instance)) and unique:
-            self.get_component_from_entity(entity_id, type(component_instance)) + component_instance
-        else:
-            self.add_component(entity_id, component_instance)
 
     def add_frame_element(self, start_coordinate, end_coordinate, youngs_modulus, mass_density, cross_section_area,
                           moment_of_inertia):
