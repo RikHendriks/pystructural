@@ -15,10 +15,9 @@ __all__ = ['LinearAnalysisResults2D']
 
 
 class LinearAnalysisResults2D:
-    def __init__(self, structure, analysis):
+    def __init__(self, structure, result_entity_id):
         self.structure = structure
-        self.analysis = analysis
-        self.result_entity_id = self.analysis.result_entity_id
+        self.result_entity_id = result_entity_id
         self.dof_calculation_component = self.structure.get_component_from_entity(self.result_entity_id,
                                                                                   DOFCalculationComponent)
         self.linear_calculation_component = self.structure.get_component_from_entity(self.result_entity_id,

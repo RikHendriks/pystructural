@@ -149,7 +149,7 @@ class Structure2D(catecs.World):
             lc_id = self.load_combinations_component.add_load_case(load_case)
             self.add_component_at_entity(entity_id, loads.ImposedLoad2D(imposed_load, lc_id), unique=False)
 
-    def solve_linear_system(self):
+    def solve_linear_system(self, analysis_name='linear_calculation'):
         # If there is no load combination defined
         if len(self.load_combinations_component.load_combinations) is 0:
             # Add the generic load combination
@@ -159,12 +159,12 @@ class Structure2D(catecs.World):
         self.run_system(PreProcessor2D(self.minimum_element_distance))
         # Add linear calculation system and solve
         self.linear_analysis_system_id =\
-            self.add_system(LinearAnalysis("linear_calculation",
+            self.add_system(LinearAnalysis(analysis_name,
                                            list(self.load_combinations_component.load_combinations.keys())))
         # Process linear calculation system
         self.process_systems(self.linear_analysis_system_id)
         # Create an instance of the post processor for this structure with the linear analysis
-        self.post_processor = PostProcessor2D(self, self.get_system(self.linear_analysis_system_id))
+        self.post_processor = PostProcessor2D(self, self.get_system(self.linear_analysis_system_id).result_entity_id)
 
     def get_point_displacement_vector(self, coordinate, load_combination='generic_load_combination'):
         # Get the entity id and the instance of the point

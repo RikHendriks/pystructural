@@ -15,11 +15,11 @@ __all__ = ['PostProcessor2D']
 
 # TODO Change this class with load combinations in mind
 class PostProcessor2D:
-    def __init__(self, structure, analysis_system):
+    def __init__(self, structure, result_entity_id):
         # Set the structure variable
         self.structure = structure
         # Initialize the linear analysis results for the given analysis system id
-        self.linear_analysis_results = LinearAnalysisResults2D(self.structure, analysis_system)
+        self.linear_analysis_results = LinearAnalysisResults2D(self.structure, result_entity_id)
         # Get the line element sort component
         self.line_element_sort = self.structure.get_component_from_entity(self.structure.general_entity_id,
                                                                           LineElementSortComponent)
