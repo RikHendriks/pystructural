@@ -12,10 +12,44 @@ from ..solver.systems import LinearAnalysis
 __all__ = ['Structure2D']
 
 
-class Structure2D(catecs.World):
-    def __init__(self, minimum_element_distance=0.1):
+class Structure(catecs.World):
+    def __init__(self, phase_id=None, minimum_element_distance=0.1):
         # Initialize the world
         super().__init__()
+        # Initialize the phase
+        self.phase_id = phase_id
+        # Initialize the variables of the structure
+        self.minimum_element_distance = minimum_element_distance
+
+    def get_component(self, component_type):
+        if self.phase_id is None:
+            for get_component_output in super().get_component(component_type):
+                yield get_component_output
+        else:
+            for entity_id, component in super().get_component(component_type):
+                if self.has_component(entity_id, additional_components.PhaseComponent):
+                    if self.phase_id in \
+                            self.get_component_from_entity(entity_id,
+                                                           additional_components.PhaseComponent).phase_id_list:
+                        yield entity_id, component
+
+    def get_components(self, *component_types):
+        if self.phase_id is None:
+            for get_components_output in super().get_components(*component_types):
+                yield get_components_output
+        else:
+            for entity_id, components in super().get_components(*component_types):
+                if self.has_component(entity_id, additional_components.PhaseComponent):
+                    if self.phase_id in \
+                            self.get_component_from_entity(entity_id,
+                                                           additional_components.PhaseComponent).phase_id_list:
+                        yield entity_id, components
+
+
+class Structure2D(Structure):
+    def __init__(self, minimum_element_distance=0.1):
+        # Initialize the world
+        super().__init__(minimum_element_distance=minimum_element_distance)
         # Initialize the general entity for all the static components of the structure
         self.general_entity_id = self.add_entity(additional_components.GroupComponent())
         # Get the group component
@@ -27,8 +61,6 @@ class Structure2D(catecs.World):
         self.linear_analysis_system_id = None
         # Initialize the post processor
         self.post_processor = None
-        # Initialize the variables of the structure
-        self.minimum_element_distance = minimum_element_distance
 
     def search_for_point(self, coordinate, error=0.001):
         for entity, point in self.get_component(geometries.Point2D):
