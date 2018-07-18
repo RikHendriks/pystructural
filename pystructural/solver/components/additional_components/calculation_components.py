@@ -8,13 +8,15 @@ class GroupComponent:
     def __init__(self):
         # The general group
         self.groups = {}
+        self.groups_phase_id_list = {}
         self.entities = {}
         # Current group id
         self.current_group_id = 0
 
-    def create_group(self):
+    def create_group(self, phase_id_list):
         # Create a group
         self.groups[self.current_group_id] = []
+        self.groups_phase_id_list[self.current_group_id] = phase_id_list
         self.current_group_id += 1
         return self.current_group_id - 1
 

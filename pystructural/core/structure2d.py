@@ -1,3 +1,5 @@
+import copy
+
 import matplotlib.pyplot as plt
 import catecs
 
@@ -7,43 +9,93 @@ from ..core import math_ps
 from ..solver.components import element_geometries, elements, geometries, connections, loads, materials, support, \
     additional_components
 from ..solver.components.load_combination import LoadCombinationsComponent
-from ..solver.systems import LinearAnalysis
+from ..solver.systems import LinearAnalysisSystem, LinearPhaseAnalysisSystem
 
 __all__ = ['Structure2D']
 
 
 class Structure(catecs.World):
-    def __init__(self, phase_id=None, minimum_element_distance=0.1):
+    def __init__(self, phase_id_filter=None, phase_id_adder_list=None, minimum_element_distance=0.1):
         # Initialize the world
         super().__init__()
-        # Initialize the phase
-        self.phase_id = phase_id
+        # Initialize the phase id filter
+        self.phase_id_filter = phase_id_filter
+        # Initialize the phase id adder
+        self.phase_id_adder_list = phase_id_adder_list
         # Initialize the variables of the structure
         self.minimum_element_distance = minimum_element_distance
 
+    def add_entity(self, *components, phase_id_list=None):
+        # initialize the id
+        self.current_entity_id += 1
+        self.entities[self.current_entity_id] = {}
+        # Add each component to the entity
+        for component in components:
+            self.add_component(self.current_entity_id, component, phase_id_list)
+        # Return the entity id
+        return self.current_entity_id
+
+    def has_component(self, entity_id, component_type):
+        if self.phase_id_filter is None:
+            return super().has_component(entity_id, component_type)
+        else:
+            if entity_id in self.entities:
+                for component in self.get_component_from_entity_generator(entity_id, component_type):
+                    if hasattr(component, 'phase_id_list'):
+                        if self.phase_id_filter in component.phase_id_list:
+                            return True
+                    else:
+                        return True
+
+    def add_component(self, entity_id, component_instance, phase_id_list=None):
+        # Add the phase id list to the component
+        if phase_id_list is not None:
+            component_instance.phase_id_list = copy.deepcopy(phase_id_list)
+        # If the re is an phase id adder add those phase id's to the component
+        elif self.phase_id_adder_list is not None:
+            component_instance.phase_id_list = copy.deepcopy(self.phase_id_adder_list)
+        # Add the component to the entity
+        return super().add_component(entity_id, component_instance)
+
     def get_component(self, component_type):
-        if self.phase_id is None:
+        if self.phase_id_filter is None:
             for get_component_output in super().get_component(component_type):
                 yield get_component_output
         else:
             for entity_id, component in super().get_component(component_type):
-                if self.has_component(entity_id, additional_components.PhaseComponent):
-                    if self.phase_id in \
-                            self.get_component_from_entity(entity_id,
-                                                           additional_components.PhaseComponent).phase_id_list:
+                if hasattr(component, 'phase_id_list'):
+                    if self.phase_id_filter in component.phase_id_list:
                         yield entity_id, component
+                else:
+                    yield entity_id, component
 
     def get_components(self, *component_types):
-        if self.phase_id is None:
+        if self.phase_id_filter is None:
             for get_components_output in super().get_components(*component_types):
                 yield get_components_output
         else:
             for entity_id, components in super().get_components(*component_types):
-                if self.has_component(entity_id, additional_components.PhaseComponent):
-                    if self.phase_id in \
-                            self.get_component_from_entity(entity_id,
-                                                           additional_components.PhaseComponent).phase_id_list:
-                        yield entity_id, components
+                for component in components:
+                    if hasattr(component, 'phase_id_list'):
+                        if self.phase_id_filter not in component.phase_id_list:
+                            break
+                else:
+                    yield entity_id, components
+
+    def get_component_from_entity(self, entity_id, component_type):
+        if self.phase_id_filter is None:
+            return super().get_component_from_entity(entity_id, component_type)
+        else:
+            if entity_id in self.entities:
+                for component in self.get_component_from_entity_generator(entity_id, component_type):
+                    if hasattr(component, 'phase_id_list'):
+                        if self.phase_id_filter in component.phase_id_list:
+                            return component
+                    else:
+                        return component
+
+    def set_phase(self, phase_id_list):
+        self.phase_id_adder_list = phase_id_list
 
     def search_for_point(self, coordinate, error=0.001):
         for entity, point in self.get_component(geometries.Point2D):
@@ -58,11 +110,19 @@ class Structure(catecs.World):
             if tuple is None:
                 return tuple
             else:
+                # Add the phase id list adder to this object
+                if hasattr(tuple[1], 'phase_id_list'):
+                    for phase_id in self.phase_id_adder_list:
+                        if phase_id not in tuple[1].phase_id_list:
+                            tuple[1].phase_id_list.append(phase_id)
+                else:
+                    tuple[1].phase_id_list = copy.deepcopy(self.phase_id_adder_list)
+                # Return the entity id and the point list
                 return tuple[0]
         else:
             return coordinate
 
-    def add_component_at_entity(self, entity_id, component_instance, unique=True):
+    def add_component_at_entity(self, entity_id, component_instance, unique=False):
         # If there is a component with the type in the entity
         if self.has_component(entity_id, type(component_instance)) and unique:
             self.get_component_from_entity(entity_id, type(component_instance)) + component_instance
@@ -81,8 +141,6 @@ class Structure2D(Structure):
                                                               additional_components.GroupComponent)
         # Get the load combinations component
         self.load_combinations_component = self.add_component(self.general_entity_id, LoadCombinationsComponent())
-        # Initialize the id of the linear system
-        self.linear_analysis_system_id = None
         # Initialize the post processor
         self.post_processor = None
 
@@ -100,7 +158,7 @@ class Structure2D(Structure):
     def add_node(self, position):
         return self.add_entity(geometries.Point2D(position[0], position[1]))
 
-    def add_component_at_coordinate(self, coordinate, component_instance, unique=True):
+    def add_component_at_coordinate(self, coordinate, component_instance, unique=False):
         # Determine the entity based on the position
         entity_id = self.position_to_id(coordinate)
         if entity_id is None:
@@ -128,7 +186,7 @@ class Structure2D(Structure):
                                                                                   moment_of_inertia))
 
         # Create the group for the frame element entity
-        group_id = self.group_component.create_group()
+        group_id = self.group_component.create_group(self.phase_id_adder_list)
         self.group_component.add_entity_to_group(frame_element_id, group_id)
 
         # Return the frame element entity id
@@ -156,7 +214,7 @@ class Structure2D(Structure):
         lc_id = self.load_combinations_component.add_load_case(load_case)
         point_load_component = loads.PointLoad2D(point_load, lc_id)
         # Add the component to the position
-        self.add_component_at_coordinate(coordinate, point_load_component, unique=False)
+        self.add_component_at_coordinate(coordinate, point_load_component)
 
     def add_global_q_load(self, entity_id, q_load, load_case=None):
         def q_load_func(x):
@@ -174,29 +232,52 @@ class Structure2D(Structure):
     def add_global_q_load_func(self, entity_id, q_load_func, load_case=None):
         if entity_id in self.entities:
             lc_id = self.load_combinations_component.add_load_case(load_case)
-            self.add_component_at_entity(entity_id, loads.QLoad2D(q_load_func, lc_id), unique=False)
+            self.add_component_at_entity(entity_id, loads.QLoad2D(q_load_func, lc_id))
 
     def add_imposed_load(self, entity_id, imposed_load, load_case=None):
         if entity_id in self.entities:
             lc_id = self.load_combinations_component.add_load_case(load_case)
-            self.add_component_at_entity(entity_id, loads.ImposedLoad2D(imposed_load, lc_id), unique=False)
+            self.add_component_at_entity(entity_id, loads.ImposedLoad2D(imposed_load, lc_id))
 
-    def solve_linear_system(self, analysis_name='linear_calculation'):
+    def solve_linear_system(self, analysis_name='linear_calculation', with_preprocessor=True):
         # If there is no load combination defined
         if len(self.load_combinations_component.load_combinations) is 0:
             # Add the generic load combination
             self.load_combinations_component.add_generic_load_combination()
 
         # Run the system: preprocessor 2D
+        if with_preprocessor:
+            self.run_system(PreProcessor2D(self.minimum_element_distance))
+        # Add linear calculation system and solve
+        linear_analysis_system_id =\
+            self.add_system(LinearAnalysisSystem(analysis_name,
+                                                 list(self.load_combinations_component.load_combinations.keys())))
+        # Process linear calculation system
+        self.process_systems(linear_analysis_system_id)
+        # Create an instance of the post processor for this structure with the linear analysis
+        self.post_processor = PostProcessor2D(self, self.get_system(linear_analysis_system_id).result_entity_id)
+
+    def solve_linear_phase_system(self, phase_analysis, analysis_name='linear_phase_calculation'):
+        # If there is no load combination defined
+        if len(self.load_combinations_component.load_combinations) is 0:
+            # Add the generic load combination
+            self.load_combinations_component.add_generic_load_combination()
+
+        # Set the phase filter to None:
+        self.phase_id_filter = None
+        self.phase_id_adder_list = None
+
+        # Run the system: preprocessor 2D
         self.run_system(PreProcessor2D(self.minimum_element_distance))
         # Add linear calculation system and solve
-        self.linear_analysis_system_id =\
-            self.add_system(LinearAnalysis(analysis_name,
-                                           list(self.load_combinations_component.load_combinations.keys())))
+        linear_phase_analysis_system_id = \
+            self.add_system(LinearPhaseAnalysisSystem(analysis_name,
+                                                      list(self.load_combinations_component.load_combinations.keys()),
+                                                      phase_analysis))
         # Process linear calculation system
-        self.process_systems(self.linear_analysis_system_id)
+        self.process_systems(linear_phase_analysis_system_id)
         # Create an instance of the post processor for this structure with the linear analysis
-        self.post_processor = PostProcessor2D(self, self.get_system(self.linear_analysis_system_id).result_entity_id)
+        self.post_processor = PostProcessor2D(self, self.get_system(linear_phase_analysis_system_id).result_entity_id)
 
     def get_point_displacement_vector(self, coordinate, load_combination='generic_load_combination'):
         # Get the entity id and the instance of the point

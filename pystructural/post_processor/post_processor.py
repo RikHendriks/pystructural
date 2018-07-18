@@ -77,7 +77,7 @@ class PostProcessor2D:
     # TODO place the general draw function outside of the following three functions
     def draw_displacements(self, load_combination, scale=1.0, decimal_rounding=2, color='blue'):
         # For every group of line elements
-        for group_id in self.line_element_sort.group_id_generator():
+        for group_id in self.line_element_sort.group_id_generator(self.structure.phase_id_filter):
             # Point of interest detector class instance
             poid = PointOfInterestDetector()
             # Initialize the variable for the previous position vector
@@ -111,7 +111,7 @@ class PostProcessor2D:
     # TODO change this to local dof generator
     def draw_dof(self, dof, load_combination, scale=1.0, decimal_rounding=2, color='red'):
         # For every group of line elements
-        for group_id in self.line_element_sort.group_id_generator():
+        for group_id in self.line_element_sort.group_id_generator(self.structure.phase_id_filter):
             # Point of interest detector class instance
             poid = PointOfInterestDetector()
             # Get the tangent vector for the group of line elements

@@ -2,8 +2,13 @@ import numpy as np
 
 __all__ = ['point_is_near_point', 'point_line_projection', 'point_line_projection_distance',
            'point_is_on_line', 'point_projection_is_on_line', 'is_collinear',
-           'line_to_unit_interval', 'line_embedding']
+           'line_to_unit_interval', 'line_embedding',
+           'quotient_set_of_equivalence_relation']
 
+
+############
+# GEOMETRY #
+############
 
 def point_is_near_point(point_0, point_1, error=0.001):
     """Return true iff the two points are near each other.
@@ -114,3 +119,22 @@ def line_embedding(unit, line_start, line_end):
         return (1 - unit) * line_start + unit * line_end
     else:
         return None
+
+
+##############
+# SET THEORY #
+##############
+
+def quotient_set_of_equivalence_relation(iterable, relation):
+    partitions = {}
+    for item in iterable:
+        for partition in partitions:
+            # If the item is in the partition
+            if relation(item, partition):
+                partitions[partition].append(item)
+                break
+        # If the item is in no partition
+        else:
+            partitions[item] = [item]
+    # Return the partitions
+    return partitions

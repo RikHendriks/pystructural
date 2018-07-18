@@ -5,10 +5,10 @@ from pystructural.pre_processor.components import LineElementSortComponent
 
 from pystructural.solver.components.geometries.line import Line2D
 
-__all__ = ['LineElementSort']
+__all__ = ['LineElementSort2D']
 
 
-class LineElementSort(catecs.System):
+class LineElementSort2D(catecs.System):
     def __init__(self):
         # Initialize the variables used in this system
         self.line_element_sort_component = None
@@ -23,6 +23,8 @@ class LineElementSort(catecs.System):
         for group_id in self.world.group_component.groups:
             # Initialize the group in the line element sort component
             self.line_element_sort_component.groups[group_id] = []
+            self.line_element_sort_component.groups_phase_id_list[group_id] =\
+                self.world.group_component.groups_phase_id_list[group_id]
             # Initialize the start and end node list and the node list of the group
             node_list = {}
             element_list = {}

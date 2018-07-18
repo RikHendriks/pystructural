@@ -7,7 +7,7 @@ from .dof_systems import UpdateDOFs, UpdateReducedDOFs
 from .load_systems import UpdateLoads
 from .stiffness_systems import ExecuteLinearCalculation
 
-__all__ = ['AnalysisSystem', 'LinearAnalysis']
+__all__ = ['LinearAnalysisSystem', 'LinearPhaseAnalysisSystem']
 
 
 class AnalysisSystem(catecs.System):
@@ -22,7 +22,7 @@ class AnalysisSystem(catecs.System):
         self.result_entity_id = self.world.add_entity(ResultComponent(self.name))
 
 
-class LinearAnalysis(AnalysisSystem):
+class LinearAnalysisSystem(AnalysisSystem):
     def process(self):
         # Check if a linear calculation system category is in self.world then remove it
         if self.world.has_system_category(self.name):
@@ -47,4 +47,21 @@ class LinearAnalysis(AnalysisSystem):
         self.world.add_system(ExecuteLinearCalculation(self.result_entity_id, self.load_combinations), self.name)
 
         # Process the 'linear calculation' system category
-        self.world.process_system_categories(self.name)
+        self.world.process_system_categories(self.name, ordered=True)
+
+
+class LinearPhaseAnalysisSystem(AnalysisSystem):
+    def __init__(self, name, load_combinations, phased_analysis):
+        self.phased_analysis = phased_analysis
+        super().__init__(name, load_combinations)
+
+    def process(self):
+        # For every phase
+        for phase_id in self.phased_analysis.phase_generator():
+            # Get the structure with only the current phase
+            self.world.phase_id_filter = phase_id
+            self.world.phase_id_adder_list = [phase_id]
+            # Solve the linear system for the structure
+            self.world.solve_linear_system(str(self.phased_analysis.phases[phase_id]), False)
+            # Combine the phase results
+            self.world.show_structure()

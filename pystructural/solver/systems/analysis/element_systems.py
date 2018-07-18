@@ -28,7 +28,8 @@ class UpdateElements(catecs.System):
                 # Determine the element_geometry of the element
                 for element_geometry_class in element_class.compatible_element_geometries:
                     if self.world.has_component(entity, element_geometry_class):
-                        components[1].element_geometry = self.world.get_component_from_entity(entity, element_geometry_class)
+                        components[1].element_geometry = self.world.get_component_from_entity(entity,
+                                                                                              element_geometry_class)
                         break
 
                 # Compute the matrices of the elements

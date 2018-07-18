@@ -1,9 +1,4 @@
-__all__ = ['PhaseComponent', 'PhasedAnalysis']
-
-
-class PhaseComponent:
-    def __init__(self, phase_id_list):
-        self.phase_id_list = phase_id_list
+__all__ = ['PhasedAnalysis']
 
 
 class PhasedAnalysis:

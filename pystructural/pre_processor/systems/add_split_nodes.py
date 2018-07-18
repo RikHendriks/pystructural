@@ -3,10 +3,10 @@ import catecs
 
 from pystructural.solver.components.geometries import Line2D, Point2D
 
-__all__ = ['AddSplitNodes']
+__all__ = ['AddSplitNodes2D']
 
 
-class AddSplitNodes(catecs.System):
+class AddSplitNodes2D(catecs.System):
     def __init__(self, minimum_element_distance):
         self.minimum_distance = minimum_element_distance
         super().__init__()
@@ -24,4 +24,4 @@ class AddSplitNodes(catecs.System):
             # Add points at the splits
             for i in range(splits - 1):
                 node_position = line_start_point + (i + 1) * (line_vector / float(splits))
-                self.world.add_entity(Point2D(*node_position))
+                self.world.add_entity(Point2D(*node_position), phase_id_list=line.phase_id_list)

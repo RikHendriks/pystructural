@@ -3,10 +3,10 @@ import catecs
 from pystructural.core.math_ps import point_is_near_point, point_is_on_line
 from pystructural.solver.components.geometries import Line2D, Point2D
 
-__all__ = ['SplitLine']
+__all__ = ['SplitLine2D']
 
 
-class SplitLine(catecs.System):
+class SplitLine2D(catecs.System):
     def process(self):
         # Split a line if a point intersects it and is not currently a start of end node of a line
         # For every point for every line
