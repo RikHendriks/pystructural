@@ -8,10 +8,6 @@ from pystructural.solver.components.connections.spring import Spring
 from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
 from pystructural.solver.systems.analysis.load_systems import load_subclasses_2d, imposed_load_subclasses_2d
 
-# To be removed
-from pystructural.solver.components.geometries import Point2D
-from pystructural.solver.components.degree_of_freedom import DOF
-
 __all__ = ['ExecuteLinearCalculation',
            'UpdateGlobalAndReducedStiffnessMatrices',
            'UpdateLoadCombinations',

@@ -1,3 +1,5 @@
+import copy
+
 import catecs
 
 from pystructural.solver.results.result_components.result_components import ResultComponent
@@ -56,12 +58,22 @@ class LinearPhaseAnalysisSystem(AnalysisSystem):
         super().__init__(name, load_combinations)
 
     def process(self):
+        # List of linear analysis results
+        lar_list = {}
+        # Previous phase id
+        prev_phase_id = None
         # For every phase
         for phase_id in self.phased_analysis.phase_generator():
             # Get the structure with only the current phase
             self.world.phase_id_filter = phase_id
             self.world.phase_id_adder_list = [phase_id]
             # Solve the linear system for the structure
-            self.world.solve_linear_system(str(self.phased_analysis.phases[phase_id]), False)
+            if phase_id != 2:
+                lar_list[phase_id] = self.world.solve_linear_system(str(self.phased_analysis.phases[phase_id]), False)
+            else:
+                lar_list[phase_id] = self.world.solve_linear_system(str(self.phased_analysis.phases[phase_id]), False,
+                                                                    lar_list[prev_phase_id])
             # Combine the phase results
             self.world.show_structure()
+            # Set the previous phase id
+            prev_phase_id = copy.deepcopy(phase_id)

@@ -6,7 +6,6 @@ from pystructural.core.math_ps import point_is_near_point
 from pystructural.pre_processor.components import LineElementSortComponent
 from pystructural.solver.components.geometries import Point2D, Line2D
 from pystructural.solver.components.support import Support
-from pystructural.solver.results import LinearAnalysisResults2D
 from . import canvas_symbols
 from .canvas import Canvas
 
@@ -15,11 +14,11 @@ __all__ = ['PostProcessor2D']
 
 # TODO Change this class with load combinations in mind
 class PostProcessor2D:
-    def __init__(self, structure, result_entity_id):
+    def __init__(self, structure, linear_analysis_results):
         # Set the structure variable
         self.structure = structure
         # Initialize the linear analysis results for the given analysis system id
-        self.linear_analysis_results = LinearAnalysisResults2D(self.structure, result_entity_id)
+        self.linear_analysis_results = linear_analysis_results
         # Get the line element sort component
         self.line_element_sort = self.structure.get_component_from_entity(self.structure.general_entity_id,
                                                                           LineElementSortComponent)
