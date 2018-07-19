@@ -60,20 +60,18 @@ class LinearPhaseAnalysisSystem(AnalysisSystem):
     def process(self):
         # List of linear analysis results
         lar_list = {}
-        # Previous phase id
-        prev_phase_id = None
         # For every phase
         for phase_id in self.phased_analysis.phase_generator():
             # Get the structure with only the current phase
             self.world.phase_id_filter = phase_id
             self.world.phase_id_adder_list = [phase_id]
             # Solve the linear system for the structure
-            if phase_id != 2:
+            if len(self.phased_analysis.previous_phases) == 0:
                 lar_list[phase_id] = self.world.solve_linear_system(str(self.phased_analysis.phases[phase_id]), False)
             else:
+                phase_analysis_list = [lar_list[prev_phase] for prev_phase in self.phased_analysis.previous_phases[
+                    phase_id]]
                 lar_list[phase_id] = self.world.solve_linear_system(str(self.phased_analysis.phases[phase_id]), False,
-                                                                    [lar_list[0], lar_list[1]])
+                                                                    phase_analysis_list)
             # Combine the phase results
             self.world.show_structure()
-            # Set the previous phase id
-            prev_phase_id = copy.deepcopy(phase_id)
