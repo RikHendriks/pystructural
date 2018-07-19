@@ -95,8 +95,8 @@ class Structure(catecs.World):
                     else:
                         return component
 
-    def set_phase(self, phase_id_list):
-        self.phase_id_adder_list = phase_id_list
+    def set_phase(self, *phase_id_list):
+        self.phase_id_adder_list = list(phase_id_list)
 
     def search_for_point(self, coordinate, error=0.001):
         for entity, point in self.get_component(geometries.Point2D):
