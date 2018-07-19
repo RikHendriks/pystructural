@@ -241,7 +241,7 @@ class Structure2D(Structure):
             self.add_component_at_entity(entity_id, loads.ImposedLoad2D(imposed_load, lc_id))
 
     def solve_linear_system(self, analysis_name='linear_calculation', with_preprocessor=True,
-                            linear_analysis_result_phase=None, linear_analysis_load_combinations=None):
+                            linear_analysis_result_phases=None, linear_analysis_load_combinations=None):
         # If there is no load combination defined
         if len(self.load_combinations_component.load_combinations) is 0:
             # Add the generic load combination
@@ -260,14 +260,15 @@ class Structure2D(Structure):
         linear_analysis_result = LinearAnalysisResults2D(self,
                                                          self.get_system(linear_analysis_system_id).result_entity_id)
         # If a linear analysis result phase was given then add it to the linear analysis results
-        if linear_analysis_result_phase is not None:
-            if linear_analysis_load_combinations is None:
-                load_combination_list = list(self.load_combinations_component.load_combinations.keys())
-                linear_analysis_result.add_linear_phase_analysis_result(linear_analysis_result_phase,
-                                                                        load_combination_list)
-            else:
-                linear_analysis_result.add_linear_phase_analysis_result(linear_analysis_result_phase,
-                                                                        linear_analysis_load_combinations)
+        if linear_analysis_result_phases is not None:
+            for linear_analysis_result_phase in linear_analysis_result_phases:
+                if linear_analysis_load_combinations is None:
+                    load_combination_list = list(self.load_combinations_component.load_combinations.keys())
+                    linear_analysis_result.add_linear_phase_analysis_result(linear_analysis_result_phase,
+                                                                            load_combination_list)
+                else:
+                    linear_analysis_result.add_linear_phase_analysis_result(linear_analysis_result_phase,
+                                                                            linear_analysis_load_combinations)
         # Create an instance of the post processor for this structure with the linear analysis
         self.post_processor = PostProcessor2D(self, linear_analysis_result)
         # Return the linear analysis results

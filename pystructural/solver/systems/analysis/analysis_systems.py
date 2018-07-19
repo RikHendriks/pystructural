@@ -72,7 +72,7 @@ class LinearPhaseAnalysisSystem(AnalysisSystem):
                 lar_list[phase_id] = self.world.solve_linear_system(str(self.phased_analysis.phases[phase_id]), False)
             else:
                 lar_list[phase_id] = self.world.solve_linear_system(str(self.phased_analysis.phases[phase_id]), False,
-                                                                    lar_list[prev_phase_id])
+                                                                    [lar_list[0], lar_list[1]])
             # Combine the phase results
             self.world.show_structure()
             # Set the previous phase id
