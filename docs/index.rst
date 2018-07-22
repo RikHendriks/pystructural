@@ -1,15 +1,22 @@
-.. PyStructural documentation master file, created by
-   sphinx-quickstart on Sun Jul 22 13:13:26 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to PyStructural's documentation!
 ========================================
 
+PyStructural is a structural finite element method implementation in Python.
+
+The design philosophy of PyStructural is that PyStructal:
+
+- is completely written in Python
+- is highly customizable
+- uses an Entity Component System (ECS) as its core architecture
+
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: User Documentation
 
+   getting_started
+   examples
+   api_reference
 
 
 Indices and tables
