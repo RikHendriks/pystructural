@@ -1,7 +1,12 @@
-from pystructural.solver.components.connections.connection import Connection
 from pystructural.solver.components.degree_of_freedom import DOF
 
-__all__ = ['Spring']
+__all__ = ['Connection',
+           'Spring']
+
+
+class Connection:
+    def __init__(self):
+        pass
 
 
 class Spring(Connection, DOF):

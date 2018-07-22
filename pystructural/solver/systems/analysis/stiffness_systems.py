@@ -3,8 +3,8 @@ import catecs
 
 import copy
 
-from pystructural.solver.components.additional_components.calculation_components import *
-from pystructural.solver.components.connections.spring import Spring
+from pystructural.solver.components.calculation_components import *
+from pystructural.solver.components.connection import Spring
 from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
 from pystructural.solver.systems.analysis.load_systems import load_subclasses_2d, imposed_load_subclasses_2d
 

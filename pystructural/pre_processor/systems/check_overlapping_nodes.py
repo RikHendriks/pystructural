@@ -1,10 +1,9 @@
-import itertools
 import copy
 
 import catecs
 
 from pystructural.core.math_ps import quotient_set_of_equivalence_relation, point_is_near_point
-from pystructural.solver.components.geometries import Point2D, Line2D
+from pystructural.solver.components.geometry import Point2D, Line2D
 
 __all__ = ['CheckOverlappingNodes2D']
 

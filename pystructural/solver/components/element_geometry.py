@@ -1,6 +1,10 @@
-from pystructural.solver.components.element_geometries.element_geometry import *
+__all__ = ['ElementGeometry',
+           'BeamElementGeometry']
 
-__all__ = ['BeamElementGeometry']
+
+class ElementGeometry:
+    def __init__(self):
+        pass
 
 
 class BeamElementGeometry(ElementGeometry):

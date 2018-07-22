@@ -1,6 +1,10 @@
-from pystructural.solver.components.materials.material import *
+__all__ = ['Material',
+           'LinearElasticity2DMaterial']
 
-__all__ = ['LinearElasticity2DMaterial']
+
+class Material:
+    def __init__(self):
+        pass
 
 
 class LinearElasticity2DMaterial(Material):

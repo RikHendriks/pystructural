@@ -3,11 +3,17 @@ import copy
 import catecs
 import matplotlib.pyplot as plt
 
+import pystructural.solver.components.connection
+import pystructural.solver.components.element_geometry
+import pystructural.solver.components.element
+import pystructural.solver.components.geometry
+import pystructural.solver.components.load
+import pystructural.solver.components.material
 from pystructural.post_processor.post_processor import PostProcessor2D
 from pystructural.pre_processor.pre_processor import PreProcessor2D
 from pystructural.solver.results import LinearAnalysisResults2D
 from ..core import math_ps
-from ..solver.components import element_geometries, elements, geometries, connections, loads, materials, support, \
+from ..solver.components import support, \
     additional_components
 from ..solver.components.load_combination import LoadCombinationsComponent
 from ..solver.systems import LinearAnalysisSystem, LinearPhaseAnalysisSystem
@@ -103,7 +109,7 @@ class Structure(catecs.World):
         self.phase_id_adder_list = list(phase_id_list)
 
     def search_for_point(self, coordinate, error=0.001):
-        for entity, point in self.get_component(geometries.Point2D):
+        for entity, point in self.get_component(pystructural.solver.components.geometry.Point2D):
             if math_ps.point_is_near_point(coordinate, point.point_list[0], error):
                 return entity, point
         else:
@@ -151,7 +157,7 @@ class Structure2D(Structure):
 
     def search_for_line_element(self, coordinate, error=0.001):
         # For every line 2d in teh structure
-        for entity, line in self.get_component(geometries.Line2D):
+        for entity, line in self.get_component(pystructural.solver.components.geometry.Line2D):
             # If the projection of the given coordinate is on the line 2d
             if math_ps.point_projection_is_on_line(coordinate, line.point_list[0], line.point_list[1]):
                 # If the distance from the coordinate and the projection is smaller than the given error return
@@ -161,7 +167,7 @@ class Structure2D(Structure):
             return None
 
     def add_node(self, position):
-        return self.add_entity(geometries.Point2D(position[0], position[1]))
+        return self.add_entity(pystructural.solver.components.geometry.Point2D(position[0], position[1]))
 
     def add_component_at_coordinate(self, coordinate, component_instance, unique=False):
         # Determine the entity based on the position
@@ -184,11 +190,12 @@ class Structure2D(Structure):
             entity_end_id = self.add_node(end_coordinate)
 
         # Create the frame element entity
-        frame_element_id = self.add_entity(geometries.Line2D(entity_start_id, entity_end_id),
-                                           elements.FrameElement2D(),
-                                           materials.LinearElasticity2DMaterial(youngs_modulus, mass_density),
-                                           element_geometries.BeamElementGeometry(cross_section_area,
-                                                                                  moment_of_inertia))
+        frame_element_id = self.add_entity(
+            pystructural.solver.components.geometry.Line2D(entity_start_id, entity_end_id),
+            pystructural.solver.components.element.FrameElement2D(),
+            pystructural.solver.components.material.LinearElasticity2DMaterial(youngs_modulus, mass_density),
+            pystructural.solver.components.element_geometry.BeamElementGeometry(cross_section_area,
+                                                                                moment_of_inertia))
 
         # Create the group for the frame element entity
         group_id = self.group_component.create_group(self.phase_id_adder_list)
@@ -206,7 +213,7 @@ class Structure2D(Structure):
 
     def add_spring(self, coordinate, spring_x=None, spring_y=None, rotation_spring_z=None):
         # Create the spring component
-        spring_component = connections.Spring(spring_x=spring_x, spring_y=spring_y, rotation_spring_z=rotation_spring_z)
+        spring_component = pystructural.solver.components.connection.Spring(spring_x=spring_x, spring_y=spring_y, rotation_spring_z=rotation_spring_z)
         # Add the component to the position
         self.add_component_at_coordinate(coordinate, spring_component)
 
@@ -217,7 +224,7 @@ class Structure2D(Structure):
     def add_point_load(self, coordinate, point_load, load_case=None):
         # Create the spring component
         lc_id = self.load_combinations_component.add_load_case(load_case)
-        point_load_component = loads.PointLoad2D(point_load, lc_id)
+        point_load_component = pystructural.solver.components.load.PointLoad2D(point_load, lc_id)
         # Add the component to the position
         self.add_component_at_coordinate(coordinate, point_load_component)
 
@@ -237,12 +244,12 @@ class Structure2D(Structure):
     def add_global_q_load_func(self, entity_id, q_load_func, load_case=None):
         if entity_id in self.entities:
             lc_id = self.load_combinations_component.add_load_case(load_case)
-            self.add_component_at_entity(entity_id, loads.QLoad2D(q_load_func, lc_id))
+            self.add_component_at_entity(entity_id, pystructural.solver.components.load.QLoad2D(q_load_func, lc_id))
 
     def add_imposed_load(self, entity_id, imposed_load, load_case=None):
         if entity_id in self.entities:
             lc_id = self.load_combinations_component.add_load_case(load_case)
-            self.add_component_at_entity(entity_id, loads.ImposedLoad2D(imposed_load, lc_id))
+            self.add_component_at_entity(entity_id, pystructural.solver.components.load.ImposedLoad2D(imposed_load, lc_id))
 
     def solve_linear_system(self, analysis_name='linear_calculation', with_preprocessor=True,
                             linear_analysis_result_phases=None, linear_analysis_load_combinations=None):
@@ -340,7 +347,7 @@ class Structure2D(Structure):
             entity_id, _ = tuple
 
             # Get the element instance
-            for line_element_class in geometries.line_elements:
+            for line_element_class in pystructural.solver.components.element.line_elements:
                 if self.has_component(entity_id, line_element_class):
                     element_instance = self.get_component_from_entity(entity_id, line_element_class)
                     break

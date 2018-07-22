@@ -1,13 +1,72 @@
 import numpy as np
 
-from pystructural.solver.components import DOF
-from pystructural.solver.components.elements import Element
+from pystructural.solver.components.geometry import Line2D, Triangle2D
+from pystructural.solver.components.degree_of_freedom import DOF
+from pystructural.solver.components.material import LinearElasticity2DMaterial
+from pystructural.solver.components.element_geometry import BeamElementGeometry
 
-from pystructural.solver.components.geometries import *
-from pystructural.solver.components.materials import *
-from pystructural.solver.components.element_geometries import *
+__all__ = ['Element',
+           'FrameElement2D', 'LinearTriangleElement2D',
+           'line_elements', 'triangle_elements']
 
-__all__ = ['FrameElement2D']
+
+class Element:
+    compatible_geometry = None
+    compatible_materials = None
+    compatible_element_geometries = None
+    element_dimension = None
+
+    def __init__(self):
+        # Geometry
+        self.geometry = None
+        # Material and geometries element
+        self.material = None
+        self.element_geometry = None
+        # Matrices
+        self.strain_matrix = None
+        self.stiffness_matrix = None
+        self.mass_matrix = None
+        self.nodal_force_vector = None
+
+    def get_dof(self):
+        pass
+
+    def get_stiffness_coordinate_to_node_and_dof_variable(self, x):
+        pass
+
+    def get_node_and_dof_variable_to_stiffness_coordinate(self, node_id, dof_id):
+        pass
+
+    def stiffness_matrix_dof_generator(self):
+        dim = self.stiffness_matrix.shape[0]
+        for i in range(0, dim):
+            for j in range(0, dim):
+                yield [self.get_stiffness_coordinate_to_node_and_dof_variable(i),
+                       self.get_stiffness_coordinate_to_node_and_dof_variable(j)],\
+                      self.stiffness_matrix[i][j]
+
+    def compute_element(self):
+        # Compute all the matrices
+        # Element properties
+        self.compute_element_properties()
+        # Stiffness matrix
+        self.compute_stiffness_matrix()
+        # Mass matrix
+        self.compute_mass_matrix()
+        # Nodal force vector
+        self.compute_nodal_force_vector()
+
+    def compute_element_properties(self):
+        pass
+
+    def compute_stiffness_matrix(self):
+        pass
+
+    def compute_mass_matrix(self):
+        pass
+
+    def compute_nodal_force_vector(self):
+        pass
 
 
 class FrameElement2D(Element):
@@ -104,3 +163,47 @@ class FrameElement2D(Element):
 
     def compute_nodal_force_vector(self):
         pass
+
+
+class LinearTriangleElement2D(Element):
+    compatible_geometry = Triangle2D
+    compatible_materials = []
+    compatible_element_geometries = []
+    element_dimension = 6
+
+    def __init__(self):
+        super().__init__()
+
+    def get_dof(self):
+        return DOF(displacement_x=True, displacement_y=True)
+
+    def get_stiffness_coordinate_to_node_and_dof_variable(self, x):
+        pass
+
+    def get_node_and_dof_variable_to_stiffness_coordinate(self, node_id, dof_id):
+        pass
+
+    def compute_element_properties(self):
+        pass
+
+    def shape_function(self, i):
+        pass
+
+    def compute_shape_matrix(self):
+        pass
+
+    def compute_strain_matrix(self):
+        pass
+
+    def compute_stiffness_matrix(self):
+        pass
+
+    def compute_mass_matrix(self):
+        pass
+
+    def compute_nodal_force_vector(self):
+        pass
+
+
+line_elements = [FrameElement2D]
+triangle_elements = [LinearTriangleElement2D]

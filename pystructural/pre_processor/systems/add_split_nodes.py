@@ -1,7 +1,7 @@
 import numpy as np
 import catecs
 
-from pystructural.solver.components.geometries import Line2D, Point2D
+from pystructural.solver.components.geometry import Point2D, Line2D
 
 __all__ = ['AddSplitNodes2D']
 

@@ -2,12 +2,13 @@ import numpy as np
 
 import copy
 
-from pystructural.solver.components.additional_components.calculation_components import *
+from pystructural.solver.components.calculation_components import *
 
 from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
-from pystructural.solver.components.geometries import line_elements, Point2D
+from pystructural.solver.components.geometry import Point2D
+from pystructural.solver.components.element import line_elements
 from pystructural.pre_processor.components import LineElementSortComponent
-from pystructural.solver.systems.analysis.load_systems import load_subclasses_2d, imposed_load_subclasses_2d
+from pystructural.solver.systems.analysis.load_systems import imposed_load_subclasses_2d
 
 from .results import *
 

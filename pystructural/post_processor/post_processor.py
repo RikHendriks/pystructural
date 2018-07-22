@@ -4,7 +4,7 @@ import numpy as np
 
 from pystructural.core.math_ps import point_is_near_point
 from pystructural.pre_processor.components import LineElementSortComponent
-from pystructural.solver.components.geometries import Point2D, Line2D
+from pystructural.solver.components.geometry import Point2D, Line2D
 from pystructural.solver.components.support import Support
 from . import canvas_symbols
 from .canvas import Canvas

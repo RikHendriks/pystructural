@@ -1,8 +1,23 @@
 import numpy as np
 
-from pystructural.solver.components.geometries import Geometry
+__all__ = ['Geometry',
+           'Point2D', 'Line2D', 'Triangle2D']
 
-__all__ = ['Line2D']
+
+class Geometry:
+
+    def __init__(self, point_id_list, point_list):
+        self.point_id_list = point_id_list
+        self.point_list = point_list
+
+    def compute_geometry_properties(self):
+        pass
+
+
+class Point2D(Geometry):
+
+    def __init__(self, x, y):
+        super().__init__(None, np.array([[x, y]]))
 
 
 class Line2D(Geometry):
@@ -40,3 +55,14 @@ class Line2D(Geometry):
         self.global_to_local_matrix[4, 3] = -s
         self.global_to_local_matrix[4, 4] = c
         self.global_to_local_matrix[5, 5] = 1.0
+
+
+class Triangle2D(Geometry):
+
+    def __init__(self, point_id_1, point_id_2, point_id_3):
+        self.area = None
+        super().__init__([point_id_1, point_id_2, point_id_3], None)
+
+    def compute_geometry_properties(self):
+        self.area = 0.5 * np.linalg.det(np.array([self.point_list[1] - self.point_list[0],
+                                                  self.point_list[2] - self.point_list[0]]))
