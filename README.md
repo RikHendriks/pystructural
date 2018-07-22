@@ -18,7 +18,7 @@ import pystructural as ps
 structure = ps.core.Structure2D()
 
 # Add a frame element
-structure.add_frame_element([0.0, 0.0], [10.0, 0.0], 1.0, 1.0, 1.0, 1.0)
+structure.add_frame_element([0.0, 0.0], [10.0, 0.0], 1.0e4, 1.0, 1.0, 1.0)
 
 # Add supports
 structure.add_support([0.0, 0.0], displacement_x=False, displacement_y=False)
@@ -31,7 +31,7 @@ structure.add_point_load([5.0, 0.0], [0.0, -10.0, 0.0])
 structure.solve_linear_system()
 
 # Show the structure
-structure.show_structure([-5.0, 15.0, -5.0, 5.0])
+structure.show_structure()
 ```
 
 <coming soon, a nice picture of this structure>
