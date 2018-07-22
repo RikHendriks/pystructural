@@ -3,6 +3,10 @@ import numpy as np
 from pystructural.core.math_ps import *
 
 
+############
+# GEOMETRY #
+############
+
 def test_is_near_point():
     p1 = np.array([0.0, 0.0])
     p2 = np.array([0.0, 0.00099])
@@ -106,6 +110,10 @@ def test_line_embedding():
     assert line_embedding(-0.1, l1, l2) is None
     assert line_embedding(1.1, l1, l2) is None
 
+
+##############
+# SET THEORY #
+##############
 
 def test_quotient_set_of_equivalence_relation():
     def equivalence_relation(e_1, e_2):
