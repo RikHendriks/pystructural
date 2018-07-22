@@ -29,7 +29,7 @@ class Geometry:
 
 
 class Point2D(Geometry):
-    """The point 2D geometry class, which is an instance of the Geometry class.
+    """The point 2D geometry class which inherits from the geometry class.
 
     :param x: The x coordinate of the point.
     :param y: The y coordinate of the point.
@@ -40,7 +40,7 @@ class Point2D(Geometry):
 
 
 class Line2D(Geometry):
-    """The line 2D geometry class, which is an instance of the Geometry class.
+    """The line 2D geometry class which inherits from the geometry class.
 
     :param point_id_1: The id of the start point of the line.
     :param point_id_2: The id of the end point of the line.
@@ -84,7 +84,7 @@ class Line2D(Geometry):
 
 
 class Triangle2D(Geometry):
-    """The triangle 2D geometry class, which is an instance of the Geometry class.
+    """The triangle 2D geometry class which inherits from the geometry class.
 
     :param point_id_1: The id of the first point of the triangle.
     :param point_id_2: The id of the second point of the triangle.
