@@ -89,6 +89,10 @@ class Structure(catecs.World):
         else:
             if entity_id in self.entities:
                 for component in self.get_component_from_entity_generator(entity_id, component_type):
+                    if hasattr(component, 'point_list'):
+                        pass
+                        #print(component.point_list)
+                        #print(component.__dict__)
                     if hasattr(component, 'phase_id_list'):
                         if self.phase_id_filter in component.phase_id_list:
                             return component
@@ -116,7 +120,7 @@ class Structure(catecs.World):
                     for phase_id in self.phase_id_adder_list:
                         if phase_id not in tuple[1].phase_id_list:
                             tuple[1].phase_id_list.append(phase_id)
-                else:
+                elif self.phase_id_adder_list is not None:
                     tuple[1].phase_id_list = copy.deepcopy(self.phase_id_adder_list)
                 # Return the entity id and the point list
                 return tuple[0]
@@ -293,8 +297,6 @@ class Structure2D(Structure):
                                                       phase_analysis))
         # Process linear calculation system
         self.process_systems(linear_phase_analysis_system_id)
-        # Create an instance of the post processor for this structure with the linear analysis
-        self.post_processor = PostProcessor2D(self, self.get_system(linear_phase_analysis_system_id).result_entity_id)
 
     def get_point_displacement_vector(self, coordinate, load_combination='generic_load_combination'):
         # Get the entity id and the instance of the point

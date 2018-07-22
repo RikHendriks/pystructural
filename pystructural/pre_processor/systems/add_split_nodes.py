@@ -24,4 +24,7 @@ class AddSplitNodes2D(catecs.System):
             # Add points at the splits
             for i in range(splits - 1):
                 node_position = line_start_point + (i + 1) * (line_vector / float(splits))
-                self.world.add_entity(Point2D(*node_position), phase_id_list=line.phase_id_list)
+                if hasattr(line, 'phase_id_list'):
+                    self.world.add_entity(Point2D(*node_position), phase_id_list=line.phase_id_list)
+                else:
+                    self.world.add_entity(Point2D(*node_position))

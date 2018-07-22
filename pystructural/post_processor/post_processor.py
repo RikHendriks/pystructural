@@ -146,7 +146,7 @@ class PostProcessor2D:
     def draw_dof_enveloping(self, dof, load_combinations, scale=1.0, decimal_rounding=2, color_min='red',
                             color_max='blue'):
         # For every group of line elements
-        for group_id in self.line_element_sort.group_id_generator():
+        for group_id in self.line_element_sort.group_id_generator(self.structure.phase_id_filter):
             # Point of interest detector class instance for the min and the max values
             poid_min = PointOfInterestDetector()
             poid_max = PointOfInterestDetector()
@@ -231,7 +231,7 @@ class PostProcessor2D:
 
     def min_max_load_combinations_generator(self, dof, coordinates):
         # For each group
-        for group_id in self.line_element_sort.group_id_generator():
+        for group_id in self.line_element_sort.group_id_generator(self.structure.phase_id_filter):
             # For each combined line value
             for position_vector, dof_value_list, load_combination_list in \
                     self.linear_analysis_results.global_dof_enveloping_generator(group_id):

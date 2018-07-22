@@ -10,7 +10,10 @@ class LineElementSortComponent:
 
     def group_id_generator(self, phase_id_filter):
         for group_id in self.groups:
-            if phase_id_filter in self.groups_phase_id_list[group_id]:
+            if phase_id_filter is not None:
+                if phase_id_filter in self.groups_phase_id_list[group_id]:
+                    yield group_id
+            else:
                 yield group_id
 
     def line_element_id_generator(self, group_id):
