@@ -1,4 +1,6 @@
 # PyStructural
+[![Documentation Status](https://readthedocs.org/projects/pystructural/badge/?version=latest)](https://pystructural.readthedocs.io/en/latest/?badge=latest)
+
 PyStructural is a structural finite element method implementation in Python.
 
 The design philosophy of PyStructural is that PyStructal:
