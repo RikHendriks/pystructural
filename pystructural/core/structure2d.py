@@ -13,8 +13,7 @@ from pystructural.post_processor.post_processor import PostProcessor2D
 from pystructural.pre_processor.pre_processor import PreProcessor2D
 from pystructural.solver.results import LinearAnalysisResults2D
 from ..core import math_ps
-from ..solver.components import support, \
-    additional_components
+from ..solver.components import support, calculation_components
 from ..solver.components.load_combination import LoadCombinationsComponent
 from ..solver.systems import LinearAnalysisSystem, LinearPhaseAnalysisSystem
 
@@ -146,10 +145,10 @@ class Structure2D(Structure):
         # Initialize the world
         super().__init__(minimum_element_distance=minimum_element_distance)
         # Initialize the general entity for all the static components of the structure
-        self.general_entity_id = self.add_entity(additional_components.GroupComponent())
+        self.general_entity_id = self.add_entity(calculation_components.GroupComponent())
         # Get the group component
         self.group_component = self.get_component_from_entity(self.general_entity_id,
-                                                              additional_components.GroupComponent)
+                                                              calculation_components.GroupComponent)
         # Get the load combinations component
         self.load_combinations_component = self.add_component(self.general_entity_id, LoadCombinationsComponent())
         # Initialize the post processor

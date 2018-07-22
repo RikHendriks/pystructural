@@ -108,4 +108,10 @@ def test_line_embedding():
 
 
 def test_quotient_set_of_equivalence_relation():
-    assert False
+    def equivalence_relation(e_1, e_2):
+        return e_1 % 2 == e_2 % 2
+
+    quotient_set = quotient_set_of_equivalence_relation(range(10), equivalence_relation)
+
+    assert quotient_set[0] == [0, 2, 4, 6, 8]
+    assert quotient_set[1] == [1, 3, 5, 7, 9]

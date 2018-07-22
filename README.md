@@ -1,4 +1,5 @@
 # PyStructural
+[![Build Status](https://travis-ci.org/pystructural/pystructural.svg?branch=master)](https://travis-ci.org/pystructural/pystructural)
 [![Documentation Status](https://readthedocs.org/projects/pystructural/badge/?version=latest)](https://pystructural.readthedocs.io/en/latest/?badge=latest)
 
 PyStructural is a structural finite element method implementation in Python.
