@@ -1,3 +1,5 @@
+.. _index:
+
 Welcome to PyStructural's documentation!
 ========================================
 
@@ -15,7 +17,7 @@ The design philosophy of PyStructural is that PyStructal:
    :caption: User Documentation
 
    getting_started
-   examples
+   examples/index
    api_reference
 
 

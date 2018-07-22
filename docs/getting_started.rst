@@ -1,3 +1,5 @@
+.. _getting_started:
+
 Getting Started
 ===============
 
@@ -13,7 +15,8 @@ setup.py file of PyStructural is and enter the following command::
 Basic Example
 ^^^^^^^^^^^^^
 
-The following shows an example of a simple structure that consists of a horizontal frame with a pointload in the middle.
+The following shows an example of a simple structure that consists of a horizontal frame with a point load in the
+middle, for more information see :ref:`examples/basic_structure`.
 
 .. code-block:: python
 
