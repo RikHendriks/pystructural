@@ -126,6 +126,12 @@ def line_embedding(unit, line_start, line_end):
 ##############
 
 def quotient_set_of_equivalence_relation(iterable, relation):
+    """Get the quotient set of an equivalence relation.
+
+    :param iterable:
+    :param relation:
+    :return:
+    """
     partitions = {}
     for item in iterable:
         for partition in partitions:
