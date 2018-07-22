@@ -1,4 +1,1 @@
-from .core import *
-from .pre_processor import *
-from .solver import *
-from .post_processor import *
+from . import core, pre_processor, solver, post_processor
