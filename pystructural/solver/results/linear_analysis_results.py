@@ -164,8 +164,8 @@ class LinearAnalysisResults2D:
             for phase_analysis, load_combinations in self.linear_phase_analysis_results:
                 if load_combination in load_combinations:
                     try:
-                        node_displacement_vector += phase_analysis.get_node_dislacement_vector(node_instance,
-                                                                                               load_combination)
+                        node_displacement_vector += phase_analysis.get_node_displacement_vector(node_instance,
+                                                                                                load_combination)
                     except KeyError:
                         pass
         # Return the node displacement vector
