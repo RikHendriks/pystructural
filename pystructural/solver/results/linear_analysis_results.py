@@ -193,8 +193,7 @@ class LinearAnalysisResults2D:
             for phase_analysis, load_combinations in self.linear_phase_analysis_results:
                 if load_combination in load_combinations:
                     try:
-                        node_force_vector += phase_analysis.get_node_global_force_vector(node_instance,
-                                                                                         load_combination)
+                        node_force_vector += phase_analysis.get_node_global_force(node_instance, load_combination)
                     except KeyError:
                         pass
         # Return the node global force vector
