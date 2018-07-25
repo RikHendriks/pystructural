@@ -48,7 +48,7 @@ class LineElementSort2D(catecs.System):
                 element_list[line_id][line.point_id_list[0]] = 0
                 element_list[line_id][line.point_id_list[1]] = 1
             # Pick the first node in the group and the starting element
-            node_id = list(start_end_node_list)[0]
+            node_id, end_node_id = list(start_end_node_list.keys())
             line_id = node_list[node_id][0]
             # iterate over the complete group and sort the group in the line element sort component
             while True:
@@ -56,15 +56,14 @@ class LineElementSort2D(catecs.System):
                 self.line_element_sort_component.groups[group_id].append(
                     copy.deepcopy((line_id, node_id, element_list[line_id][node_id])))
                 # Determine if the node is the first or the second node of the element
-                if element_list[line_id][node_id] == 0:
-                    second_node = (1, list(element_list[line_id])[1])
-                else:
-                    second_node = (0, list(element_list[line_id])[0])
+                for node in element_list[line_id]:
+                    if element_list[line_id][node] != element_list[line_id][node_id]:
+                        second_node = (element_list[line_id][node], node)
                 # Add the second node of the line to the component
                 self.line_element_sort_component.groups[group_id].append(
                     copy.deepcopy((line_id, second_node[1], second_node[0])))
                 # Break if the end of the chain is reached in the group
-                if second_node[1] == list(start_end_node_list)[1]:
+                if second_node[1] == end_node_id:
                     break
                 # Set the node id for the next iteration
                 node_id = second_node[1]
