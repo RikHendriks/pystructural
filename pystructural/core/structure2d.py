@@ -94,10 +94,6 @@ class Structure(catecs.World):
         else:
             if entity_id in self.entities:
                 for component in self.get_component_from_entity_generator(entity_id, component_type):
-                    if hasattr(component, 'point_list'):
-                        pass
-                        #print(component.point_list)
-                        #print(component.__dict__)
                     if hasattr(component, 'phase_id_list'):
                         if self.phase_id_filter in component.phase_id_list:
                             return component

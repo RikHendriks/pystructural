@@ -82,10 +82,12 @@ class FrameElement2D(Element):
         # Element matrices
         self.local_stiffness_matrix = None
         self.global_to_local_matrix = None
+        # DOF
+        self.DOF = DOF(displacement_x=True, displacement_y=True, rotation_z=True)
         super().__init__()
 
     def get_dof(self):
-        return DOF(displacement_x=True, displacement_y=True, rotation_z=True)
+        return self.DOF
 
     def get_stiffness_coordinate_to_node_and_dof_variable(self, x):
         dof_id_list = self.get_dof().get_dof_id_list()
@@ -172,10 +174,12 @@ class LinearTriangleElement2D(Element):
     element_dimension = 6
 
     def __init__(self):
+        # DOF
+        self.DOF = DOF(displacement_x=True, displacement_y=True)
         super().__init__()
 
     def get_dof(self):
-        return DOF(displacement_x=True, displacement_y=True)
+        return self.DOF
 
     def get_stiffness_coordinate_to_node_and_dof_variable(self, x):
         pass

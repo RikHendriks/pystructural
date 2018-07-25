@@ -1,6 +1,6 @@
 import numpy as np
 
-__all__ = ['point_is_near_point', 'point_line_projection', 'point_line_projection_distance',
+__all__ = ['point_2d_norm', 'point_is_near_point', 'point_line_projection', 'point_line_projection_distance',
            'point_is_on_line', 'point_projection_is_on_line', 'is_collinear',
            'line_to_unit_interval', 'line_embedding',
            'quotient_set_of_equivalence_relation']
@@ -10,6 +10,15 @@ __all__ = ['point_is_near_point', 'point_line_projection', 'point_line_projectio
 # GEOMETRY #
 ############
 
+def point_2d_norm(point_0):
+    """Returns the norm of a 2d point.
+
+    :param point_0:
+    :return:
+    """
+    return (point_0[0] ** 2 + point_0[1] ** 2) ** 0.5
+
+
 def point_is_near_point(point_0, point_1, error=0.001):
     """Return true iff the two points are near each other.
 
@@ -18,7 +27,7 @@ def point_is_near_point(point_0, point_1, error=0.001):
     :param error:
     :return:
     """
-    return np.linalg.norm(point_0 - point_1) < error
+    return point_2d_norm(point_0 - point_1) < error
 
 
 def point_line_projection(point, line_start, line_end):
@@ -32,7 +41,7 @@ def point_line_projection(point, line_start, line_end):
     # Determine the projection of the point to the line
     v = line_end - line_start
     w = point - line_start
-    return line_start + np.dot(v, w) * v / (np.linalg.norm(v) ** 2)
+    return line_start + np.dot(v, w) * v / (point_2d_norm(v) ** 2)
 
 
 def point_line_projection_distance(point, line_start, line_end):
@@ -46,7 +55,7 @@ def point_line_projection_distance(point, line_start, line_end):
     # Get the projection of the point
     projection = point_line_projection(point, line_start, line_end)
     # Return the distance between the projection and the point
-    return np.linalg.norm(projection - point)
+    return point_2d_norm(projection - point)
 
 
 def point_is_on_line(point, line_start, line_end, error=0.001):
@@ -102,7 +111,7 @@ def line_to_unit_interval(point, line_start, line_end, error=0.001):
     :return:
     """
     if point_is_on_line(point, line_start, line_end, error):
-        return np.linalg.norm(point - line_start) / np.linalg.norm(line_end - line_start)
+        return point_2d_norm(point - line_start) / point_2d_norm(line_end - line_start)
     else:
         return None
 

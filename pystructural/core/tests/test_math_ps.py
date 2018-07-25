@@ -7,6 +7,14 @@ from pystructural.core.math_ps import *
 # GEOMETRY #
 ############
 
+def test_point_2d_norm():
+    p1 = np.array([0.0, 1.0])
+    p2 = np.array([0.5, 0.5])
+
+    assert point_2d_norm(p1) == 1.0
+    assert point_2d_norm(p2) == 0.5 * 2 ** 0.5
+
+
 def test_is_near_point():
     p1 = np.array([0.0, 0.0])
     p2 = np.array([0.0, 0.00099])

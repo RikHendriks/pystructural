@@ -73,5 +73,3 @@ class LinearPhaseAnalysisSystem(AnalysisSystem):
                     phase_id]]
                 lar_list[phase_id] = self.world.solve_linear_system(str(self.phased_analysis.phases[phase_id]), False,
                                                                     phase_analysis_list)
-            # Combine the phase results
-            # self.world.show_structure()

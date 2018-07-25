@@ -37,6 +37,8 @@ class PointLoad2D(Load):
         if len(point_load) != 3:
             raise TypeError("The input must be a list or numpy array with 3 elements.")
         self.point_load = np.array(point_load)
+        # DOF
+        self.DOF = DOF(displacement_x=True, displacement_y=True, rotation_z=True)
         # Initialize the init of the super class
         super().__init__(load_case_id)
 
@@ -45,7 +47,7 @@ class PointLoad2D(Load):
         return self
 
     def get_dof(self):
-        return DOF(displacement_x=True, displacement_y=True, rotation_z=True)
+        return self.DOF
 
     def load_dof_generator(self):
         for i in range(0, len(self.point_load)):
@@ -66,6 +68,8 @@ class QLoad2D(Load):
     def __init__(self, q_load_func, load_case_id=None):
         # Initialize the q-load function
         self.q_load_func = q_load_func
+        # DOF
+        self.DOF = DOF(displacement_y=True, rotation_z=True)
         # Initialize the init of the super class
         super().__init__(load_case_id)
 
@@ -74,7 +78,7 @@ class QLoad2D(Load):
         return self
 
     def get_dof(self):
-        return DOF(displacement_y=True, rotation_z=True)
+        return self.DOF
 
     def load_dof_generator(self):
         q_1 = self.q_load_func(self.geometry.point_list[0])
@@ -103,11 +107,13 @@ class ImposedLoad2D(ImposedLoad):
         if len(imposed_load) != 2:
             raise TypeError("The input must be a list or numpy array with 3 elements.")
         self.imposed_load = np.array(imposed_load)
+        # DOF
+        self.DOF = DOF(displacement_x=True, displacement_y=True, rotation_z=True)
         # Initialize the init of the super class
         super().__init__(load_case_id)
 
     def get_dof(self):
-        return DOF(displacement_x=True, displacement_y=True, rotation_z=True)
+        return self.DOF
 
     def load_dof_generator(self):
         # Initialize the global force vector

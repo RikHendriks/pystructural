@@ -12,6 +12,10 @@ class DOF:
         self.rotation_x = rotation_x
         self.rotation_y = rotation_y
         self.rotation_z = rotation_z
+        # Initialize the dof id list
+        self.dof_id_list = None
+        # Update the dof id list
+        self.update_dof_id_list()
 
     def __add__(self, other):
         self.update_dof(other)
@@ -47,6 +51,8 @@ class DOF:
         # Rotation z
         if other_dof.rotation_z is True:
             self.rotation_z = True
+        # Update the dof id list
+        self.update_dof_id_list()
 
     def get_dof(self, i):
         # Displacement x
@@ -70,7 +76,7 @@ class DOF:
         else:
             raise IndexError("This function only accepts an integer number from 0 to 5")
 
-    def get_dof_id_list(self):
+    def update_dof_id_list(self):
         id_list = []
         # Displacement x
         if self.displacement_x is True:
@@ -91,4 +97,8 @@ class DOF:
         if self.rotation_z is True:
             id_list.append(5)
         # Return the id_list
-        return id_list
+        self.dof_id_list = id_list
+
+    def get_dof_id_list(self):
+        # Return the dof id list
+        return self.dof_id_list
