@@ -37,28 +37,28 @@ class LinearAnalysisResults2D:
         # Add the linear phase analysis results to the list
         self.linear_phase_analysis_results.append([linear_phase_analysis_result, load_combinations])
 
-    def update_linear_phase_analysis_results(self):
-        # If a linear analysis results is given then add the results to the results of the current analysis
-        for phase_analysis, load_combinations in self.linear_phase_analysis_results:
-            for load_combination in load_combinations:
-                # For each element in the displacement vector
-                for i in self.dof_calculation_component.global_to_local_dof_dict:
-                    # Get the global dof
-                    entity_id, dof = self.dof_calculation_component.global_to_local_dof_dict[i]
-                    # If the same dof exists in the linear analysis result
-                    if entity_id in phase_analysis.dof_calculation_component.local_to_global_dof_dict:
-                        if dof in phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id]:
-                            j = phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id][dof]
-                            self.displacement_and_load_vectors_component.displacement_vectors[load_combination][i] += \
-                                phase_analysis.displacement_and_load_vectors_component.displacement_vectors[
-                                    load_combination][j]
-                    # If the same dof exists in the linear analysis result
-                    if entity_id in phase_analysis.dof_calculation_component.local_to_global_dof_dict:
-                        if dof in phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id]:
-                            j = phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id][dof]
-                            self.displacement_and_load_vectors_component.load_vectors[load_combination][i] += \
-                                phase_analysis.displacement_and_load_vectors_component.load_vectors[
-                                    load_combination][j]
+    # def update_linear_phase_analysis_results(self):
+    #     # If a linear analysis results is given then add the results to the results of the current analysis
+    #     for phase_analysis, load_combinations in self.linear_phase_analysis_results:
+    #         for load_combination in load_combinations:
+    #             # For each element in the displacement vector
+    #             for i in self.dof_calculation_component.global_to_local_dof_dict:
+    #                 # Get the global dof
+    #                 entity_id, dof = self.dof_calculation_component.global_to_local_dof_dict[i]
+    #                 # If the same dof exists in the linear analysis result
+    #                 if entity_id in phase_analysis.dof_calculation_component.local_to_global_dof_dict:
+    #                     if dof in phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id]:
+    #                         j = phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id][dof]
+    #                         self.displacement_and_load_vectors_component.displacement_vectors[load_combination][i] += \
+    #                             phase_analysis.displacement_and_load_vectors_component.displacement_vectors[
+    #                                 load_combination][j]
+    #                 # If the same dof exists in the linear analysis result
+    #                 if entity_id in phase_analysis.dof_calculation_component.local_to_global_dof_dict:
+    #                     if dof in phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id]:
+    #                         j = phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id][dof]
+    #                         self.displacement_and_load_vectors_component.load_vectors[load_combination][i] += \
+    #                             phase_analysis.displacement_and_load_vectors_component.load_vectors[
+    #                                 load_combination][j]
 
     def calculate_line_result(self, group_id):
         line_start = self.structure.get_component_from_entity(self.line_element_sort.groups[group_id][0][1],
@@ -160,6 +160,16 @@ class LinearAnalysisResults2D:
             node_displacement_vector[i] += \
                 self.displacement_and_load_vectors_component.displacement_vectors[load_combination][global_id]
 
+        # If linear phased analysis results are added to the node displacement vector then add it
+        if phased:
+            # For every load combination in every phase analysis
+            for phase_analysis, load_combinations in self.linear_phase_analysis_results:
+                if load_combination in load_combinations:
+                    try:
+                        node_displacement_vector += phase_analysis.get_node_displacement_vector(node_instance,
+                                                                                                load_combination)
+                    except KeyError:
+                        pass
         # Return the node displacement vector
         return node_displacement_vector
 
@@ -179,6 +189,16 @@ class LinearAnalysisResults2D:
             node_force_vector[i] += \
                 self.displacement_and_load_vectors_component.load_vectors[load_combination][global_id]
 
+        # If linear phased analysis results are added to the node force vector then add it
+        if phased:
+            # For every load combination in every phase analysis
+            for phase_analysis, load_combinations in self.linear_phase_analysis_results:
+                if load_combination in load_combinations:
+                    try:
+                        node_force_vector += phase_analysis.get_node_global_force_vector(node_instance,
+                                                                                         load_combination)
+                    except KeyError:
+                        pass
         # Return the node global force vector
         return node_force_vector
 
@@ -196,6 +216,16 @@ class LinearAnalysisResults2D:
                             3*i:3*i+3]
                         break
 
+        # If linear phased analysis results are added to the support force vector then add it
+        if phased:
+            # For every load combination in every phase analysis
+            for phase_analysis, load_combinations in self.linear_phase_analysis_results:
+                if load_combination in load_combinations:
+                    try:
+                        support_force_vector += phase_analysis.get_support_node_global_force(node_instance,
+                                                                                             load_combination)
+                    except KeyError:
+                        pass
         # Return the support global force vector
         return support_force_vector
 
@@ -214,6 +244,16 @@ class LinearAnalysisResults2D:
             element_displacement_vector[i] +=\
                 self.displacement_and_load_vectors_component.displacement_vectors[load_combination][global_id]
 
+        # If linear phased analysis results are added to the element displacement vector then add it
+        if phased:
+            # For every load combination in every phase analysis
+            for phase_analysis, load_combinations in self.linear_phase_analysis_results:
+                if load_combination in load_combinations:
+                    try:
+                        element_displacement_vector += phase_analysis.get_element_displacement_vector(element_instance,
+                                                                                                      load_combination)
+                    except KeyError:
+                        pass
         # Return the element displacement vector
         return element_displacement_vector
 
@@ -239,6 +279,16 @@ class LinearAnalysisResults2D:
                             # Subtract the imposed load from the load vector
                             element_global_force_vector[i] -= factor * data[1]
 
+        # If linear phased analysis results are added to the element global force vector then add it
+        if phased:
+            # For every load combination in every phase analysis
+            for phase_analysis, load_combinations in self.linear_phase_analysis_results:
+                if load_combination in load_combinations:
+                    try:
+                        element_global_force_vector += phase_analysis.get_element_global_force_vector(element_instance,
+                                                                                                      load_combination)
+                    except KeyError:
+                        pass
         # Return the element global force vector
         return element_global_force_vector
 
