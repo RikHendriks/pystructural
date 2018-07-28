@@ -85,8 +85,8 @@ def test_phased_analysis_result_0():
     # Create the phased analysis
     phase_analysis = ps.solver.PhasedAnalysis()
     # Create the two phases
-    phase_0 = phase_analysis.add_phase('phase_0')
-    phase_1 = phase_analysis.add_phase('phase_1')
+    phase_0 = phase_analysis.create_phase('phase_0')
+    phase_1 = phase_analysis.create_phase('phase_1')
     # Add phase_0 as the previous phase to phase_1
     phase_analysis.add_previous_phase(phase_1, phase_0)
     # Create a structure instance
@@ -118,9 +118,9 @@ def test_phased_analysis_result_1():
     # Create the phased analysis
     phase_analysis = ps.solver.PhasedAnalysis()
     # Create the two phases
-    phase_0 = phase_analysis.add_phase('phase_0')
-    phase_1 = phase_analysis.add_phase('phase_1')
-    phase_2 = phase_analysis.add_phase('phase_2')
+    phase_0 = phase_analysis.create_phase('phase_0')
+    phase_1 = phase_analysis.create_phase('phase_1')
+    phase_2 = phase_analysis.create_phase('phase_2')
     # Add phase_0 as the previous phase to phase_1
     phase_analysis.add_previous_phase(phase_2, phase_0, phase_1)
     # Create a structure instance
