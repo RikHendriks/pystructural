@@ -31,7 +31,7 @@ class UpdateDOFs(catecs.System):
             # dictionary value to a dictionary
             self.dof_calculation_component.local_to_global_dof_dict[entity] = {}
             # Get the dof id list
-            dof_id_list = component.get_dof_id_list()
+            dof_id_list = component.dof_id_list
             # Put each id of the list in the dictionary
             for dof_id in dof_id_list:
                 # Put the current_id in the local_to_global_to_local_dof_dict
@@ -73,7 +73,7 @@ class UpdateReducedDOFs(catecs.System):
 
                     # If the dof id is in the dof id list of the support instance
                     # then it is also in the reduced dof dict.
-                    if dof_id not in support_class_instance.get_dof_id_list():
+                    if dof_id not in support_class_instance.dof_id_list:
                         global_in_reduced = False
 
             # If the global id is in the reduced matrix then add it to the correct dicts
