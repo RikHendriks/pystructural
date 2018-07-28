@@ -37,29 +37,6 @@ class LinearAnalysisResults2D:
         # Add the linear phase analysis results to the list
         self.linear_phase_analysis_results.append([linear_phase_analysis_result, load_combinations])
 
-    # def update_linear_phase_analysis_results(self):
-    #     # If a linear analysis results is given then add the results to the results of the current analysis
-    #     for phase_analysis, load_combinations in self.linear_phase_analysis_results:
-    #         for load_combination in load_combinations:
-    #             # For each element in the displacement vector
-    #             for i in self.dof_calculation_component.global_to_local_dof_dict:
-    #                 # Get the global dof
-    #                 entity_id, dof = self.dof_calculation_component.global_to_local_dof_dict[i]
-    #                 # If the same dof exists in the linear analysis result
-    #                 if entity_id in phase_analysis.dof_calculation_component.local_to_global_dof_dict:
-    #                     if dof in phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id]:
-    #                         j = phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id][dof]
-    #                         self.displacement_and_load_vectors_component.displacement_vectors[load_combination][i] += \
-    #                             phase_analysis.displacement_and_load_vectors_component.displacement_vectors[
-    #                                 load_combination][j]
-    #                 # If the same dof exists in the linear analysis result
-    #                 if entity_id in phase_analysis.dof_calculation_component.local_to_global_dof_dict:
-    #                     if dof in phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id]:
-    #                         j = phase_analysis.dof_calculation_component.local_to_global_dof_dict[entity_id][dof]
-    #                         self.displacement_and_load_vectors_component.load_vectors[load_combination][i] += \
-    #                             phase_analysis.displacement_and_load_vectors_component.load_vectors[
-    #                                 load_combination][j]
-
     def calculate_line_result(self, group_id):
         line_start = self.structure.get_component_from_entity(self.line_element_sort.groups[group_id][0][1],
                                                               Point2D)
