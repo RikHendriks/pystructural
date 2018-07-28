@@ -1,7 +1,24 @@
+"""
+pystructural.solver.components.degree_of_freedom
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Implements the degree of freedom class.
+"""
 __all__ = ['DOF']
 
 
 class DOF:
+    """The DOF (degree of freedom) class which holds the information of which kinds of DOFs are active or inactive on
+    a given entity.
+
+    :param displacement_x: DOF for the displacement in the x axis, dof id: 0.
+    :param displacement_y: DOF for the displacement in the y axis, dof id: 1.
+    :param displacement_z: DOF for the displacement in the z axis, dof id: 2.
+    :param rotation_x: DOF for the rotation around the x axis, dof id: 3.
+    :param rotation_y: DOF for the rotation around the y axis, dof id: 4.
+    :param rotation_z: DOF for the rotation around the z axis, dof id: 5.
+    """
+
     def __init__(self, displacement_x=False, displacement_y=False, displacement_z=False,
                  rotation_x=False, rotation_y=False, rotation_z=False):
         # Initialize the displacements
@@ -17,22 +34,11 @@ class DOF:
         # Update the dof id list
         self.update_dof_id_list()
 
-    def __add__(self, other):
-        self.update_dof(other)
-        return self
-
-    def __neg__(self):
-        # Negate all the bool variables
-        self.displacement_x = not self.displacement_x
-        self.displacement_y = not self.displacement_y
-        self.displacement_z = not self.displacement_z
-        self.rotation_x = not self.rotation_x
-        self.rotation_y = not self.rotation_y
-        self.rotation_z = not self.rotation_z
-        # Return the negation
-        return self
-
     def update_dof(self, other_dof):
+        """Update self with another dof: set each bool to true in self if it is true in other_dof.
+
+        :param other_dof: The other dof with which to update self.
+        """
         # Displacement x
         if other_dof.displacement_x is True:
             self.displacement_x = True
@@ -54,7 +60,12 @@ class DOF:
         # Update the dof id list
         self.update_dof_id_list()
 
-    def get_dof(self, i):
+    def check_dof_id(self, i):
+        """Check if a DOF is on or off.
+
+        :param i: The dof id number.
+        :return: Return True if the DOF corresponding with the id number is active.
+        """
         # Displacement x
         if i == 0:
             return self.displacement_x
@@ -77,6 +88,8 @@ class DOF:
             raise IndexError("This function only accepts an integer number from 0 to 5")
 
     def update_dof_id_list(self):
+        """Update the dof_id_list: put each DOF id in the dof_id_list if the DOF is active.
+        """
         id_list = []
         # Displacement x
         if self.displacement_x is True:
@@ -98,7 +111,3 @@ class DOF:
             id_list.append(5)
         # Return the id_list
         self.dof_id_list = id_list
-
-    def get_dof_id_list(self):
-        # Return the dof id list
-        return self.dof_id_list

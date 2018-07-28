@@ -54,7 +54,7 @@ class PointLoad2D(Load):
             yield self.get_load_value_to_node_and_dof_variable(i), self.point_load[i]
 
     def get_load_value_to_node_and_dof_variable(self, i):
-        dof_id_list = self.get_dof().get_dof_id_list()
+        dof_id_list = self.get_dof().dof_id_list
         return [self.geometry.point_id_list[0], dof_id_list[i]]
 
 
@@ -84,7 +84,7 @@ class QLoad2D(Load):
         q_1 = self.q_load_func(self.geometry.point_list[0])
         q_2 = self.q_load_func(self.geometry.point_list[1])
         for i in range(2):
-            for dof in self.get_dof().get_dof_id_list():
+            for dof in self.get_dof().dof_id_list:
                 if i == 0:
                     if dof == 1:
                         yield [self.geometry.point_id_list[i], dof], (7 * q_1 + 3 * q_2) * self.geometry.length / 20.0
@@ -123,7 +123,7 @@ class ImposedLoad2D(ImposedLoad):
         local_force_vector = np.matmul(np.transpose(self.geometry.global_to_local_matrix), global_force_vector)
         # Yield the load dofs
         for i in range(2):
-            for dof in self.get_dof().get_dof_id_list():
+            for dof in self.get_dof().dof_id_list:
                 if i == 0:
                     yield [self.geometry.point_id_list[i], dof], local_force_vector[{0: 0, 1: 1, 5: 2}[dof]]
                 else:

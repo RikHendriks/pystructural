@@ -86,7 +86,7 @@ class FrameElement2D(Element):
         self.DOF = DOF(displacement_x=True, displacement_y=True, rotation_z=True)
 
     def get_stiffness_coordinate_to_node_and_dof_variable(self, x):
-        return self.geometry.point_id_list[x//3], self.DOF.get_dof_id_list()[x % 3]
+        return self.geometry.point_id_list[x//3], self.DOF.dof_id_list[x % 3]
 
     def get_node_and_dof_variable_to_stiffness_coordinate(self, node_id, dof_id):
         if node_id == self.geometry.point_id_list[0]:
