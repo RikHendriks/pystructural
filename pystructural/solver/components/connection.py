@@ -37,7 +37,7 @@ class Spring(Connection, DOF):
         return self
 
     def spring_dof_generator(self):
-        dof_id_list = self.get_dof_id_list()
+        dof_id_list = self.dof_id_list
         # For every dof that is used in the spring
         for dof in dof_id_list:
             if dof == 0:
