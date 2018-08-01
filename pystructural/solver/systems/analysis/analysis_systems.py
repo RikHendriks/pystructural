@@ -73,5 +73,5 @@ class LinearPhaseAnalysisSystem(AnalysisSystem):
                     phase_id]]
                 lar_list[phase_id] = self.world.solve_linear_system(str(self.phased_analysis.phases[phase_id]), False,
                                                                     phase_analysis_list)
-        # # Update linear analysis results
-        # self.world.post_processor.linear_analysis_results.update_linear_phase_analysis_results()
+            # Set the current phase analysis id variable in the linear analysis
+            lar_list[phase_id].phase_analysis_id = phase_id

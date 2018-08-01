@@ -32,6 +32,7 @@ class LinearAnalysisResults2D:
         self.line_results = {}
         # Initialize the linear phase analysis results
         self.linear_phase_analysis_results = []
+        self.phase_analysis_id = None
 
     def add_linear_phase_analysis_result(self, linear_phase_analysis_result, load_combinations):
         # Add the linear phase analysis results to the list
@@ -245,7 +246,9 @@ class LinearAnalysisResults2D:
             components = self.structure.get_all_component_types_from_entity(element_instance.entity_id,
                                                                             load_class.compatible_geometry, load_class)
             if components is not None:
-                for imposed_load in components[1]:
+                imposed_loads = components[1] if self.phase_analysis_id is None else \
+                    filter(lambda x: self.phase_analysis_id in x.phase_id_list, components[1])
+                for imposed_load in imposed_loads:
                     # For each dof in the load
                     for data in imposed_load.load_dof_generator():
                         i = element_instance.get_node_and_dof_variable_to_stiffness_coordinate(data[0][0], data[0][1])
