@@ -423,7 +423,7 @@ class Structure2D(Structure):
         self.post_processor.clear_canvas()
 
     def save_min_max_combinations_as_png(self, path, dof, coordinates, plot_window=None,
-                                         title='', xlabel='', ylabel=''):
+                                         title='', xlabel='', ylabel='', visualization_package='matplotlib'):
         # For each min max load combination
         for dof_value, load_combination, position_vector, is_min in \
                 self.post_processor.min_max_load_combinations_generator(dof, coordinates):
@@ -431,10 +431,9 @@ class Structure2D(Structure):
             lc_name = self.load_combinations_component.load_combination_names_inverse[load_combination]
             # Save the load combination as a png
             self.save_structure_as_png(path + '_' + lc_name, lc_name, plot_window, title + ' ' + lc_name,
-                                       xlabel, ylabel)
+                                       xlabel, ylabel, visualization_package)
 
-    def save_structure_as_svg(self, path, load_combination='generic_load_combination',
-                              visualization_package='svgpathtools'):
+    def save_structure_as_svg(self, path, load_combination='generic_load_combination'):
         # Draw the structure
         self.post_processor.draw_structure()
         # Draw the supports
@@ -443,6 +442,6 @@ class Structure2D(Structure):
         load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
         self.post_processor.draw_structure_results(load_combination_id, True, True, True, True, 1.0, 1.0)
         # Save the structure
-        self.post_processor.save_structure(path, None, visualization_package)
+        self.post_processor.save_structure(path, None, 'svgpathtools')
         # Clear the canvas
         self.post_processor.clear_canvas()

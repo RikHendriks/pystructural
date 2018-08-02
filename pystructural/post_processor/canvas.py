@@ -1,6 +1,9 @@
 import copy
 
 import matplotlib.pyplot as plt
+import bokeh.plotting as bk_plt
+import bokeh.models as bk_mod
+import bokeh.io as bk_io
 import numpy as np
 import svgpathtools as svg
 
@@ -29,19 +32,19 @@ class Canvas:
         if p[1] > self.plot_window[3]:
             self.plot_window[3] = p[1]
 
-    def draw_line(self, start, end, color='black'):
+    def draw_line(self, x, y, color='black'):
         # If the line is (partially) outside the border then increase the borders
-        self.expand_plot_window(start)
-        self.expand_plot_window(end)
+        self.expand_plot_window([min(x), min(y)])
+        self.expand_plot_window([max(x), max(y)])
         # Append the line to the line list
-        self.lines.append([np.array([start, end]), color])
+        self.lines.append([x, y, color])
 
     def draw_lines(self, lines, color='black'):
-        for line in lines:
-            self.draw_line(line[0], line[1], color)
+        for x, y in lines:
+            self.draw_line(x, y, color)
 
-    def draw_text(self, coordinate, text, font_size=12, color='black'):
-        self.texts.append([coordinate, text, font_size, color])
+    def draw_text(self, x, y, text, font_size=12, color='black'):
+        self.texts.append([x, y, text, font_size, color])
 
     def draw_symbol(self, symbol, scale, translation, color='black'):
         symbol = scale_lines(symbol, scale)
@@ -73,7 +76,7 @@ class Canvas:
         if visualization_package == 'matplotlib':
             self.show_matplotlib(plot_window)
         elif visualization_package == 'bokeh':
-            self.show_bokeh(plot_window)
+            self.show_bokeh()
 
     def save(self, filename, plot_window, visualization_package='matplotlib'):
         # Redefine the axis of the plot
@@ -98,10 +101,10 @@ class Canvas:
     def show_matplotlib(self, plot_window):
         # Plot each line to matplotlib
         for line in self.lines:
-            plt.plot([line[0][0][0], line[0][1][0]], [line[0][0][1], line[0][1][1]], line[1])
+            plt.plot(line[0], line[1], line[2])
         # Plot each text to matplotlib
         for text in self.texts:
-            plt.text(text[0][0], text[0][1], text[1], fontsize=text[2], color=text[3])
+            plt.text(text[0], text[1], text[2], fontsize=text[3], color=text[4])
         # Set the axis
         plt.axis(plot_window)
         # Show the plot
@@ -109,16 +112,25 @@ class Canvas:
         # Clear the plot
         plt.gcf().clear()
 
-    def show_bokeh(self, plot_window):
-        pass
+    def show_bokeh(self):
+        # Instantiate the figure
+        f = bk_plt.figure()
+        # Plot each line to bokeh
+        for line in self.lines:
+            f.line(line[0], line[1], line_color=line[2])
+        # Plot the text to bokeh
+        for text in self.texts:
+            f.add_layout(bk_mod.Label(x=text[0], y=text[1], text=text[2]))
+        # Show the results
+        bk_plt.show(f)
 
     def save_matplotlib(self, filename, plot_window):
         # Plot each line to matplotlib
         for line in self.lines:
-            plt.plot([line[0][0][0], line[0][1][0]], [line[0][0][1], line[0][1][1]], line[1])
+            plt.plot(line[0], line[1], line[2])
         # Plot each text to matplotlib
         for text in self.texts:
-            plt.text(text[0][0], text[0][1], text[1], fontsize=text[2], color=text[3])
+            plt.text(text[0], text[1], text[2], fontsize=text[3], color=text[4])
         # Set the axis
         plt.axis(plot_window)
         # Save the plotted file
@@ -127,22 +139,36 @@ class Canvas:
         plt.gcf().clear()
 
     def save_bokeh(self, filename):
-        pass
+        # Instantiate the figure
+        f = bk_plt.figure()
+        # Plot each line to bokeh
+        for line in self.lines:
+            f.line(line[0], line[1], line_color=line[2])
+        # Plot the text to bokeh
+        for text in self.texts:
+            f.add_layout(bk_mod.Label(x=text[0], y=text[1], text=text[2]))
+        # Save the results
+        bk_io.export_png(f, filename)
 
     def save_svgpathtools(self, filename):
-        lines = [svg.Line(start[0] + start[1] * -1j, end[0] + end[1] * -1j) for [start, end], _ in self.lines]
-        line_colors = [color for [_, _], color in self.lines]
-        text_path = [svg.Line(coordinate[0] + coordinate[1] * -1j, coordinate[0] + 1.0 + coordinate[1] * -1j) for
-                     coordinate, _, _, _ in self.texts]
-        text = [text for _, text, _, _ in self.texts]
+        lines = []
+        for x, y, _ in self.lines:
+            for i in range(len(x)-1):
+                lines.append(svg.Line(x[i] + y[i] * -1j, x[i+1] + y[i+1] * -1j))
+        line_colors = [color for x, _, color in self.lines for _ in range(len(x))]
+        text_path = []
+        for x, y, _, _, _ in self.texts:
+            for i in range(len(x)):
+                text_path.append(svg.Line(x[i] + y[i] * -1j, x[i] + 1.0 + y[i] * -1j))
+        text = [text for x, _, text, _, _ in self.texts for _ in range(len(x))]
         svg.wsvg(lines, line_colors, stroke_widths=[0.01] * len(lines),
                  text=text, text_path=text_path, font_size=[0.1] * len(text),
                  filename=filename)
 
 
 def scale_line(line, scale):
-    line[0] *= scale
-    line[1] *= scale
+    line[0] = [scale * x for x in line[0]]
+    line[1] = [scale * y for y in line[1]]
     return line
 
 
@@ -153,8 +179,8 @@ def scale_lines(lines, scale):
 
 
 def translate_line(line, translation):
-    line[0] += translation
-    line[1] += translation
+    line[0] = [x + translation[0] for x in line[0]]
+    line[1] = [y + translation[1] for y in line[1]]
     return line
 
 

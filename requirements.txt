@@ -1,4 +1,5 @@
 numpy
 catecs
 matplotlib
+bokeh
 svgpathtools

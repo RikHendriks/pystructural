@@ -20,6 +20,7 @@ setup(
             'numpy',
             'catecs',
             'matplotlib',
+            'bokeh',
             'svgpathtools',
         ]
 )
