@@ -359,7 +359,7 @@ class Structure2D(Structure):
                                                                                                    load_combination_id)
 
     def show_structure(self, load_combination='generic_load_combination', plot_window=None,
-                       displacement_scale=100.0, dof_scale=0.1, support_scale=0.25):
+                       displacement_scale=100.0, dof_scale=0.1, support_scale=0.25, visualization_package='matplotlib'):
         # Draw the structure
         self.post_processor.draw_structure()
         # Draw the supports
@@ -369,11 +369,12 @@ class Structure2D(Structure):
         self.post_processor.draw_structure_results(load_combination_id, True, True, True, True,
                                                    displacement_scale, dof_scale)
         # Show the structure
-        self.post_processor.show_structure(plot_window)
+        self.post_processor.show_structure(plot_window, visualization_package)
         # Clear the canvas
         self.post_processor.clear_canvas()
 
-    def show_structure_dof_enveloping(self, dof, plot_window=None, path_svg=None, dof_scale=0.1, support_scale=0.25):
+    def show_structure_dof_enveloping(self, dof, plot_window=None, dof_scale=0.1, support_scale=0.25,
+                                      visualization_package='matplotlib'):
         # Draw the structure
         self.post_processor.draw_structure()
         # Draw the supports
@@ -382,15 +383,12 @@ class Structure2D(Structure):
         self.post_processor.draw_dof_enveloping(dof, self.load_combinations_component.load_combinations.keys(),
                                                 dof_scale)
         # Show the structure
-        self.post_processor.show_structure(plot_window)
-        # If there is a path given for the svg then save the structure as an svg
-        if path_svg is not None:
-            self.post_processor.save_as_svg(path_svg)
+        self.post_processor.show_structure(plot_window, visualization_package)
         # Clear the canvas
         self.post_processor.clear_canvas()
 
     def save_structure_as_png(self, path, load_combination='generic_load_combination', plot_window=None,
-                              title='', xlabel='', ylabel=''):
+                              title='', xlabel='', ylabel='', visualization_package='matplotlib'):
         # Draw the structure
         self.post_processor.draw_structure()
         # Draw the supports
@@ -403,12 +401,12 @@ class Structure2D(Structure):
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         # Save the structure
-        self.post_processor.save_as_png(path, plot_window)
+        self.post_processor.save_structure(path, plot_window, visualization_package)
         # Clear the canvas
         self.post_processor.clear_canvas()
 
     def save_enveloping_structure_as_png(self, path, dof, plot_window=None,
-                                         title='', xlabel='', ylabel=''):
+                                         title='', xlabel='', ylabel='', visualization_package='matplotlib'):
         # Draw the structure
         self.post_processor.draw_structure()
         # Draw the supports
@@ -420,7 +418,7 @@ class Structure2D(Structure):
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         # Save the structure
-        self.post_processor.save_as_png(path, plot_window)
+        self.post_processor.save_structure(path, plot_window, visualization_package)
         # Clear the canvas
         self.post_processor.clear_canvas()
 
@@ -435,7 +433,8 @@ class Structure2D(Structure):
             self.save_structure_as_png(path + '_' + lc_name, lc_name, plot_window, title + ' ' + lc_name,
                                        xlabel, ylabel)
 
-    def save_structure_as_svg(self, path, load_combination='generic_load_combination'):
+    def save_structure_as_svg(self, path, load_combination='generic_load_combination',
+                              visualization_package='svgpathtools'):
         # Draw the structure
         self.post_processor.draw_structure()
         # Draw the supports
@@ -444,6 +443,6 @@ class Structure2D(Structure):
         load_combination_id = self.load_combinations_component.load_combination_names[load_combination]
         self.post_processor.draw_structure_results(load_combination_id, True, True, True, True, 1.0, 1.0)
         # Save the structure
-        self.post_processor.save_as_svg(path)
+        self.post_processor.save_structure(path, None, visualization_package)
         # Clear the canvas
         self.post_processor.clear_canvas()

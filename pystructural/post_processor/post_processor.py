@@ -217,17 +217,13 @@ class PostProcessor2D:
         # Clear the canvas
         self.canvas.clear()
 
-    def show_structure(self, plot_window=None):
+    def show_structure(self, plot_window=None, visualization_package='matplotlib'):
         # Show the structure with matplotlib
-        self.canvas.show_matplotlib(plot_window=plot_window, show_plot=True)
+        self.canvas.show(plot_window, visualization_package)
 
-    def save_as_png(self, path, plot_window=None):
-        # Save the structure as an png
-        self.canvas.show_matplotlib(filename=path + '.png', plot_window=plot_window, show_plot=False)
-
-    def save_as_svg(self, path):
-        # Save the structure as an svg
-        self.canvas.save_as_svg(path + '.svg')
+    def save_structure(self, path, plot_window=None, visualization_package='matplotlib'):
+        # Save the structure
+        self.canvas.save(path, plot_window, visualization_package)
 
     def min_max_load_combinations_generator(self, dof, coordinates):
         # For each group
