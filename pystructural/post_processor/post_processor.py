@@ -2,7 +2,7 @@ import copy
 
 import numpy as np
 
-from pystructural.core.math_ps import point_is_near_point
+from pystructural.core import math_ps
 from pystructural.pre_processor.components import LineElementSortComponent
 from pystructural.solver.components.geometry import Point2D, Line2D
 from pystructural.solver.components.support import Support
@@ -245,7 +245,7 @@ class PostProcessor2D:
             for position_vector, dof_value_list, load_combination_list in \
                     self.linear_analysis_results.global_dof_enveloping_generator(group_id):
                 # Check if their is a coordinate on the given position vector
-                norms = map(lambda x: point_is_near_point(position_vector, x), coordinates)
+                norms = map(lambda x: math_ps.point_is_near_point(position_vector, x), coordinates)
                 if True in norms:
                     # Determine the dof value list of the correct dof
                     dof_value_list = [dof_value[dof] for dof_value in dof_value_list]
@@ -288,3 +288,37 @@ class PointOfInterestDetector:
                     points_of_interest.append(self.values[i - 1])
                 previous_slope = copy.deepcopy(slope)
         return points_of_interest
+
+
+def max_point_line(x, y):
+    # Point of the line
+    point_list = [np.array(point) for point in zip(x, y)]
+    # Determine the start and the end point of the line
+    line_start = np.array([x[0], y[1]])
+    line_end = np.array([x[-1], y[-1]])
+    # Return the max
+    return max([math_ps.point_line_projection_distance(point, line_start, line_end) for point in point_list])
+
+
+def normalize_point_line(x, y, scale=1.0, max_value=None):
+    # Point of the line
+    point_list = [np.array(point) for point in zip(x, y)]
+    # Determine the start and the end point of the line
+    line_start = np.array([x[0], y[1]])
+    line_end = np.array([x[-1], y[-1]])
+    # The determine the max closest distance from a point on the line list to the line if no max value was given
+    if max_value is None:
+            # Get the closest distance to the line from every point of the given line list and return the max
+            max_value = max([math_ps.point_line_projection_distance(point, line_start, line_end)
+                             for point in point_list])
+    # Get the projection for every point
+    projection_point_list = [math_ps.point_line_projection(point, line_start, line_end) for point in point_list]
+    # Subtract the projections from the original points
+    delta_point_list = [point_list[i] - projection_point_list[i] for i in range(len(x))]
+    # Divide each delta point by the max value
+    delta_point_list = [scale * point / max_value for point in delta_point_list]
+    # Add the point projection list and the delta point list
+    point_list = [projection_point + delta_point
+                  for projection_point, delta_point in zip(projection_point_list, delta_point_list)]
+    # Return the x and y lists of the new point list
+    return [point[0] for point in point_list], [point[1] for point in point_list]
