@@ -20,6 +20,7 @@ class UpdateGeometries(catecs.System):
                 if geometry_class is Point2D:
                     component.point_id_list = [entity]
                 else:
+                    # Get the point list
                     point_list = []
                     for point_id in component.point_id_list:
                         point_list.append(self.world.get_component_from_entity(point_id, Point2D).point_list[0])

@@ -67,8 +67,11 @@ class LinearAnalysisResults2D:
         tangent_vector = np.zeros(2)
         tangent_vector[0] = vector[1]
         tangent_vector[1] = -vector[0]
+        # Reverse the points in the line if the first point is not the most left and the down node
+        if tangent_vector[0] < 0 or (tangent_vector[0] == 0 and tangent_vector[1] < 0):
+            tangent_vector *= -1.0
         # Return the normalized tangent vector
-        return tangent_vector / np.linalg.norm(tangent_vector)
+        return -tangent_vector / np.linalg.norm(tangent_vector)
 
     def displacement_generator(self, group_id, load_combination):
         # For every line in the group of line elements
