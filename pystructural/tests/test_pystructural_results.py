@@ -66,6 +66,28 @@ def test_basic_result_2():
     assert np.allclose(structure.get_point_displacement_vector([5.0, 0.0]), np.array([0.0, -1.25e3, 0.0]))
 
 
+def test_basic_result_3():
+    """Tests a structure with vertical springs and a point load in the middle.
+    """
+    # Create a structure instance
+    structure = ps.core.Structure2D()
+    # Add a frame element
+    structure.add_frame_element([0.0, 0.0], [10.0, 0.0], 1.0, 1.0, 1.0, 1.0)
+    # Add supports
+    structure.add_support([0.0, 0.0], displacement_x=False)
+    # Add springs
+    structure.add_spring([0.0, 0.0], spring_y=1)
+    structure.add_spring([10.0, 0.0], spring_y=1)
+    # Add a point load
+    structure.add_point_load([5.0, 0.0], [0.0, -1.0, 0.0])
+    # Solve the linear system
+    structure.solve_linear_system()
+    # Test the forces in the middle of the frame
+    assert np.allclose(structure.get_line_force_vector([4.99, 0.0])[3:], np.array([0.0, -0.5, -2.5]))
+    # Test the displacements in the middle of the frame
+    assert np.allclose(structure.get_point_displacement_vector([5.0, 0.0]), np.array([0.0, -0.5 - 1000 / 48, 0.0]))
+
+
 #################################
 # LOAD COMBINATION RESULT TESTS #
 #################################
