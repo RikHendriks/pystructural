@@ -1,6 +1,6 @@
 import catecs
 
-from .systems import CheckOverlappingNodes2D, AddSplitNodes2D, SplitLine2D, LineElementSort2D
+from .systems import CheckOverlappingNodes2D, AddSplitNodes2D, SplitLine2D, LineElementSort2D, PreProcessorDofSystems
 
 __all__ = ['PreProcessor2D']
 
@@ -24,3 +24,5 @@ class PreProcessor2D(catecs.System):
         self.world.run_system(SplitLine2D())
         # Run system instance: line element sort 2d
         self.world.run_system(LineElementSort2D())
+        # Run system instance: pre processor dof systems
+        self.world.run_system(PreProcessorDofSystems())

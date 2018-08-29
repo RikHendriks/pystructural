@@ -41,7 +41,7 @@ def test_basic_result_1():
     # Solve the linear system
     structure.solve_linear_system()
     # Test the forces in the middle of the frame
-    assert np.allclose(structure.get_line_force_vector([4.99, 0.0])[3:], np.array([0.0, -0.5, -12.5]), rtol=1.e4)
+    assert np.allclose(structure.get_line_force_vector([4.99, 0.0])[3:], np.array([0.0, -0.05, -12.5]), atol=1.e-3)
     # Test the displacements in the middle of the frame
     assert np.allclose(structure.get_point_displacement_vector([5.0, 0.0]), np.array([0.0, -50000 / 384, 0.0]))
 
@@ -61,9 +61,9 @@ def test_basic_result_2():
     # Solve the linear system
     structure.solve_linear_system()
     # Test the forces in the middle of the frame
-    assert np.allclose(structure.get_line_force_vector([4.99, 0.0])[3:], np.array([0.0, 0.0, 0.0]), rtol=1.e4)
+    assert np.allclose(structure.get_line_force_vector([4.99, 0.0])[3:], np.array([0.0, 0.0, 0.0]), atol=1.e-7)
     # Test the displacements in the middle of the frame
-    assert np.allclose(structure.get_point_displacement_vector([5.0, 0.0]), np.array([0.0, -1.25e3, 0.0]))
+    assert np.allclose(structure.get_point_displacement_vector([5.0, 0.0]), np.array([0.0, -1.25e3, 0.0]), atol=1.e-7)
 
 
 def test_basic_result_3():
@@ -147,7 +147,7 @@ def test_phased_analysis_result_0():
     # Solve the linear system
     structure.solve_linear_phase_system(phase_analysis)
     # Test the forces in the middle of the frame
-    assert np.allclose(structure.get_line_force_vector([4.99, 0.0])[3:], np.array([0.0, -0.55, -15.0]), rtol=1.e-4)
+    assert np.allclose(structure.get_line_force_vector([4.99, 0.0])[3:], np.array([0.0, -0.55, -15.0]), atol=1.e-3)
     # Test the displacements in the middle of the frame
     assert np.allclose(structure.get_point_displacement_vector([5.0, 0.0]),
                        np.array([0.0, -1000 / 48 + -50000 / 384, 0.0]))
@@ -204,4 +204,4 @@ def test_phased_analysis_result_1():
     structure.solve_linear_phase_system(phase_analysis)
 
     # Test the forces at the middle support in the frames
-    assert np.allclose(structure.get_line_force_vector([4.99, 0.0])[3:], np.array([0.0, 5.525, 3.1233]), rtol=1.e-4)
+    assert np.allclose(structure.get_line_force_vector([4.99, 0.0])[3:], np.array([0.0, 5.525, 3.1233]), atol=1.e-5)

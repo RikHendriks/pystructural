@@ -7,6 +7,7 @@ from pystructural.solver.components.calculation_components import *
 from pystructural.solver.systems.analysis.element_systems import element_subclasses_2d
 from pystructural.solver.components.geometry import Point2D
 from pystructural.solver.components.element import line_elements
+from pystructural.solver.components.degree_of_freedom import dof_conversion_dict, DOF
 from pystructural.pre_processor.components import LineElementSortComponent
 from pystructural.solver.systems.analysis.load_systems import imposed_load_subclasses_2d
 
@@ -131,13 +132,13 @@ class LinearAnalysisResults2D:
 
         # Determine the entity id
         node_id = node_instance.point_id_list[0]
+        # Get the dof instance of the node
+        dof = self.structure.get_component_from_entity(node_id, DOF)
 
         # Determine the node displacement vector
         for i in range(3):
-            j = copy.deepcopy(i)
-            if j == 2:
-                j = 5
-            global_id = self.dof_calculation_component.local_to_global_dof_dict[node_id][j]
+            global_id = self.dof_calculation_component.local_to_global_dof_dict[node_id][
+                dof.dof_id_dict[dof_conversion_dict[i]]]
             node_displacement_vector[i] += \
                 self.displacement_and_load_vectors_component.displacement_vectors[load_combination][global_id]
 

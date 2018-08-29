@@ -42,4 +42,4 @@ class UpdateElements(catecs.System):
                     if not self.world.has_component(point_entity, DOF):
                         self.world.add_component(point_entity, DOF())
                     # Get the dof from the elements and update the node dof
-                    self.world.get_component_from_entity(point_entity, DOF).update_dof(components[1].DOF)
+                    self.world.get_component_from_entity(point_entity, DOF).update_dof(components[1])

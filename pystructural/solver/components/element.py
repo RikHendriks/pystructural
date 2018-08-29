@@ -10,13 +10,13 @@ __all__ = ['Element',
            'line_elements', 'triangle_elements']
 
 
-class Element:
+class Element(DOF):
     compatible_geometry = None
     compatible_materials = None
     compatible_element_geometries = None
     element_dimension = None
 
-    def __init__(self):
+    def __init__(self, *dof_id_list):
         # Geometry
         self.geometry = None
         # Material and geometries element
@@ -28,7 +28,7 @@ class Element:
         self.mass_matrix = None
         self.nodal_force_vector = None
         # DOF
-        self.DOF = None
+        super().__init__(*dof_id_list)
 
     def get_stiffness_coordinate_to_node_and_dof_variable(self, x):
         pass
@@ -75,24 +75,24 @@ class FrameElement2D(Element):
     element_dimension = 6
 
     def __init__(self):
-        super().__init__()
+        super().__init__("displacement_x", "displacement_y", "rotation_z")
         # Element properties
         self.ea = None
         self.ei = None
         # Element matrices
         self.local_stiffness_matrix = None
         self.global_to_local_matrix = None
-        # DOF
-        self.DOF = DOF(displacement_x=True, displacement_y=True, rotation_z=True)
 
     def get_stiffness_coordinate_to_node_and_dof_variable(self, x):
-        return self.geometry.point_id_list[x//3], self.DOF.dof_id_list[x % 3]
+        return self.geometry.point_id_list[x//3],\
+               self.dof_id_dict[{0: "displacement_x", 1: "displacement_y", 2: "rotation_z"}[x % 3]]
 
     def get_node_and_dof_variable_to_stiffness_coordinate(self, node_id, dof_id):
+        dof_name = {v: k for k, v in self.dof_id_dict.items()}[dof_id]
         if node_id == self.geometry.point_id_list[0]:
-            return {0: 0, 1: 1, 5: 2}[dof_id]
+            return {"displacement_x": 0, "displacement_y": 1, "rotation_z": 2}[dof_name]
         else:
-            return {0: 3, 1: 4, 5: 5}[dof_id]
+            return {"displacement_x": 3, "displacement_y": 4, "rotation_z": 5}[dof_name]
 
     def compute_element_properties(self):
         # Compute the ea
@@ -170,8 +170,7 @@ class LinearTriangleElement2D(Element):
 
     def __init__(self):
         # DOF
-        super().__init__()
-        self.DOF = DOF(displacement_x=True, displacement_y=True)
+        super().__init__("displacement_x", "displacement_y")
 
     def get_stiffness_coordinate_to_node_and_dof_variable(self, x):
         pass

@@ -18,6 +18,7 @@ class Connection:
         pass
 
 
+# TODO change this class
 class Spring(Connection, DOF):
     """The Spring geometry class which inherits from the connection and dof classes.
 
@@ -38,27 +39,39 @@ class Spring(Connection, DOF):
         self.rotation_spring_y = rotation_spring_y
         self.rotation_spring_z = rotation_spring_z
         Connection.__init__(self)
-        DOF.__init__(self, self.spring_x is not None, self.spring_y is not None, self.spring_z is not None,
-                     self.rotation_spring_x is not None, self.rotation_spring_y is not None,
-                     self.rotation_spring_z is not None)
+        # Get the list of the dof's corresponding to the
+        dof_id_list = []
+        if spring_x:
+            dof_id_list.append("displacement_x")
+        if spring_y:
+            dof_id_list.append("displacement_y")
+        if spring_z:
+            dof_id_list.append("displacement_z")
+        if rotation_spring_x:
+            dof_id_list.append("rotation_x")
+        if rotation_spring_y:
+            dof_id_list.append("rotation_y")
+        if rotation_spring_z:
+            dof_id_list.append("rotation_z")
+        # Initialize the DOF
+        DOF.__init__(self, *dof_id_list)
 
     def spring_dof_generator(self):
         """A generator for the dof and the corresponding spring value.
 
         :return: A tuple (dof_id, spring_value)
         """
-        dof_id_list = self.dof_id_list
         # For every dof that is used in the spring
-        for dof_id in dof_id_list:
-            if dof_id == 0:
-                yield (dof_id, self.spring_x)
-            elif dof_id == 1:
-                yield (dof_id, self.spring_y)
-            elif dof_id == 2:
-                yield (dof_id, self.spring_z)
-            elif dof_id == 3:
-                yield (dof_id, self.rotation_spring_x)
-            elif dof_id == 4:
-                yield (dof_id, self.rotation_spring_y)
-            elif dof_id == 5:
-                yield (dof_id, self.rotation_spring_z)
+        for dof in self.dof_id_dict:
+            if dof == "displacement_x":
+                yield (self.dof_id_dict[dof], self.spring_x)
+            elif dof == "displacement_y":
+                yield (self.dof_id_dict[dof], self.spring_y)
+            elif dof == "displacement_z":
+                yield (self.dof_id_dict[dof], self.spring_z)
+            elif dof == "rotation_x":
+                yield (self.dof_id_dict[dof], self.rotation_spring_x)
+            elif dof == "rotation_y":
+                yield (self.dof_id_dict[dof], self.rotation_spring_y)
+            elif dof == "rotation_z":
+                yield (self.dof_id_dict[dof], self.rotation_spring_z)
