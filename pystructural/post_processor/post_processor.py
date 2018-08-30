@@ -38,7 +38,7 @@ class PostProcessor2D:
             # Set the offset boolean
             offset = False
             # Rotation block symbol
-            if support.rotation_z is False:
+            if "rotation_z" not in support.dof_id_dict:
                 self.canvas.draw_symbol(canvas_symbols.get_rotation_block_symbol(), scale, coordinate, color)
                 offset = True
             # Rotation spring symbol
@@ -49,14 +49,14 @@ class PostProcessor2D:
                 offset = True
             """
             # Displacement block symbol
-            if support.displacement_x is False and support.displacement_y is False:
+            if "displacement_x" not in support.dof_id_dict and "displacement_y" not in support.dof_id_dict:
                 if offset is True:
                     self.canvas.draw_symbol(canvas_symbols.get_displacement_block(), scale,
                                             coordinate + scale * np.array([0.0, -0.5]), color)
                 else:
                     self.canvas.draw_symbol(canvas_symbols.get_displacement_block(), scale, coordinate, color)
             # Displacement free x symbol
-            elif support.displacement_y is False:
+            elif "displacement_y" not in support.dof_id_dict:
                 if offset is True:
                     self.canvas.draw_symbol(canvas_symbols.get_displacement_free_x(), scale,
                                             coordinate + scale * np.array([0.0, -0.5]), color)
@@ -65,7 +65,7 @@ class PostProcessor2D:
                 # Spring x symbol
                 # TODO add the spring x symbol here
             # Displacement free y symbol
-            elif support.displacement_x is False:
+            elif "displacement_x" not in support.dof_id_dict:
                 if offset is True:
                     self.canvas.draw_symbol(canvas_symbols.get_displacement_free_y(), scale,
                                             coordinate + scale * np.array([0.0, -0.5]), color)

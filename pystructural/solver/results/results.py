@@ -46,7 +46,12 @@ class LineResults(Results):
         # While the lines haven't all ended
         while True:
             # Get the minimum value in the unit interval
-            min_unit = min(*[self.line_values_dict[k][v][0] for k, v in line_generator_list.items()])
+            min_unit = [self.line_values_dict[k][v][0] for k, v in line_generator_list.items()]
+            # Get the minimum value of the list min_unit
+            if len(min_unit) == 1:
+                min_unit = min_unit[0]
+            else:
+                min_unit = min(*min_unit)
 
             # Find all the line points that have this minimum unit interval
             k_min_dict = {k: v for k, v in line_generator_list.items() if self.line_values_dict[k][v][0] == min_unit}
