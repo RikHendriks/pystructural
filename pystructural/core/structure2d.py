@@ -255,7 +255,7 @@ class Structure2D(Structure):
 
         # Run the system: preprocessor 2D
         if with_preprocessor:
-            self.run_system(PreProcessor2D(self.minimum_element_distance))
+            self.run_system(PreProcessor2D(minimum_element_distance=self.minimum_element_distance))
         # Add linear calculation system and solve
         linear_analysis_system_id =\
             self.add_system(LinearAnalysisSystem(analysis_name,
