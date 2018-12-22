@@ -30,7 +30,7 @@ def test_basic_result_1():
     """Tests a structure with a simple q-load over the whole frame.
     """
     # Create a structure instance
-    structure = ps.core.Structure2D(0.05)
+    structure = ps.core.Structure2D()
     # Add a frame element
     frame_id = structure.add_frame_element([0.0, 0.0], [10.0, 0.0], 1.0, 1.0, 1.0, 1.0)
     # Add supports
@@ -50,7 +50,7 @@ def test_basic_result_2():
     """Tests a structure with an imposed load over the whole frame.
     """
     # Create a structure instance
-    structure = ps.core.Structure2D(0.05)
+    structure = ps.core.Structure2D()
     # Add a frame element
     frame_id = structure.add_frame_element([0.0, 0.0], [10.0, 0.0], 1.0, 1.0, 1.0, 1.0)
     # Add supports
@@ -63,7 +63,7 @@ def test_basic_result_2():
     # Test the forces in the middle of the frame
     assert np.allclose(structure.get_line_force_vector([4.99, 0.0])[3:], np.array([0.0, 0.0, 0.0]), atol=1.e-7)
     # Test the displacements in the middle of the frame
-    assert np.allclose(structure.get_point_displacement_vector([5.0, 0.0]), np.array([0.0, -1.25e3, 0.0]), atol=1.e-7)
+    assert np.allclose(structure.get_point_displacement_vector([5.0, 0.0]), np.array([0.0, -1.25e3, 0.0]))
 
 
 def test_basic_result_3():
@@ -166,7 +166,7 @@ def test_phased_analysis_result_1():
     # Add phase_0 as the previous phase to phase_1
     phase_analysis.add_previous_phase(phase_2, phase_0, phase_1)
     # Create a structure instance
-    structure = ps.core.Structure2D(0.05)
+    structure = ps.core.Structure2D()
 
     # Add a frame element
     structure.set_phase(phase_0, phase_2)

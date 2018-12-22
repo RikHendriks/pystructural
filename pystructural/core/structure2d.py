@@ -291,7 +291,7 @@ class Structure2D(Structure):
         self.phase_id_adder_list = None
 
         # Run the system: preprocessor 2D
-        self.run_system(PreProcessor2D(self.minimum_element_distance))
+        self.run_system(PreProcessor2D(minimum_element_distance=self.minimum_element_distance))
         # Add linear calculation system and solve
         linear_phase_analysis_system_id = \
             self.add_system(LinearPhaseAnalysisSystem(analysis_name,
@@ -302,7 +302,7 @@ class Structure2D(Structure):
 
     def get_point_displacement_vector(self, coordinate, load_combination='generic_load_combination'):
         # Get the entity id and the instance of the point
-        entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance+0.01)
+        entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance - 0.01)
         # If the point exists
         if point is not None:
             # Get the load combination id
@@ -313,7 +313,7 @@ class Structure2D(Structure):
 
     def get_point_global_force_vector(self, coordinate, load_combination='generic_load_combination'):
         # Get the entity id and the instance of the point
-        entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance + 0.01)
+        entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance - 0.01)
         # If the point exists
         if point is not None:
             # Get the load combination id
@@ -324,7 +324,7 @@ class Structure2D(Structure):
 
     def get_point_support_global_force_vector(self, coordinate, load_combination='generic_load_combination'):
         # Get the entity id and the instance of the point
-        entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance + 0.01)
+        entity_id, point = self.search_for_point(coordinate, error=self.minimum_element_distance - 0.01)
         # If the point exists
         if point is not None:
             # Get the load combination id
